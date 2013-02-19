@@ -1,0 +1,10 @@
+# for eclipse #
+**/.settings
+**/.project
+**/.classpath
+
+# for maven build #
+**/target/
+
+# for eclipse groovy #
+**/.groovy
