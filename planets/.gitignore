@@ -8,3 +8,6 @@
 
 # for eclipse groovy #
 **/.groovy
+
+# for empty folder #
+**/.gitkeep
