@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="
+	http://www.springframework.org/schema/beans	
+	http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.springframework.org/schema/util
+	http://www.springframework.org/schema/util/spring-util.xsd
+	">
+
+	<!-- modifiers -->
+	<bean id="absolutePathModifier"
+		class="org.rec.planets.mercury.url.processor.modify.AbsolutePathModifier"
+		factory-method="getInstance" />
+	<bean id="fixupQueryStringModifier"
+		class="org.rec.planets.mercury.url.processor.modify.FixupQueryStringModifier"
+		factory-method="getInstance" />
+	<bean id="lowercaseModifier"
+		class="org.rec.planets.mercury.url.processor.modify.LowercaseModifier"
+		factory-method="getInstance" />
+	<bean id="stripExtraSlashModifier"
+		class="org.rec.planets.mercury.url.processor.modify.StripExtraSlashModifier"
+		factory-method="getInstance" />
+	<bean id="stripSessionCFIDModifier"
+		class="org.rec.planets.mercury.url.processor.modify.StripSessionCFIDModifier"
+		factory-method="getInstance" />
+	<bean id="stripSessionIDModifier"
+		class="org.rec.planets.mercury.url.processor.modify.StripSessionIDModifier"
+		factory-method="getInstance" />
+	<bean id="stripWWWModifier"
+		class="org.rec.planets.mercury.url.processor.modify.StripWWWModifier"
+		factory-method="getInstance" />
+	<bean id="stripWWWNModifier"
+		class="org.rec.planets.mercury.url.processor.modify.StripWWWNModifier"
+		factory-method="getInstance" />
+	<bean id="stripRefModifier"
+		class="org.rec.planets.mercury.url.processor.modify.StripRefModifier"
+		factory-method="getInstance" />
+	<bean id="stripQueryModifier"
+		class="org.rec.planets.mercury.url.processor.modify.StripQueryModifier"
+		factory-method="getInstance" />
+	<bean id="stripTailModifier"
+		class="org.rec.planets.mercury.url.processor.modify.StripTailModifier"
+		factory-method="getInstance" />
+
+	<bean id="encodeModifier"
+		class="org.rec.planets.mercury.url.processor.modify.EncodeModifier"
+		p:encoding="UTF-8" p:encodePath="true" p:encodeQuery="true"
+		p:encodeRef="true" />
+
+	<bean id="stripByRegexModifier"
+		class="org.rec.planets.mercury.url.processor.modify.StripByRegexModifier">
+		<property name="regex">
+			<bean class="org.rec.planets.mercury.parse.bean.Regex">
+				<constructor-arg name="expression" value="^(.+)/.*$" />
+				<constructor-arg name="groups" value="1" />
+			</bean>
+		</property>
+	</bean>
+</beans>
