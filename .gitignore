@@ -1,6 +1,10 @@
-*.class
+# for eclipse #
+**/.settings
+**/.project
+**/.classpath
 
-# Package Files #
-*.jar
-*.war
-*.ear
+# for maven build #
+**/target
+
+# for eclipse groovy #
+**/.groovy
