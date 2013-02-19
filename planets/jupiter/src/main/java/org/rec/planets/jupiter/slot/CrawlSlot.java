@@ -51,6 +51,12 @@ public interface CrawlSlot {
 	 * 恢复
 	 */
 	void resume();
+	
+	/**
+	 * 是否暂停状态
+	 * @return
+	 */
+	boolean isPaulsed();
 
 	/**
 	 * 返回最大线程数

@@ -68,4 +68,8 @@ public class PausableThreadPoolExecutor extends ThreadPoolExecutor {
 			pauseLock.unlock();
 		}
 	}
+
+	public boolean isPaused() {
+		return isPaused;
+	}
 }

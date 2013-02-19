@@ -3,6 +3,8 @@ package org.rec.planets.mercury.domain;
 import java.io.Serializable;
 import java.util.List;
 
+import org.rec.planets.mercury.domain.constant.JobMode;
+
 /**
  * 任务
  * 
@@ -24,6 +26,10 @@ public class Job extends BusinessEntity implements Serializable {
 	 * url
 	 */
 	private List<CrawlURL> urls;
+	/**
+	 * 任务模式,主动/被动
+	 */
+	private JobMode jobMode;
 
 	public Long getId() {
 		return id;
@@ -57,4 +63,11 @@ public class Job extends BusinessEntity implements Serializable {
 		this.urls = urls;
 	}
 
+	public JobMode getJobMode() {
+		return jobMode;
+	}
+
+	public void setJobMode(JobMode jobMode) {
+		this.jobMode = jobMode;
+	}
 }
