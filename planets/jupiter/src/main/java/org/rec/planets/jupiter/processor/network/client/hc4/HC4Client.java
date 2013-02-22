@@ -1,10 +1,15 @@
 package org.rec.planets.jupiter.processor.network.client.hc4;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.http.Header;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
+import org.apache.http.StatusLine;
 import org.apache.http.client.CookieStore;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
@@ -15,26 +20,29 @@ import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.cookie.Cookie;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.cookie.BasicClientCookie;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
+import org.apache.http.util.EntityUtils;
 import org.rec.planets.jupiter.processor.network.bean.Request;
 import org.rec.planets.jupiter.processor.network.bean.Response;
 import org.rec.planets.jupiter.processor.network.client.Client;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Strings;
 
-public abstract class HC4Client implements Client {
+public class HC4Client implements Client {
 	protected DefaultHttpClient httpClient;
 
 	public HC4Client(DefaultHttpClient httpClient) {
 		this.httpClient = httpClient;
 	}
 
-	@Override
-	public <T> Response<T> request(Request request) throws Exception {
+	private <T> HttpEntity request(Request request, Response<T> emptyResponse)
+			throws Exception {
 		RequestMethod method = request.getMethod();
 		method = method == null ? RequestMethod.GET : method;
 		String encoding = request.getEncoding();
@@ -75,23 +83,97 @@ public abstract class HC4Client implements Client {
 		}
 
 		HttpContext context = new BasicHttpContext();
+		CookieStore cookieStore = new BasicCookieStore();
+		context.setAttribute(ClientContext.COOKIE_STORE, cookieStore);
+
 		if (request.getCookies() != null) {
-			CookieStore cookieStore = httpClient.getCookieStore();
-			if (cookieStore == null)
-				cookieStore = new BasicCookieStore();
-			context.setAttribute(ClientContext.COOKIE_STORE, cookieStore);
 			for (Map.Entry<String, String> kv : request.getCookies().entrySet()) {
+				cookieStore.addCookie(new BasicClientCookie(kv.getKey(), kv
+						.getValue()));
 			}
 		}
 
-		// TODO Auto-generated method stub
-		return null;
+		HttpResponse response = null;
+
+		try {
+			response = httpClient.execute(httpRequest, context);
+		} finally {
+			httpRequest.abort();
+		}
+
+		StatusLine statusLine = response.getStatusLine();
+		if (statusLine != null) {
+			response.setStatusCode(statusLine.getStatusCode());
+		}
+
+		Header[] allHeaders = response.getAllHeaders();
+		if (allHeaders != null && allHeaders.length > 0) {
+			Map<String, String> responseHeader = new HashMap<String, String>();
+			for (Header header : allHeaders) {
+				responseHeader.put(header.getName(), header.getValue());
+			}
+			emptyResponse.setHeaders(responseHeader);
+		}
+
+		List<Cookie> allCookies = cookieStore.getCookies();
+		if (!CollectionUtils.isEmpty(allCookies)) {
+			Map<String, String> responseCookies = new HashMap<String, String>();
+			for (Cookie cookie : allCookies) {
+				responseCookies.put(cookie.getName(), cookie.getValue());
+			}
+			emptyResponse.setCookies(responseCookies);
+		}
+		
+		HttpEntity entity = response.getEntity();
+		
+		Header contentEncodingHeader = entity.getContentEncoding();
+		if (contentEncodingHeader != null) {
+			emptyResponse.setContentEncoding(contentEncodingHeader.getValue());
+		}
+
+		Header contentType = entity.getContentType();
+		if (contentType != null)
+			emptyResponse.setContentType(contentType.getValue());
+
+		emptyResponse.setContentLength(entity.getContentLength());
+
+		return entity;
+	}
+
+	@Override
+	public Response<String> requestString(Request request) throws Exception {
+		Response<String> emptyResponse = new Response<String>();
+		HttpEntity entity = this.request(request, emptyResponse);
+		String encoding = emptyResponse.getContentEncoding();
+		if (Strings.isNullOrEmpty(encoding))
+			encoding = request.getEncoding();
+		if (Strings.isNullOrEmpty(encoding))
+			encoding = Charsets.UTF_8.name();
+		try {
+			emptyResponse.setContent(EntityUtils.toString(entity, encoding));
+		} finally {
+			EntityUtils.consumeQuietly(entity);
+		}
+
+		return emptyResponse;
+	}
+
+	@Override
+	public Response<byte[]> requestByteArray(Request request) throws Exception {
+		Response<byte[]> emptyResponse = new Response<byte[]>();
+		HttpEntity entity = this.request(request, emptyResponse);
+		try {
+			emptyResponse.setContent(EntityUtils.toByteArray(entity));
+		} finally {
+			EntityUtils.consumeQuietly(entity);
+		}
+
+		return emptyResponse;
 	}
 
 	@Override
 	public void close() {
-		// TODO Auto-generated method stub
-
+		httpClient.getConnectionManager().shutdown();
 	}
 
 }

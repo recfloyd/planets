@@ -24,7 +24,7 @@ public abstract class AbstractHC4ClientFactory implements ClientFactory {
 							entry.getValue());
 			}
 
-		// 添加gzip,delate支持
+		// 添加gzip,deflate支持
 		httpClient.addResponseInterceptor(new HttpResponseInterceptor() {
 
 			@Override
