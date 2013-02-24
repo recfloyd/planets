@@ -8,11 +8,11 @@ import org.rec.planets.mercury.domain.AbstractBean;
 public class CrawlRule extends AbstractBean {
 	private Short websiteId;
 	private Long version;
-	private Map<String, ?> websiteProperties;
+	private Map<String, Object> websiteProperties;
 	private CrawlProcessor crawlProcessor;
 
 	public CrawlRule(Short websiteId, Long version,
-			Map<String, ?> websiteProperties, CrawlProcessor crawlProcessor) {
+			Map<String, Object> websiteProperties, CrawlProcessor crawlProcessor) {
 		this.websiteId = websiteId;
 		this.version = version;
 		this.websiteProperties = websiteProperties;
@@ -27,7 +27,7 @@ public class CrawlRule extends AbstractBean {
 		return version;
 	}
 
-	public Map<String, ?> getWebsiteProperties() {
+	public Map<String, Object> getWebsiteProperties() {
 		return websiteProperties;
 	}
 

@@ -6,5 +6,5 @@ import org.rec.planets.jupiter.processor.network.bean.Response;
 public interface Client {
 	Response<String> requestString(Request request) throws Exception;
 	Response<byte[]> requestByteArray(Request request) throws Exception;
-	void close();
+	void destroy();
 }

@@ -14,7 +14,7 @@ public class Request extends AbstractBean {
 	private Multimap<String, String> params;
 	private String encoding;
 	private Map<String, String> cookies;
-	private Map<String, ?> clientSetting;
+	private Map<String, Object> clientSetting;
 
 	public RequestMethod getMethod() {
 		return method;
@@ -64,11 +64,11 @@ public class Request extends AbstractBean {
 		this.cookies = cookies;
 	}
 
-	public Map<String, ?> getClientSetting() {
+	public Map<String, Object> getClientSetting() {
 		return clientSetting;
 	}
 
-	public void setClientSetting(Map<String, ?> clientSetting) {
+	public void setClientSetting(Map<String, Object> clientSetting) {
 		this.clientSetting = clientSetting;
 	}
 }

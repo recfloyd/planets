@@ -1,7 +1,6 @@
-package org.rec.planets.jupiter.processor.filter;
+package org.rec.planets.jupiter.processor;
 
 import org.rec.planets.jupiter.bean.CrawlContext;
-import org.rec.planets.jupiter.processor.CrawlProcessor;
 
 public interface Filter {
 	void invoke(CrawlProcessor processor,CrawlContext crawlContext) throws Exception;
