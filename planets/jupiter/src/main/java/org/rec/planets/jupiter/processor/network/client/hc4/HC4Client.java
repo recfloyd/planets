@@ -43,10 +43,10 @@ import com.google.common.base.Strings;
 public class HC4Client implements Client {
 	protected DefaultHttpClient httpClient;
 
-	public HC4Client(Map<String, ?> clientParam) {
+	public HC4Client(Map<String, Object> clientParam) {
 		this.httpClient = new DefaultHttpClient();
 		if (clientParam != null)
-			for (Map.Entry<String, ?> entry : clientParam.entrySet()) {
+			for (Map.Entry<String, Object> entry : clientParam.entrySet()) {
 				if (entry.getValue() != null)
 					httpClient.getParams().setParameter(entry.getKey(),
 							entry.getValue());

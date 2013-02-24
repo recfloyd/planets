@@ -8,7 +8,7 @@ import org.rec.planets.mercury.parse.bean.Regex;
  * @author rec
  * 
  */
-public class StripWWWModifier extends AbstractStripModifier {
+public final class StripWWWModifier extends AbstractStripModifier {
 	private StripWWWModifier() {
 	}
 

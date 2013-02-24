@@ -8,7 +8,7 @@ import org.rec.planets.mercury.parse.URLUtil;
  * @author rec
  * 
  */
-public class AbsolutePathModifier extends AbstractModifier {
+public final class AbsolutePathModifier extends AbstractModifier {
 	private AbsolutePathModifier() {
 	}
 

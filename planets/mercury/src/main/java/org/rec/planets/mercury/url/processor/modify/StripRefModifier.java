@@ -8,7 +8,7 @@ import org.rec.planets.mercury.parse.URLUtil;
  * @author rec
  * 
  */
-public class StripRefModifier extends AbstractModifier {
+public final class StripRefModifier extends AbstractModifier {
 	private StripRefModifier() {
 	}
 

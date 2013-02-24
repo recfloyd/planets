@@ -2,7 +2,7 @@ package org.rec.planets.mercury.url.processor.modify;
 
 import org.rec.planets.mercury.parse.bean.Regex;
 
-public class StripSessionIDModifier extends AbstractStripModifier {
+public final class StripSessionIDModifier extends AbstractStripModifier {
 	private StripSessionIDModifier() {
 	}
 

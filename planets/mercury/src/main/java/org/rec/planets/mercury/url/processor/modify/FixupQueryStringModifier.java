@@ -6,7 +6,7 @@ package org.rec.planets.mercury.url.processor.modify;
  * @author rec
  * 
  */
-public class FixupQueryStringModifier extends AbstractModifier {
+public final class FixupQueryStringModifier extends AbstractModifier {
 	private FixupQueryStringModifier() {
 	}
 

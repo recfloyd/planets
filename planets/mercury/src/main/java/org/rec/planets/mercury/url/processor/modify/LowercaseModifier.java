@@ -6,7 +6,7 @@ package org.rec.planets.mercury.url.processor.modify;
  * @author rec
  * 
  */
-public class LowercaseModifier extends AbstractModifier {
+public final class LowercaseModifier extends AbstractModifier {
 	private LowercaseModifier() {
 	}
 

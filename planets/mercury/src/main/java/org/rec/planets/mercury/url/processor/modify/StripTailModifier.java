@@ -6,7 +6,7 @@ package org.rec.planets.mercury.url.processor.modify;
  * @author rec
  * 
  */
-public class StripTailModifier extends AbstractStripModifier {
+public final class StripTailModifier extends AbstractStripModifier {
 	private StripTailModifier() {
 	}
 

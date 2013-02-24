@@ -10,7 +10,7 @@ import jregex.REFlags;
  * @author rec
  * 
  */
-public class StripExtraSlashModifier extends AbstractModifier {
+public final class StripExtraSlashModifier extends AbstractModifier {
 	private StripExtraSlashModifier() {
 	}
 
