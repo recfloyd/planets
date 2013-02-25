@@ -10,6 +10,11 @@ import org.rec.planets.jupiter.bean.CrawlContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * 并行处理器.它将一组可并行运行的处理器运行在一个线程池上,并等待所有处理结束之后再返回
+ * @author rec
+ *
+ */
 public class ParallelCrawlProcessor implements CrawlProcessor {
 	private static final Logger logger = LoggerFactory
 			.getLogger(ParallelCrawlProcessor.class);

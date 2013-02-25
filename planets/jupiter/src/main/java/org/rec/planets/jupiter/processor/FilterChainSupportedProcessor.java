@@ -4,6 +4,11 @@ import java.util.List;
 
 import org.rec.planets.jupiter.bean.CrawlContext;
 
+/**
+ * 包装了一组过滤器和一个核心操作的处理器.类似于Struts中将一组Interceptor包装到一个Action上
+ * @author rec
+ *
+ */
 public class FilterChainSupportedProcessor implements CrawlProcessor {
 	private CrawlProcessor targetProcessor;
 

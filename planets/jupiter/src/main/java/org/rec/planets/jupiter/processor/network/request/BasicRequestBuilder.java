@@ -4,6 +4,11 @@ import org.rec.planets.jupiter.bean.CrawlContext;
 import org.rec.planets.jupiter.processor.network.bean.Request;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+/**
+ * 最基本的请求实体创建器
+ * @author rec
+ *
+ */
 public final class BasicRequestBuilder implements RequestBuilder {
 	private BasicRequestBuilder() {
 	}

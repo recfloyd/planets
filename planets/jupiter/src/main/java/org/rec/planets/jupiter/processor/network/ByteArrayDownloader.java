@@ -4,11 +4,17 @@ import org.rec.planets.jupiter.processor.network.bean.Request;
 import org.rec.planets.jupiter.processor.network.bean.Response;
 import org.rec.planets.jupiter.processor.network.client.Client;
 
-public class StringDownloadProcessor extends AbstractDownloadProcessor {
+/**
+ * 字节数组下载器
+ * @author rec
+ *
+ */
+public class ByteArrayDownloader extends AbstractDownloader {
 
 	@Override
 	protected <T> Response<?> request(Client client, Request request)
 			throws Exception {
-		return client.requestString(request);
+		return client.requestByteArray(request);
 	}
+
 }

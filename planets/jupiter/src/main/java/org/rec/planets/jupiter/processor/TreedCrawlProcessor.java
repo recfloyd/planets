@@ -6,6 +6,11 @@ import org.rec.planets.mercury.tree.TreeNodeTraversalUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * 树形处理器,用于在运行过程中进行分支
+ * @author rec
+ *
+ */
 public class TreedCrawlProcessor implements CrawlProcessor {
 	private static final Logger logger = LoggerFactory
 			.getLogger(TreedCrawlProcessor.class);

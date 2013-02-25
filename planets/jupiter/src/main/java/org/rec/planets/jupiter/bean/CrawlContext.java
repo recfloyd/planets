@@ -7,6 +7,11 @@ import org.rec.planets.mercury.domain.AbstractBean;
 import org.rec.planets.mercury.domain.CrawlURL;
 import org.rec.planets.mercury.domain.Job;
 
+/**
+ * 抓取上下文,保存了对于一个url进行处理的所有中间和最后结果
+ * @author rec
+ *
+ */
 public class CrawlContext extends AbstractBean {
 	private Map<String, Object> websiteProperties;
 	private Job job;

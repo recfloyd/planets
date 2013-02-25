@@ -4,6 +4,12 @@ import java.util.Map;
 
 import org.rec.planets.mercury.domain.AbstractBean;
 
+/**
+ * http响应实体
+ * @author rec
+ *
+ * @param <T>
+ */
 public class Response<T> extends AbstractBean {
 	private int statusCode;
 	private String contentType;

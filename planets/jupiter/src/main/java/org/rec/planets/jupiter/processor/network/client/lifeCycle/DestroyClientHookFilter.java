@@ -6,6 +6,11 @@ import org.rec.planets.jupiter.processor.CrawlProcessor;
 import org.rec.planets.jupiter.processor.Filter;
 import org.rec.planets.jupiter.processor.network.client.Client;
 
+/**
+ * http客户端销毁过滤器,执行完下载之后,此过滤器将客户端销毁
+ * @author rec
+ *
+ */
 public class DestroyClientHookFilter implements Filter {
 	private DestroyClientHookFilter() {
 	}

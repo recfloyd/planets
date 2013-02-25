@@ -9,6 +9,7 @@ import org.rec.planets.mercury.parse.bean.OrderedRegex;
 import org.rec.planets.mercury.url.processor.URLProcessor;
 import org.rec.planets.mercury.url.processor.recognize.fingerprint.calculator.Calculator;
 import org.rec.planets.mercury.url.processor.recognize.fingerprint.combiner.Combiner;
+import org.springframework.util.CollectionUtils;
 
 import com.google.common.base.Joiner;
 
@@ -55,15 +56,15 @@ public class FingerprintGenerator implements URLProcessor {
 	protected String calculateEigenvalue(CrawlURL crawlURL) throws Exception {
 		String source = omitHost ? URLUtil.getRelativePath(crawlURL.getUrl())
 				: crawlURL.getUrl();
-		String[] s = null;
+		List<String> s = null;
 		String eigenvalue = null;
 		for (OrderedRegex regex : regexes) {
 			s = RegexUtil.groupFirstMatch(source, regex, strict);
-			if (s != null)
+			if (!CollectionUtils.isEmpty(s))
 				break;
 		}
 
-		if (s == null) {
+		if (CollectionUtils.isEmpty(s)) {
 			if (allowUnknownType) {
 				eigenvalue = crawlURL.getUrl();// 如果允许未知类型的url计算特征值,那么以全部url作为特征值
 			} else {

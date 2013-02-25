@@ -7,6 +7,11 @@ import org.rec.planets.jupiter.bean.CrawlContextConstants;
 import org.rec.planets.jupiter.processor.network.client.Client;
 import org.rec.planets.jupiter.processor.network.client.hc4.HC4Client;
 
+/**
+ * HttpClient4的创建工厂
+ * @author rec
+ *
+ */
 public class HC4ClientFactory implements ClientFactory {
 
 	@SuppressWarnings("unchecked")

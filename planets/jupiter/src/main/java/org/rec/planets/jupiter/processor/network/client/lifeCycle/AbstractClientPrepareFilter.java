@@ -5,6 +5,11 @@ import org.rec.planets.jupiter.processor.CrawlProcessor;
 import org.rec.planets.jupiter.processor.Filter;
 import org.rec.planets.jupiter.processor.network.client.factory.ClientFactory;
 
+/**
+ * http客户端准备过滤器
+ * @author rec
+ *
+ */
 public abstract class AbstractClientPrepareFilter implements Filter {
 	protected ClientFactory clientFactory;
 

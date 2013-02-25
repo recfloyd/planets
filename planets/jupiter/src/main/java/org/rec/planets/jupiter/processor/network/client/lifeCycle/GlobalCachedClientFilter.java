@@ -4,6 +4,11 @@ import org.rec.planets.jupiter.bean.CrawlContext;
 import org.rec.planets.jupiter.bean.CrawlContextConstants;
 import org.rec.planets.jupiter.processor.network.client.Client;
 
+/**
+ * http客户端准备过滤器,此过滤器尝试从全局缓存中获取客户端
+ * @author rec
+ *
+ */
 public class GlobalCachedClientFilter extends AbstractClientPrepareFilter {
 	private GlobalClientCache globalClientCache;
 

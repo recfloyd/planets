@@ -6,6 +6,11 @@ import org.rec.planets.jupiter.bean.CrawlContext;
 import org.rec.planets.jupiter.processor.network.client.Client;
 import org.rec.planets.jupiter.processor.network.client.factory.ClientFactory;
 
+/**
+ * http客户端全局缓存
+ * @author rec
+ *
+ */
 public final class GlobalClientCache {
 	private ConcurrentHashMap<Short, Client> clientCache;
 

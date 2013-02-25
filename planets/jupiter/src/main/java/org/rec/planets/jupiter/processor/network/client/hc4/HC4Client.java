@@ -166,33 +166,39 @@ public class HC4Client implements Client {
 
 		HttpEntity entity = response.getEntity();
 
-		Header contentEncodingHeader = entity.getContentEncoding();
-		if (contentEncodingHeader != null) {
-			emptyResponse.setContentEncoding(contentEncodingHeader.getValue());
+		if (entity != null) {
+			Header contentEncodingHeader = entity.getContentEncoding();
+			if (contentEncodingHeader != null) {
+				emptyResponse.setContentEncoding(contentEncodingHeader
+						.getValue());
+			}
+
+			Header contentType = entity.getContentType();
+			if (contentType != null)
+				emptyResponse.setContentType(contentType.getValue());
+
+			emptyResponse.setContentLength(entity.getContentLength());
 		}
-
-		Header contentType = entity.getContentType();
-		if (contentType != null)
-			emptyResponse.setContentType(contentType.getValue());
-
-		emptyResponse.setContentLength(entity.getContentLength());
 
 		return entity;
 	}
 
 	@Override
-	public Response<String> requestString(Request request) throws Exception {
+	public Response<String> requestText(Request request) throws Exception {
 		Response<String> emptyResponse = new Response<String>();
 		HttpEntity entity = this.request(request, emptyResponse);
-		String encoding = emptyResponse.getContentEncoding();
-		if (Strings.isNullOrEmpty(encoding))
-			encoding = request.getEncoding();
-		if (Strings.isNullOrEmpty(encoding))
-			encoding = Charsets.UTF_8.name();
-		try {
-			emptyResponse.setContent(EntityUtils.toString(entity, encoding));
-		} finally {
-			EntityUtils.consumeQuietly(entity);
+		if (entity != null) {
+			String encoding = emptyResponse.getContentEncoding();
+			if (Strings.isNullOrEmpty(encoding))
+				encoding = request.getEncoding();
+			if (Strings.isNullOrEmpty(encoding))
+				encoding = Charsets.UTF_8.name();
+			try {
+				emptyResponse
+						.setContent(EntityUtils.toString(entity, encoding));
+			} finally {
+				EntityUtils.consumeQuietly(entity);
+			}
 		}
 
 		return emptyResponse;
@@ -202,10 +208,12 @@ public class HC4Client implements Client {
 	public Response<byte[]> requestByteArray(Request request) throws Exception {
 		Response<byte[]> emptyResponse = new Response<byte[]>();
 		HttpEntity entity = this.request(request, emptyResponse);
-		try {
-			emptyResponse.setContent(EntityUtils.toByteArray(entity));
-		} finally {
-			EntityUtils.consumeQuietly(entity);
+		if (entity != null) {
+			try {
+				emptyResponse.setContent(EntityUtils.toByteArray(entity));
+			} finally {
+				EntityUtils.consumeQuietly(entity);
+			}
 		}
 
 		return emptyResponse;

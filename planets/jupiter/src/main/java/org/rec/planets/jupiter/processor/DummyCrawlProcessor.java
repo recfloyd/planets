@@ -2,6 +2,11 @@ package org.rec.planets.jupiter.processor;
 
 import org.rec.planets.jupiter.bean.CrawlContext;
 
+/**
+ * 空处理器,什么也不做
+ * @author rec
+ *
+ */
 public class DummyCrawlProcessor implements CrawlProcessor {
 	private static volatile DummyCrawlProcessor instance;
 

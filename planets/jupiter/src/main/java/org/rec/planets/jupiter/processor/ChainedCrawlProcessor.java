@@ -6,6 +6,11 @@ import org.rec.planets.jupiter.bean.CrawlContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * 链式处理器,将一连串的处理包装为一组
+ * @author rec
+ *
+ */
 public class ChainedCrawlProcessor implements CrawlProcessor {
 	private static final Logger logger = LoggerFactory
 			.getLogger(ChainedCrawlProcessor.class);

@@ -1,5 +1,6 @@
 package org.rec.planets.mercury.parse;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -80,7 +81,7 @@ public final class RegexUtil {
 	 *            true为全量匹配,false为部分匹配
 	 * @return
 	 */
-	public static String[] groupFirstMatch(String string, Regex regex,
+	public static List<String> groupFirstMatch(String string, Regex regex,
 			boolean strict) {
 		Matcher matcher = getMatcher(string, regex);
 
@@ -92,10 +93,10 @@ public final class RegexUtil {
 			return null;
 
 		int[] groups = regex.getGroups();
-		String[] result = new String[groups.length];
+		List<String> result = new ArrayList<String>(groups.length);
 
 		for (int i = 0; i < groups.length; i++) {
-			result[i] = matcher.group(groups[i]);
+			result.add(matcher.group(groups[i]));
 		}
 
 		return result;
@@ -108,19 +109,19 @@ public final class RegexUtil {
 	 * @param regex
 	 * @return
 	 */
-	public static List<String[]> groupAllMatch(String string, Regex regex) {
+	public static List<List<String>> groupAllMatch(String string, Regex regex) {
 		Matcher matcher = getMatcher(string, regex);
-		List<String[]> result = new LinkedList<String[]>();
+		List<List<String>> result = new LinkedList<List<String>>();
 		MatchIterator matchIterator = matcher.findAll();
 		MatchResult mr = null;
 		int[] groups = regex.getGroups();
-		String[] groupResult = null;
+		List<String> groupResult = null;
 
 		while (matchIterator.hasMore()) {
 			mr = matchIterator.nextMatch();
-			groupResult = new String[groups.length];
+			groupResult = new ArrayList<String>(groups.length);
 			for (int i = 0; i < groups.length; i++) {
-				groupResult[i] = mr.group(groups[i]);
+				groupResult.add(mr.group(groups[i]));
 			}
 			result.add(groupResult);
 		}

@@ -8,8 +8,19 @@ import org.rec.planets.jupiter.processor.network.bean.Response;
 import org.rec.planets.jupiter.processor.network.client.Client;
 import org.rec.planets.jupiter.processor.network.request.RequestBuilder;
 
-public abstract class AbstractDownloadProcessor implements CrawlProcessor {
+/**
+ * 抽象下载器
+ * @author rec
+ *
+ */
+public abstract class AbstractDownloader implements CrawlProcessor {
+	/**
+	 * 请求创建器
+	 */
 	protected RequestBuilder requestBuilder;
+	/**
+	 * 结果键
+	 */
 	protected String resultKey;
 
 	@Override

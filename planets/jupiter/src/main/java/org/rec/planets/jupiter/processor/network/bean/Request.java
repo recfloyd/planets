@@ -7,6 +7,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.google.common.collect.Multimap;
 
+/**
+ * http请求实体
+ * @author rec
+ *
+ */
 public class Request extends AbstractBean {
 	private RequestMethod method;
 	private String url;

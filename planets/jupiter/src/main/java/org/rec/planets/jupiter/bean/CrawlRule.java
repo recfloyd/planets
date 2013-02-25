@@ -5,6 +5,11 @@ import java.util.Map;
 import org.rec.planets.jupiter.processor.CrawlProcessor;
 import org.rec.planets.mercury.domain.AbstractBean;
 
+/**
+ * 抓取规则
+ * @author rec
+ *
+ */
 public class CrawlRule extends AbstractBean {
 	private Short websiteId;
 	private Long version;
