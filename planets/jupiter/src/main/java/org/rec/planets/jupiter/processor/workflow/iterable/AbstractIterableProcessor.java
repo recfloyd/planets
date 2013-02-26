@@ -19,7 +19,7 @@ public abstract class AbstractIterableProcessor implements CrawlProcessor {
 	private static final Logger logger = LoggerFactory
 			.getLogger(AbstractIterableProcessor.class);
 
-	protected abstract Object getItems();
+	protected abstract Object getItems(CrawlContext crawlContext);
 
 	protected CrawlProcessor nestedProcessor;
 	protected boolean omitAbsence;
@@ -29,7 +29,7 @@ public abstract class AbstractIterableProcessor implements CrawlProcessor {
 
 	@Override
 	public void process(CrawlContext crawlContext) throws Exception {
-		Object object = getItems();
+		Object object = getItems(crawlContext);
 		if (object == null) {
 			if (omitAbsence)
 				return;
@@ -56,6 +56,10 @@ public abstract class AbstractIterableProcessor implements CrawlProcessor {
 		}
 
 		if (parallel) {
+			if (threadPool == null)
+				throw new IllegalArgumentException(
+						"property threadPool is not configed but parallel is true");
+
 			List<IterableProcessCallable> tasks = new ArrayList<IterableProcessCallable>(
 					list.size());
 			for (IterableItem item : list) {
