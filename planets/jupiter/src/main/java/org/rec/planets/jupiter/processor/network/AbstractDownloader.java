@@ -3,6 +3,8 @@ package org.rec.planets.jupiter.processor.network;
 import org.rec.planets.jupiter.bean.CrawlContext;
 import org.rec.planets.jupiter.bean.CrawlContextConstants;
 import org.rec.planets.jupiter.processor.CrawlProcessor;
+import org.rec.planets.jupiter.processor.accessor.Accessable;
+import org.rec.planets.jupiter.processor.accessor.CrawlContextAccessor;
 import org.rec.planets.jupiter.processor.network.bean.Request;
 import org.rec.planets.jupiter.processor.network.bean.Response;
 import org.rec.planets.jupiter.processor.network.client.Client;
@@ -10,10 +12,11 @@ import org.rec.planets.jupiter.processor.network.request.RequestBuilder;
 
 /**
  * 抽象下载器
+ * 
  * @author rec
- *
+ * 
  */
-public abstract class AbstractDownloader implements CrawlProcessor {
+public abstract class AbstractDownloader implements CrawlProcessor, Accessable {
 	/**
 	 * 请求创建器
 	 */
@@ -22,6 +25,8 @@ public abstract class AbstractDownloader implements CrawlProcessor {
 	 * 结果键
 	 */
 	protected String resultKey;
+
+	protected CrawlContextAccessor crawlContextAccessor;
 
 	@Override
 	public void process(CrawlContext crawlContext) throws Exception {
@@ -35,7 +40,7 @@ public abstract class AbstractDownloader implements CrawlProcessor {
 
 		Response<?> response = request(client, request);
 
-		crawlContext.getContext().put(resultKey, response);
+		crawlContextAccessor.set(crawlContext, resultKey, response);
 	}
 
 	protected abstract <T> Response<?> request(Client client, Request request)
@@ -47,5 +52,11 @@ public abstract class AbstractDownloader implements CrawlProcessor {
 
 	public void setResultKey(String resultKey) {
 		this.resultKey = resultKey;
+	}
+
+	@Override
+	public void setCrawlContextAccessor(
+			CrawlContextAccessor crawlContextAccessor) {
+		this.crawlContextAccessor = crawlContextAccessor;
 	}
 }

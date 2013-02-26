@@ -1,19 +1,20 @@
-package org.rec.planets.jupiter.processor;
+package org.rec.planets.jupiter.processor.workflow;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
 import org.rec.planets.jupiter.bean.CrawlContext;
+import org.rec.planets.jupiter.processor.CrawlProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * 并行处理器.它将一组可并行运行的处理器运行在一个线程池上,并等待所有处理结束之后再返回
+ * 
  * @author rec
- *
+ * 
  */
 public class ParallelCrawlProcessor implements CrawlProcessor {
 	private static final Logger logger = LoggerFactory
@@ -21,23 +22,6 @@ public class ParallelCrawlProcessor implements CrawlProcessor {
 	private List<CrawlProcessor> processors;
 	private boolean omitException;
 	private ExecutorService threadPool;
-
-	private static class ProcessCallable implements Callable<Void> {
-		private CrawlProcessor processor;
-		private CrawlContext crawlContext;
-
-		private ProcessCallable(CrawlProcessor processor,
-				CrawlContext crawlContext) {
-			this.processor = processor;
-			this.crawlContext = crawlContext;
-		}
-
-		@Override
-		public Void call() throws Exception {
-			processor.process(crawlContext);
-			return null;
-		}
-	}
 
 	@Override
 	public void process(final CrawlContext crawlContext) throws Exception {

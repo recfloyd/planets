@@ -1,6 +1,7 @@
-package org.rec.planets.jupiter.processor;
+package org.rec.planets.jupiter.processor.workflow;
 
 import org.rec.planets.jupiter.bean.CrawlContext;
+import org.rec.planets.jupiter.processor.CrawlProcessor;
 
 /**
  * 空处理器,什么也不做

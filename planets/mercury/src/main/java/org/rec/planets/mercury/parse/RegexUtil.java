@@ -19,10 +19,7 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 
-public final class RegexUtil {
-	private RegexUtil() {
-	}
-
+public abstract class RegexUtil {
 	private static final Logger logger = LoggerFactory
 			.getLogger(RegexUtil.class);
 	private static LoadingCache<Regex, Pattern> patternCache = CacheBuilder

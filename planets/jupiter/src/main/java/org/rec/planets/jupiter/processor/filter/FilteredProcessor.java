@@ -1,6 +1,7 @@
-package org.rec.planets.jupiter.processor;
+package org.rec.planets.jupiter.processor.filter;
 
 import org.rec.planets.jupiter.bean.CrawlContext;
+import org.rec.planets.jupiter.processor.CrawlProcessor;
 
 /**
  * 被过滤的处理器,在一个处理器外包装一个过滤器

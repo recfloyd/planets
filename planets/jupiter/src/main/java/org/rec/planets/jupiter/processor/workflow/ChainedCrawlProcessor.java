@@ -1,8 +1,9 @@
-package org.rec.planets.jupiter.processor;
+package org.rec.planets.jupiter.processor.workflow;
 
 import java.util.List;
 
 import org.rec.planets.jupiter.bean.CrawlContext;
+import org.rec.planets.jupiter.processor.CrawlProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

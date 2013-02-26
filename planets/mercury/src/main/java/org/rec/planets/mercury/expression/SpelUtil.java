@@ -12,10 +12,7 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 
-public final class SpelUtil {
-	private SpelUtil() {
-	}
-
+public abstract class SpelUtil {
 	private static final Logger logger = LoggerFactory
 			.getLogger(SpelUtil.class);
 	private static final ExpressionParser parser = new SpelExpressionParser();

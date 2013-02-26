@@ -15,10 +15,7 @@ import org.springframework.web.util.UriUtils;
 import com.google.common.base.Charsets;
 import com.google.common.base.Strings;
 
-public final class URLUtil {
-	private URLUtil() {
-	}
-
+public abstract class URLUtil {
 	/**
 	 * 获取url的绝对路径
 	 * 

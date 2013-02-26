@@ -1,8 +1,9 @@
-package org.rec.planets.jupiter.processor;
+package org.rec.planets.jupiter.processor.filter;
 
 import java.util.List;
 
 import org.rec.planets.jupiter.bean.CrawlContext;
+import org.rec.planets.jupiter.processor.CrawlProcessor;
 
 /**
  * 包装了一组过滤器和一个核心操作的处理器.类似于Struts中将一组Interceptor包装到一个Action上

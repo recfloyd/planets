@@ -1,6 +1,7 @@
-package org.rec.planets.jupiter.processor;
+package org.rec.planets.jupiter.processor.workflow;
 
 import org.rec.planets.jupiter.bean.CrawlContext;
+import org.rec.planets.jupiter.processor.CrawlProcessor;
 import org.rec.planets.mercury.tree.TreeNode;
 import org.rec.planets.mercury.tree.TreeNodeTraversalUtil;
 import org.slf4j.Logger;

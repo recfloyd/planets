@@ -8,10 +8,7 @@ import java.util.Stack;
  * @author lijia
  * 
  */
-public final class TreeNodeTraversalUtil {
-	private TreeNodeTraversalUtil() {
-	}
-
+public abstract class TreeNodeTraversalUtil {
 	/**
 	 * 采用非递归算法对树进行深度优先遍历
 	 * 
