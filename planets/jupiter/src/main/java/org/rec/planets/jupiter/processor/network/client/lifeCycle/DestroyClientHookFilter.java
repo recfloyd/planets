@@ -1,9 +1,8 @@
 package org.rec.planets.jupiter.processor.network.client.lifeCycle;
 
 import org.rec.planets.jupiter.bean.CrawlContext;
-import org.rec.planets.jupiter.bean.CrawlContextConstants;
 import org.rec.planets.jupiter.processor.CrawlProcessor;
-import org.rec.planets.jupiter.processor.accessor.Accessable;
+import org.rec.planets.jupiter.processor.accessor.CrawlContextAccessable;
 import org.rec.planets.jupiter.processor.accessor.CrawlContextAccessor;
 import org.rec.planets.jupiter.processor.filter.Filter;
 import org.rec.planets.jupiter.processor.network.client.Client;
@@ -14,7 +13,7 @@ import org.rec.planets.jupiter.processor.network.client.Client;
  * @author rec
  * 
  */
-public class DestroyClientHookFilter implements Filter, Accessable {
+public class DestroyClientHookFilter implements Filter, CrawlContextAccessable {
 	protected CrawlContextAccessor crawlContextAccessor;
 
 	@Override
@@ -23,13 +22,12 @@ public class DestroyClientHookFilter implements Filter, Accessable {
 		try {
 			processor.process(crawlContext);
 		} finally {
-			Client client = (Client) crawlContextAccessor.get(crawlContext,
-					CrawlContextConstants.KEY_CLIENT);
+			Client client = (Client) crawlContextAccessor.get(crawlContext);
 			if (client != null)
 				client.destroy();
 		}
 	}
-	
+
 	@Override
 	public void setCrawlContextAccessor(
 			CrawlContextAccessor crawlContextAccessor) {

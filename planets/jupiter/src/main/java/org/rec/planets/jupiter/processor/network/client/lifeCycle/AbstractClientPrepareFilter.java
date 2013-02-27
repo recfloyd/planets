@@ -2,7 +2,7 @@ package org.rec.planets.jupiter.processor.network.client.lifeCycle;
 
 import org.rec.planets.jupiter.bean.CrawlContext;
 import org.rec.planets.jupiter.processor.CrawlProcessor;
-import org.rec.planets.jupiter.processor.accessor.Accessable;
+import org.rec.planets.jupiter.processor.accessor.CrawlContextAccessable;
 import org.rec.planets.jupiter.processor.accessor.CrawlContextAccessor;
 import org.rec.planets.jupiter.processor.filter.Filter;
 import org.rec.planets.jupiter.processor.network.client.factory.ClientFactory;
@@ -13,7 +13,7 @@ import org.rec.planets.jupiter.processor.network.client.factory.ClientFactory;
  * @author rec
  * 
  */
-public abstract class AbstractClientPrepareFilter implements Filter, Accessable {
+public abstract class AbstractClientPrepareFilter implements Filter, CrawlContextAccessable {
 	protected ClientFactory clientFactory;
 	protected CrawlContextAccessor crawlContextAccessor;
 

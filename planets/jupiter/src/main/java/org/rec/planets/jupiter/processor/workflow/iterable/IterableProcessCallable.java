@@ -3,6 +3,8 @@ package org.rec.planets.jupiter.processor.workflow.iterable;
 import org.rec.planets.jupiter.bean.CrawlContext;
 import org.rec.planets.jupiter.processor.CrawlProcessor;
 import org.rec.planets.jupiter.processor.workflow.ProcessCallable;
+import org.rec.planets.jupiter.processor.workflow.iterable.bean.IterableItem;
+import org.rec.planets.jupiter.processor.workflow.iterable.bean.IterableItemStackHolder;
 
 /**
  * 并行循环处理线程

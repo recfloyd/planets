@@ -18,8 +18,7 @@ public class ContextCachedClientFilter extends AbstractClientPrepareFilter {
 				CrawlContextConstants.KEY_CLIENT);
 		if (client == null) {
 			client = clientFactory.getClient(crawlContext);
-			crawlContextAccessor.set(crawlContext,
-					CrawlContextConstants.KEY_CLIENT, client);
+			crawlContextAccessor.set(crawlContext, client);
 		}
 	}
 }

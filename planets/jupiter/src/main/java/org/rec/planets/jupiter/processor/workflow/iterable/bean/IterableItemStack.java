@@ -1,4 +1,4 @@
-package org.rec.planets.jupiter.processor.workflow.iterable;
+package org.rec.planets.jupiter.processor.workflow.iterable.bean;
 
 import java.util.ArrayDeque;
 import java.util.Deque;

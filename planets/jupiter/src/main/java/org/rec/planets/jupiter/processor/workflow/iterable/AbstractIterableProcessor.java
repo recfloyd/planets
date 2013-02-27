@@ -11,8 +11,11 @@ import java.util.concurrent.Future;
 
 import org.rec.planets.jupiter.bean.CrawlContext;
 import org.rec.planets.jupiter.processor.CrawlProcessor;
+import org.rec.planets.jupiter.processor.workflow.iterable.bean.IterableItem;
+import org.rec.planets.jupiter.processor.workflow.iterable.bean.IterableItemStackHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.Assert;
 
 /**
  * 抽象的循环处理器
@@ -70,9 +73,7 @@ public abstract class AbstractIterableProcessor implements CrawlProcessor {
 		}
 
 		if (parallel) {
-			if (threadPool == null)
-				throw new IllegalArgumentException(
-						"property threadPool is not configed but parallel is true");
+			Assert.notNull(threadPool, "property threadPool is not configed but parallel is true");
 
 			List<IterableProcessCallable> tasks = new ArrayList<IterableProcessCallable>(
 					list.size());

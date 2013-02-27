@@ -5,6 +5,6 @@ package org.rec.planets.jupiter.processor.accessor;
  * @author rec
  *
  */
-public interface Accessable {
+public interface CrawlContextAccessable {
 	void setCrawlContextAccessor(CrawlContextAccessor crawlContextAccessor);
 }

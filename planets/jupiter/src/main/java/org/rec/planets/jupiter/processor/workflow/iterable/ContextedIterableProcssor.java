@@ -1,23 +1,18 @@
 package org.rec.planets.jupiter.processor.workflow.iterable;
 
 import org.rec.planets.jupiter.bean.CrawlContext;
-import org.rec.planets.jupiter.processor.accessor.Accessable;
+import org.rec.planets.jupiter.processor.accessor.CrawlContextAccessable;
 import org.rec.planets.jupiter.processor.accessor.CrawlContextAccessor;
 
 /**
- * 循环处理器
- * 循环体存在于CrawlContext内,通过一个key将其获取
+ * 循环处理器 循环体存在于CrawlContext内,通过一个key将其获取
+ * 
  * @author rec
- *
+ * 
  */
 public class ContextedIterableProcssor extends AbstractIterableProcessor
-		implements Accessable {
+		implements CrawlContextAccessable {
 	private CrawlContextAccessor crawlContextAccessor;
-	private String itemsKey;
-
-	public void setItemsKey(String itemsKey) {
-		this.itemsKey = itemsKey;
-	}
 
 	@Override
 	public void setCrawlContextAccessor(
@@ -27,7 +22,7 @@ public class ContextedIterableProcssor extends AbstractIterableProcessor
 
 	@Override
 	protected Object getItems(CrawlContext crawlContext) {
-		return crawlContextAccessor.get(crawlContext, itemsKey);
+		return crawlContextAccessor.get(crawlContext);
 	}
 
 }

@@ -15,8 +15,7 @@ public class GlobalCachedClientFilter extends AbstractClientPrepareFilter {
 
 	@Override
 	protected void setClient(CrawlContext crawlContext) {
-		Client client = (Client) crawlContextAccessor.get(crawlContext,
-				CrawlContextConstants.KEY_CLIENT);
+		Client client = (Client) crawlContextAccessor.get(crawlContext);
 		if (client == null) {
 			client = globalClientCache.getClient(crawlContext, clientFactory);
 			crawlContext.getContext().put(CrawlContextConstants.KEY_CLIENT,

@@ -1,4 +1,4 @@
-package org.rec.planets.jupiter.processor.workflow.iterable;
+package org.rec.planets.jupiter.processor.workflow.iterable.bean;
 
 import org.rec.planets.mercury.domain.AbstractBean;
 

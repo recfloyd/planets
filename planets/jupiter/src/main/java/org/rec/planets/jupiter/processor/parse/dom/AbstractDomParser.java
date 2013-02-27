@@ -4,7 +4,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.rec.planets.jupiter.bean.CrawlContext;
-import org.rec.planets.jupiter.processor.parse.AbstractParser;
+import org.rec.planets.jupiter.processor.AbstractReadWriteProcessor;
 import org.rec.planets.jupiter.processor.parse.dom.bean.DomElement;
 import org.springframework.util.CollectionUtils;
 
@@ -12,10 +12,11 @@ import com.google.common.base.Strings;
 
 /**
  * 抽象的dom解析器
+ * 
  * @author rec
- *
+ * 
  */
-public abstract class AbstractDomParser extends AbstractParser {
+public abstract class AbstractDomParser extends AbstractReadWriteProcessor {
 	protected DomElement domElement;
 
 	public void setDomElement(DomElement domElement) {
@@ -23,7 +24,7 @@ public abstract class AbstractDomParser extends AbstractParser {
 	}
 
 	@Override
-	protected Object parseInternal(CrawlContext crawlContext, Object source)
+	protected Object processInternal(CrawlContext crawlContext, Object source)
 			throws Exception {
 		Document document = (Document) source;
 		Elements elements = document.select(domElement.getSelector());
@@ -35,7 +36,7 @@ public abstract class AbstractDomParser extends AbstractParser {
 
 	protected abstract Object extract(Elements elements,
 			CrawlContext crawlContext);
-	
+
 	protected String extractFromElement(Element element) {
 		if (Strings.isNullOrEmpty(domElement.getAttrabute())) {
 			return element.html().trim();
