@@ -1,5 +1,10 @@
 package org.rec.planets.jupiter.processor.workflow.iterable;
 
+/**
+ * 循环实体保存器.它将循环实体保存在当前线程的ThreadLocal里面
+ * @author rec
+ *
+ */
 public abstract class IterableItemStackHolder {
 	private static final ThreadLocal<IterableItemStack> THREAD_LOCAL = new ThreadLocal<IterableItemStack>();
 

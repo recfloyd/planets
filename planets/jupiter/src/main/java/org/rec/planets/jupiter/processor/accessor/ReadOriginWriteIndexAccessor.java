@@ -5,6 +5,13 @@ import org.rec.planets.jupiter.processor.workflow.iterable.IterableItemStackHold
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
 
+/**
+ * 循环写入器
+ * 用在Iterable循环内
+ * 向CrawlContext写入的时候默认加一个编号,这个编号从当前线程的ThreadLocal里面取
+ * @author rec
+ *
+ */
 public class ReadOriginWriteIndexAccessor extends BasicAccessor {
 	@Override
 	public void set(CrawlContext crawlContext, String key, Object item) {

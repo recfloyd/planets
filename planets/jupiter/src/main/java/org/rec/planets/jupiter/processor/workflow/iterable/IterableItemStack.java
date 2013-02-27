@@ -5,6 +5,11 @@ import java.util.Deque;
 
 import org.rec.planets.mercury.domain.AbstractBean;
 
+/**
+ * 用于存储循环实体的valueStack
+ * @author rec
+ *
+ */
 public class IterableItemStack extends AbstractBean {
 	private Deque<IterableItem> stack;
 

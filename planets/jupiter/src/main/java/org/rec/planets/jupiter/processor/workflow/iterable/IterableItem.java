@@ -2,6 +2,12 @@ package org.rec.planets.jupiter.processor.workflow.iterable;
 
 import org.rec.planets.mercury.domain.AbstractBean;
 
+/**
+ * 循环实体
+ * 使用在循环处理器内
+ * @author rec
+ *
+ */
 public class IterableItem extends AbstractBean {
 	private Object target;
 	private int index;

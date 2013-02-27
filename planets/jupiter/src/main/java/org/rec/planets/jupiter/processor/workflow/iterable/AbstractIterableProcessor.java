@@ -14,6 +14,20 @@ import org.rec.planets.jupiter.processor.CrawlProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * 抽象的循环处理器
+ * 此处理器通过getItems获取一个可以遍历的对象
+ * 在遍历此对象的过程中,将每次遍历的实体封装为IterableItem对象保存在当前线程的ThreadLocal内
+ * 对于每次遍历,执行一个内置的Processor的处理.
+ * 此内置的Processor如果需要访问当前遍历实体,可以从IterableItemStackHolder内获取;
+ * 如果需要对CrawlContext进行循环读写,那么需要选用一个合适的CrawlContextAccessor
+ * 
+ * 此处理器还支持并发处理,注入一个线程池并将parallel设置为true,可以并行的进行遍历
+ * 
+ * 注意,遍历过程中如果需要访问遍历实体,那么必须在执行内置Processor的线程内进行,如果另外开启线程,因为访问不到IterableItemStack
+ * @author rec
+ *
+ */
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public abstract class AbstractIterableProcessor implements CrawlProcessor {
 	private static final Logger logger = LoggerFactory
