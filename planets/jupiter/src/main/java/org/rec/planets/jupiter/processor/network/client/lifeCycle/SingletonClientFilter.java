@@ -10,10 +10,9 @@ import org.rec.planets.jupiter.processor.network.client.Client;
  * 
  */
 public class SingletonClientFilter extends AbstractClientPrepareFilter {
-
 	@Override
 	protected void setClient(CrawlContext crawlContext) {
 		Client client = clientFactory.getClient(crawlContext);
-		crawlContextAccessor.set(crawlContext, client);
+		crawlContextWriter.set(crawlContext, clientKey, client);
 	}
 }

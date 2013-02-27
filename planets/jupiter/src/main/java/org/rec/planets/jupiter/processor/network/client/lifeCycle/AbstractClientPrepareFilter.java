@@ -2,8 +2,8 @@ package org.rec.planets.jupiter.processor.network.client.lifeCycle;
 
 import org.rec.planets.jupiter.bean.CrawlContext;
 import org.rec.planets.jupiter.processor.CrawlProcessor;
-import org.rec.planets.jupiter.processor.accessor.CrawlContextAccessable;
-import org.rec.planets.jupiter.processor.accessor.CrawlContextAccessor;
+import org.rec.planets.jupiter.processor.accessor.CrawlContextReader;
+import org.rec.planets.jupiter.processor.accessor.CrawlContextWriter;
 import org.rec.planets.jupiter.processor.filter.Filter;
 import org.rec.planets.jupiter.processor.network.client.factory.ClientFactory;
 
@@ -13,9 +13,12 @@ import org.rec.planets.jupiter.processor.network.client.factory.ClientFactory;
  * @author rec
  * 
  */
-public abstract class AbstractClientPrepareFilter implements Filter, CrawlContextAccessable {
+public abstract class AbstractClientPrepareFilter implements Filter {
 	protected ClientFactory clientFactory;
-	protected CrawlContextAccessor crawlContextAccessor;
+	protected CrawlContextReader crawlContextReader;
+	protected CrawlContextWriter crawlContextWriter;
+
+	protected String clientKey;
 
 	protected abstract void setClient(CrawlContext crawlContext);
 
@@ -30,9 +33,15 @@ public abstract class AbstractClientPrepareFilter implements Filter, CrawlContex
 		processor.process(crawlContext);
 	}
 
-	@Override
-	public void setCrawlContextAccessor(
-			CrawlContextAccessor crawlContextAccessor) {
-		this.crawlContextAccessor = crawlContextAccessor;
+	public void setCrawlContextWriter(CrawlContextWriter crawlContextWriter) {
+		this.crawlContextWriter = crawlContextWriter;
+	}
+
+	public void setClientKey(String clientKey) {
+		this.clientKey = clientKey;
+	}
+
+	public void setCrawlContextReader(CrawlContextReader crawlContextReader) {
+		this.crawlContextReader = crawlContextReader;
 	}
 }

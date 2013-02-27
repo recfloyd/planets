@@ -1,6 +1,7 @@
-package org.rec.planets.mercury.url.processor;
+package org.rec.planets.mercury.url.processor.workflow;
 
 import org.rec.planets.mercury.domain.CrawlURL;
+import org.rec.planets.mercury.url.processor.URLProcessor;
 
 /**
  * 什么也不做的处理器,用于占位

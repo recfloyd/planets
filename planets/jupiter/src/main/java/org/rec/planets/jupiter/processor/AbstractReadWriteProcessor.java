@@ -1,9 +1,8 @@
 package org.rec.planets.jupiter.processor;
 
 import org.rec.planets.jupiter.bean.CrawlContext;
-import org.rec.planets.jupiter.processor.accessor.CrawlContextAccessable;
-import org.rec.planets.jupiter.processor.accessor.CrawlContextAccessor;
-import org.springframework.util.Assert;
+import org.rec.planets.jupiter.processor.accessor.CrawlContextReader;
+import org.rec.planets.jupiter.processor.accessor.CrawlContextWriter;
 
 /**
  * 抽象的读写处理器 根据CrawlContextAccessor从crawlContext中读取数据,处理后再回写结果
@@ -11,34 +10,65 @@ import org.springframework.util.Assert;
  * @author rec
  * 
  */
-public abstract class AbstractReadWriteProcessor implements CrawlProcessor,
-		CrawlContextAccessable {
-	protected CrawlContextAccessor crawlContextAccessor;
+public abstract class AbstractReadWriteProcessor implements CrawlProcessor {
+	protected CrawlContextReader crawlContextReader;
+	protected CrawlContextWriter crawlContextWriter;
+	protected String sourceKey;
+	protected String resultKey;
+	protected boolean omitSourceNull;
+	protected boolean omitResultNull;
 
 	protected abstract Object processInternal(CrawlContext crawlContext,
 			Object source) throws Exception;
 
 	@Override
 	public void process(CrawlContext crawlContext) throws Exception {
-		Assert.notNull(crawlContextAccessor,
-				"crawlContextAccessor is null and cannot read or write");
+		Object source = crawlContextReader.get(crawlContext, resultKey);
 
-		Object source = crawlContextAccessor.get(crawlContext);
-
-		if (source == null)
+		if (source == null) {
+			if (!omitSourceNull)
+				throw new RuntimeException(
+						"cannot get source from crawlContext by key "
+								+ sourceKey + " of crawlURL "
+								+ crawlContext.getCrawlURL());
 			return;
+		}
 
 		Object result = this.processInternal(crawlContext, source);
 
-		if (result == null)
+		if (result == null) {
+			if (!omitResultNull)
+				throw new RuntimeException(
+						"cannot set result to crawlContext because of null by key "
+								+ resultKey + " of crawlURL "
+								+ crawlContext.getCrawlURL());
 			return;
+		}
 
-		crawlContextAccessor.set(crawlContext, result);
+		crawlContextWriter.set(crawlContext, resultKey, result);
 	}
 
-	@Override
-	public void setCrawlContextAccessor(
-			CrawlContextAccessor crawlContextAccessor) {
-		this.crawlContextAccessor = crawlContextAccessor;
+	public void setCrawlContextReader(CrawlContextReader crawlContextReader) {
+		this.crawlContextReader = crawlContextReader;
+	}
+
+	public void setCrawlContextWriter(CrawlContextWriter crawlContextWriter) {
+		this.crawlContextWriter = crawlContextWriter;
+	}
+
+	public void setSourceKey(String sourceKey) {
+		this.sourceKey = sourceKey;
+	}
+
+	public void setResultKey(String resultKey) {
+		this.resultKey = resultKey;
+	}
+
+	public void setOmitSourceNull(boolean omitSourceNull) {
+		this.omitSourceNull = omitSourceNull;
+	}
+
+	public void setOmitResultNull(boolean omitResultNull) {
+		this.omitResultNull = omitResultNull;
 	}
 }

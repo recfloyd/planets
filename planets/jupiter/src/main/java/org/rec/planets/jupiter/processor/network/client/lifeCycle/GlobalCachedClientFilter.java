@@ -1,7 +1,6 @@
 package org.rec.planets.jupiter.processor.network.client.lifeCycle;
 
 import org.rec.planets.jupiter.bean.CrawlContext;
-import org.rec.planets.jupiter.bean.CrawlContextConstants;
 import org.rec.planets.jupiter.processor.network.client.Client;
 
 /**
@@ -15,11 +14,11 @@ public class GlobalCachedClientFilter extends AbstractClientPrepareFilter {
 
 	@Override
 	protected void setClient(CrawlContext crawlContext) {
-		Client client = (Client) crawlContextAccessor.get(crawlContext);
+		Client client = (Client) crawlContextReader
+				.get(crawlContext, clientKey);
 		if (client == null) {
 			client = globalClientCache.getClient(crawlContext, clientFactory);
-			crawlContext.getContext().put(CrawlContextConstants.KEY_CLIENT,
-					client);
+			crawlContextWriter.set(crawlContext, clientKey, client);
 		}
 
 	}
@@ -27,5 +26,4 @@ public class GlobalCachedClientFilter extends AbstractClientPrepareFilter {
 	public void setGlobalClientCache(GlobalClientCache globalClientCache) {
 		this.globalClientCache = globalClientCache;
 	}
-
 }

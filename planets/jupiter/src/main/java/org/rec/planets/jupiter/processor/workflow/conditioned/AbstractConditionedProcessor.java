@@ -2,26 +2,30 @@ package org.rec.planets.jupiter.processor.workflow.conditioned;
 
 import org.rec.planets.jupiter.bean.CrawlContext;
 import org.rec.planets.jupiter.processor.CrawlProcessor;
-import org.rec.planets.jupiter.processor.accessor.CrawlContextAccessable;
-import org.rec.planets.jupiter.processor.accessor.CrawlContextAccessor;
+import org.rec.planets.jupiter.processor.accessor.CrawlContextReader;
 
 /**
  * 基于条件判断的处理器
+ * 
  * @author rec
- *
+ * 
  */
-public abstract class AbstractConditionedProcessor implements CrawlContextAccessable, CrawlProcessor {
-	protected CrawlContextAccessor crawlContextAccessor;
-	
-	protected boolean eval(CrawlContext crawlContext){
-		Boolean result=(Boolean)crawlContextAccessor.get(crawlContext);
-		return result;
+public abstract class AbstractConditionedProcessor implements CrawlProcessor {
+	private CrawlContextReader crawlContextReader;
+	private String evalString;
+
+	protected boolean eval(CrawlContext crawlContext) {
+		Boolean result = (Boolean) crawlContextReader.get(crawlContext,
+				evalString);
+		return result == null ? false : result;
 	}
 
-	@Override
-	public void setCrawlContextAccessor(
-			CrawlContextAccessor crawlContextAccessor) {
-		this.crawlContextAccessor=crawlContextAccessor;
+	public void setCrawlContextReader(CrawlContextReader crawlContextReader) {
+		this.crawlContextReader = crawlContextReader;
+	}
+
+	public void setEvalString(String evalString) {
+		this.evalString = evalString;
 	}
 
 }

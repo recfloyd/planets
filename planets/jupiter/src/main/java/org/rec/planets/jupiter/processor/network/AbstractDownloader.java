@@ -1,15 +1,13 @@
 package org.rec.planets.jupiter.processor.network;
 
 import org.rec.planets.jupiter.bean.CrawlContext;
-import org.rec.planets.jupiter.bean.CrawlContextConstants;
 import org.rec.planets.jupiter.processor.CrawlProcessor;
-import org.rec.planets.jupiter.processor.accessor.CrawlContextAccessable;
-import org.rec.planets.jupiter.processor.accessor.CrawlContextAccessor;
+import org.rec.planets.jupiter.processor.accessor.CrawlContextReader;
+import org.rec.planets.jupiter.processor.accessor.CrawlContextWriter;
 import org.rec.planets.jupiter.processor.network.bean.Request;
 import org.rec.planets.jupiter.processor.network.bean.Response;
 import org.rec.planets.jupiter.processor.network.client.Client;
 import org.rec.planets.jupiter.processor.network.request.RequestBuilder;
-import org.springframework.util.Assert;
 
 /**
  * 抽象下载器
@@ -17,27 +15,27 @@ import org.springframework.util.Assert;
  * @author rec
  * 
  */
-public abstract class AbstractDownloader implements CrawlProcessor,
-		CrawlContextAccessable {
+public abstract class AbstractDownloader implements CrawlProcessor {
 	/**
 	 * 请求创建器
 	 */
 	protected RequestBuilder requestBuilder;
 
-	protected CrawlContextAccessor crawlContextAccessor;
+	protected CrawlContextReader crawlContextReader;
+	protected CrawlContextWriter crawlContextWriter;
+	protected String clientKey;
+	protected String responseKey;
 
 	@Override
 	public void process(CrawlContext crawlContext) throws Exception {
-		Client client = (Client) crawlContext.getContext().get(
-				CrawlContextConstants.KEY_CLIENT);
-		Assert.notNull(client, "can not get client via key "
-				+ CrawlContextConstants.KEY_CLIENT);
+		Client client = (Client) crawlContextReader
+				.get(crawlContext, clientKey);
 
 		Request request = requestBuilder.build(crawlContext);
 
 		Response<?> response = request(client, request);
 
-		crawlContextAccessor.set(crawlContext, response);
+		crawlContextWriter.set(crawlContext, responseKey, response);
 	}
 
 	protected abstract <T> Response<?> request(Client client, Request request)
@@ -47,9 +45,19 @@ public abstract class AbstractDownloader implements CrawlProcessor,
 		this.requestBuilder = requestBuilder;
 	}
 
-	@Override
-	public void setCrawlContextAccessor(
-			CrawlContextAccessor crawlContextAccessor) {
-		this.crawlContextAccessor = crawlContextAccessor;
+	public void setCrawlContextReader(CrawlContextReader crawlContextReader) {
+		this.crawlContextReader = crawlContextReader;
+	}
+
+	public void setCrawlContextWriter(CrawlContextWriter crawlContextWriter) {
+		this.crawlContextWriter = crawlContextWriter;
+	}
+
+	public void setClientKey(String clientKey) {
+		this.clientKey = clientKey;
+	}
+
+	public void setResponseKey(String responseKey) {
+		this.responseKey = responseKey;
 	}
 }

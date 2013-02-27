@@ -11,11 +11,11 @@ import org.springframework.beans.BeanWrapperImpl;
  * @author rec
  * 
  */
-public class ReadOriginWriteIndexAccessor extends
-		BasicKeyedCrawlContextAccessor {
+public class IterableItemIndexCrawlContextWriter extends
+		KeyedCrawlContextWriter {
 	@Override
-	public void set(CrawlContext crawlContext, Object result) {
-		String newKey = resultKey + '['
+	public void set(CrawlContext crawlContext, String key, Object result) {
+		String newKey = key + '['
 				+ IterableItemStackHolder.getItem().getIndex() + ']';
 		BeanWrapper bw = new BeanWrapperImpl(crawlContext);
 		bw.setPropertyValue(newKey, result);

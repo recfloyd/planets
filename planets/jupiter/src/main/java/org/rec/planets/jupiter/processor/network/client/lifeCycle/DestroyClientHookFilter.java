@@ -2,8 +2,7 @@ package org.rec.planets.jupiter.processor.network.client.lifeCycle;
 
 import org.rec.planets.jupiter.bean.CrawlContext;
 import org.rec.planets.jupiter.processor.CrawlProcessor;
-import org.rec.planets.jupiter.processor.accessor.CrawlContextAccessable;
-import org.rec.planets.jupiter.processor.accessor.CrawlContextAccessor;
+import org.rec.planets.jupiter.processor.accessor.CrawlContextReader;
 import org.rec.planets.jupiter.processor.filter.Filter;
 import org.rec.planets.jupiter.processor.network.client.Client;
 
@@ -13,8 +12,9 @@ import org.rec.planets.jupiter.processor.network.client.Client;
  * @author rec
  * 
  */
-public class DestroyClientHookFilter implements Filter, CrawlContextAccessable {
-	protected CrawlContextAccessor crawlContextAccessor;
+public class DestroyClientHookFilter implements Filter {
+	private CrawlContextReader crawlContextReader;
+	private String clientKey;
 
 	@Override
 	public void invoke(CrawlProcessor processor, CrawlContext crawlContext)
@@ -22,15 +22,19 @@ public class DestroyClientHookFilter implements Filter, CrawlContextAccessable {
 		try {
 			processor.process(crawlContext);
 		} finally {
-			Client client = (Client) crawlContextAccessor.get(crawlContext);
+			Client client = (Client) crawlContextReader.get(crawlContext,
+					clientKey);
 			if (client != null)
 				client.destroy();
 		}
 	}
 
-	@Override
-	public void setCrawlContextAccessor(
-			CrawlContextAccessor crawlContextAccessor) {
-		this.crawlContextAccessor = crawlContextAccessor;
+	public void setCrawlContextReader(CrawlContextReader crawlContextReader) {
+		this.crawlContextReader = crawlContextReader;
 	}
+
+	public void setClientKey(String clientKey) {
+		this.clientKey = clientKey;
+	}
+
 }

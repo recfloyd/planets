@@ -1,8 +1,9 @@
-package org.rec.planets.mercury.url.processor;
+package org.rec.planets.mercury.url.processor.workflow;
 
 import java.util.List;
 
 import org.rec.planets.mercury.domain.CrawlURL;
+import org.rec.planets.mercury.url.processor.URLProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
