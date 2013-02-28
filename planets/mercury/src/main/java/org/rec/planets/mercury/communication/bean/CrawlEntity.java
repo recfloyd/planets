@@ -14,7 +14,7 @@ public class CrawlEntity extends AbstractBean implements Serializable {
 	/**
 	 * 爬行内容
 	 */
-	private Map<String, ?> content;
+	private Map<String, Object> content;
 
 	public Long getParentId() {
 		return parentId;
@@ -24,11 +24,11 @@ public class CrawlEntity extends AbstractBean implements Serializable {
 		this.parentId = parentId;
 	}
 
-	public Map<String, ?> getContent() {
+	public Map<String, Object> getContent() {
 		return content;
 	}
 
-	public void setContent(Map<String, ?> content) {
+	public void setContent(Map<String, Object> content) {
 		this.content = content;
 	}
 }

@@ -9,7 +9,7 @@ import org.rec.planets.mercury.expression.ELUtil;
  * @author rec
  * 
  */
-public class BasicContextReader implements ContextReader {
+public class ELContextReader implements ContextReader {
 	@Override
 	public Object read(ActionContext context, String key) {
 		return ELUtil.evalFromObject(context, key);

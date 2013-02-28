@@ -1,10 +1,12 @@
 package org.rec.planets.mercury.domain;
 
-import com.google.common.base.Objects;
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
 
 public abstract class AbstractBean {
 	@Override
 	public String toString() {
-		return Objects.toStringHelper(this).toString();
+		return ToStringBuilder.reflectionToString(this,
+				ToStringStyle.SHORT_PREFIX_STYLE);
 	}
 }

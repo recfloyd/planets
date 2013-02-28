@@ -10,7 +10,7 @@ import org.springframework.beans.BeanWrapperImpl;
  * @author rec
  * 
  */
-public class BasicContextWriter implements ContextWriter {
+public class PropertyContextWriter implements ContextWriter {
 
 	@Override
 	public void write(ActionContext context, String key, Object result) {
