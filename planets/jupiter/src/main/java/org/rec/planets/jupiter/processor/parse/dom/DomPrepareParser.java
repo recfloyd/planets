@@ -1,8 +1,8 @@
 package org.rec.planets.jupiter.processor.parse.dom;
 
 import org.jsoup.Jsoup;
-import org.rec.planets.jupiter.bean.CrawlContext;
-import org.rec.planets.jupiter.processor.AbstractReadWriteProcessor;
+import org.rec.planets.jupiter.context.ActionContext;
+import org.rec.planets.jupiter.processor.AbstractReadWriteAction;
 
 /**
  * DOM对象准备器
@@ -10,9 +10,9 @@ import org.rec.planets.jupiter.processor.AbstractReadWriteProcessor;
  * @author rec
  * 
  */
-public class DomPrepareParser extends AbstractReadWriteProcessor {
+public class DomPrepareParser extends AbstractReadWriteAction {
 	@Override
-	protected Object processInternal(CrawlContext crawlContext, Object source)
+	protected Object processInternal(ActionContext context, Object source)
 			throws Exception {
 		String html = (String) source;
 		return Jsoup.parse(html);

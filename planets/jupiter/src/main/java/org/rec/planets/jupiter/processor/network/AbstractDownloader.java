@@ -1,9 +1,9 @@
 package org.rec.planets.jupiter.processor.network;
 
-import org.rec.planets.jupiter.bean.CrawlContext;
-import org.rec.planets.jupiter.processor.CrawlProcessor;
-import org.rec.planets.jupiter.processor.accessor.CrawlContextReader;
-import org.rec.planets.jupiter.processor.accessor.CrawlContextWriter;
+import org.rec.planets.jupiter.context.ActionContext;
+import org.rec.planets.jupiter.context.accessor.ContextReader;
+import org.rec.planets.jupiter.context.accessor.ContextWriter;
+import org.rec.planets.jupiter.processor.Action;
 import org.rec.planets.jupiter.processor.network.bean.Request;
 import org.rec.planets.jupiter.processor.network.bean.Response;
 import org.rec.planets.jupiter.processor.network.client.Client;
@@ -15,27 +15,26 @@ import org.rec.planets.jupiter.processor.network.request.RequestBuilder;
  * @author rec
  * 
  */
-public abstract class AbstractDownloader implements CrawlProcessor {
+public abstract class AbstractDownloader implements Action {
 	/**
 	 * 请求创建器
 	 */
 	protected RequestBuilder requestBuilder;
-
-	protected CrawlContextReader crawlContextReader;
-	protected CrawlContextWriter crawlContextWriter;
+	protected ContextReader contextReader;
+	protected ContextWriter contextWriter;
 	protected String clientKey;
 	protected String responseKey;
 
 	@Override
-	public void process(CrawlContext crawlContext) throws Exception {
-		Client client = (Client) crawlContextReader
-				.get(crawlContext, clientKey);
+	public void execute(ActionContext context) throws Exception {
+		Client client = (Client) contextReader
+				.read(context, clientKey);
 
-		Request request = requestBuilder.build(crawlContext);
+		Request request = requestBuilder.build(context);
 
 		Response<?> response = request(client, request);
 
-		crawlContextWriter.set(crawlContext, responseKey, response);
+		contextWriter.write(context, responseKey, response);
 	}
 
 	protected abstract <T> Response<?> request(Client client, Request request)
@@ -45,12 +44,12 @@ public abstract class AbstractDownloader implements CrawlProcessor {
 		this.requestBuilder = requestBuilder;
 	}
 
-	public void setCrawlContextReader(CrawlContextReader crawlContextReader) {
-		this.crawlContextReader = crawlContextReader;
+	public void setContextReader(ContextReader contextReader) {
+		this.contextReader = contextReader;
 	}
 
-	public void setCrawlContextWriter(CrawlContextWriter crawlContextWriter) {
-		this.crawlContextWriter = crawlContextWriter;
+	public void setContextWriter(ContextWriter contextWriter) {
+		this.contextWriter = contextWriter;
 	}
 
 	public void setClientKey(String clientKey) {

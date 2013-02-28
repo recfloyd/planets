@@ -1,27 +1,28 @@
-package org.rec.planets.jupiter.bean;
+package org.rec.planets.jupiter.rule;
 
 import java.util.Map;
 
-import org.rec.planets.jupiter.processor.CrawlProcessor;
+import org.rec.planets.jupiter.processor.Action;
 import org.rec.planets.mercury.domain.AbstractBean;
 
 /**
  * 抓取规则
+ * 
  * @author rec
- *
+ * 
  */
-public class CrawlRule extends AbstractBean {
+public class Rule extends AbstractBean {
 	private Short websiteId;
 	private Long version;
 	private Map<String, Object> websiteProperties;
-	private CrawlProcessor crawlProcessor;
+	private Action action;
 
-	public CrawlRule(Short websiteId, Long version,
-			Map<String, Object> websiteProperties, CrawlProcessor crawlProcessor) {
+	public Rule(Short websiteId, Long version,
+			Map<String, Object> websiteProperties, Action action) {
 		this.websiteId = websiteId;
 		this.version = version;
 		this.websiteProperties = websiteProperties;
-		this.crawlProcessor = crawlProcessor;
+		this.action = action;
 	}
 
 	public Short getWebsiteId() {
@@ -36,7 +37,8 @@ public class CrawlRule extends AbstractBean {
 		return websiteProperties;
 	}
 
-	public CrawlProcessor getCrawlProcessor() {
-		return crawlProcessor;
+	public Action getAction() {
+		return action;
 	}
+
 }

@@ -3,8 +3,8 @@ package org.rec.planets.jupiter.processor.parse.dom;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.rec.planets.jupiter.bean.CrawlContext;
-import org.rec.planets.jupiter.processor.AbstractReadWriteProcessor;
+import org.rec.planets.jupiter.context.ActionContext;
+import org.rec.planets.jupiter.processor.AbstractReadWriteAction;
 import org.rec.planets.jupiter.processor.parse.dom.bean.DomElement;
 import org.springframework.util.CollectionUtils;
 
@@ -16,7 +16,7 @@ import com.google.common.base.Strings;
  * @author rec
  * 
  */
-public abstract class AbstractDomParser extends AbstractReadWriteProcessor {
+public abstract class AbstractDomParser extends AbstractReadWriteAction {
 	protected DomElement domElement;
 
 	public void setDomElement(DomElement domElement) {
@@ -24,18 +24,18 @@ public abstract class AbstractDomParser extends AbstractReadWriteProcessor {
 	}
 
 	@Override
-	protected Object processInternal(CrawlContext crawlContext, Object source)
+	protected Object processInternal(ActionContext context, Object source)
 			throws Exception {
 		Document document = (Document) source;
 		Elements elements = document.select(domElement.getSelector());
 		if (CollectionUtils.isEmpty(elements))
 			return null;
 		else
-			return extract(elements, crawlContext);
+			return extract(elements, context);
 	}
 
 	protected abstract Object extract(Elements elements,
-			CrawlContext crawlContext);
+			ActionContext context);
 
 	protected String extractFromElement(Element element) {
 		if (Strings.isNullOrEmpty(domElement.getAttrabute())) {

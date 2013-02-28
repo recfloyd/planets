@@ -1,7 +1,7 @@
 package org.rec.planets.jupiter.processor.workflow.conditioned;
 
-import org.rec.planets.jupiter.bean.CrawlContext;
-import org.rec.planets.jupiter.processor.CrawlProcessor;
+import org.rec.planets.jupiter.context.ActionContext;
+import org.rec.planets.jupiter.processor.Action;
 
 /**
  * if-else处理器,分别注入2个处理器,在判断为if和else的时候执行各自的处理
@@ -9,34 +9,34 @@ import org.rec.planets.jupiter.processor.CrawlProcessor;
  *
  */
 public class IfelseProcessor extends AbstractConditionedProcessor {
-	private CrawlProcessor ifProcessor;
-	private CrawlProcessor elseProcessor;
+	private Action ifProcessor;
+	private Action elseProcessor;
 
 	@Override
-	public void process(CrawlContext crawlContext) throws Exception {
+	public void execute(ActionContext crawlContext) throws Exception {
 		if (eval(crawlContext)) {
 			if (ifProcessor != null)
-				ifProcessor.process(crawlContext);
+				ifProcessor.execute(crawlContext);
 		} else {
 			if (elseProcessor != null)
-				elseProcessor.process(crawlContext);
+				elseProcessor.execute(crawlContext);
 		}
 
 	}
 
-	public CrawlProcessor getIfProcessor() {
+	public Action getIfProcessor() {
 		return ifProcessor;
 	}
 
-	public void setIfProcessor(CrawlProcessor ifProcessor) {
+	public void setIfProcessor(Action ifProcessor) {
 		this.ifProcessor = ifProcessor;
 	}
 
-	public CrawlProcessor getElseProcessor() {
+	public Action getElseProcessor() {
 		return elseProcessor;
 	}
 
-	public void setElseProcessor(CrawlProcessor elseProcessor) {
+	public void setElseProcessor(Action elseProcessor) {
 		this.elseProcessor = elseProcessor;
 	}
 }

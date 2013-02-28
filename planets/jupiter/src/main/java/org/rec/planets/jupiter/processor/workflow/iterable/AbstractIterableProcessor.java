@@ -9,8 +9,8 @@ import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
-import org.rec.planets.jupiter.bean.CrawlContext;
-import org.rec.planets.jupiter.processor.CrawlProcessor;
+import org.rec.planets.jupiter.context.ActionContext;
+import org.rec.planets.jupiter.processor.Action;
 import org.rec.planets.jupiter.processor.workflow.iterable.bean.IterableItem;
 import org.rec.planets.jupiter.processor.workflow.iterable.bean.IterableItemStackHolder;
 import org.slf4j.Logger;
@@ -32,20 +32,20 @@ import org.springframework.util.Assert;
  *
  */
 @SuppressWarnings({ "rawtypes", "unchecked" })
-public abstract class AbstractIterableProcessor implements CrawlProcessor {
+public abstract class AbstractIterableProcessor implements Action {
 	private static final Logger logger = LoggerFactory
 			.getLogger(AbstractIterableProcessor.class);
 
-	protected abstract Object getItems(CrawlContext crawlContext);
+	protected abstract Object getItems(ActionContext crawlContext);
 
-	protected CrawlProcessor nestedProcessor;
+	protected Action nestedProcessor;
 	protected boolean omitAbsence;
 	protected boolean parallel;
 	protected boolean omitException;
 	protected ExecutorService threadPool;
 
 	@Override
-	public void process(CrawlContext crawlContext) throws Exception {
+	public void execute(ActionContext crawlContext) throws Exception {
 		Object object = getItems(crawlContext);
 		if (object == null) {
 			if (omitAbsence)
@@ -105,7 +105,7 @@ public abstract class AbstractIterableProcessor implements CrawlProcessor {
 				item = list.get(i);
 				IterableItemStackHolder.putItem(item);
 				try {
-					nestedProcessor.process(crawlContext);
+					nestedProcessor.execute(crawlContext);
 				} catch (Exception e) {
 					if (omitException) {
 						logger.warn(
@@ -128,7 +128,7 @@ public abstract class AbstractIterableProcessor implements CrawlProcessor {
 	}
 
 	protected List<IterableItem> traverseMap(Object object,
-			CrawlContext crawlContext) throws Exception {
+			ActionContext crawlContext) throws Exception {
 		Map map = (Map) object;
 		int index = 0;
 		int total = map.size();
@@ -144,7 +144,7 @@ public abstract class AbstractIterableProcessor implements CrawlProcessor {
 	}
 
 	protected List<IterableItem> traverseCollection(Object object,
-			CrawlContext crawlContext) throws Exception {
+			ActionContext crawlContext) throws Exception {
 		Collection collection = (Collection) object;
 		int index = 0;
 		int total = collection.size();
@@ -160,7 +160,7 @@ public abstract class AbstractIterableProcessor implements CrawlProcessor {
 	}
 
 	protected List<IterableItem> traverseArray(Object object,
-			CrawlContext crawlContext) throws Exception {
+			ActionContext crawlContext) throws Exception {
 		int total = Array.getLength(object);
 		IterableItem item = null;
 		List<IterableItem> list = new ArrayList<IterableItem>(total);
@@ -176,7 +176,7 @@ public abstract class AbstractIterableProcessor implements CrawlProcessor {
 		this.omitAbsence = omitAbsence;
 	}
 
-	public void setNestedProcessor(CrawlProcessor nestedProcessor) {
+	public void setNestedProcessor(Action nestedProcessor) {
 		this.nestedProcessor = nestedProcessor;
 	}
 

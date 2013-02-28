@@ -1,8 +1,8 @@
 package org.rec.planets.jupiter.processor.transfer;
 
 import org.apache.commons.beanutils.Converter;
-import org.rec.planets.jupiter.bean.CrawlContext;
-import org.rec.planets.jupiter.processor.AbstractReadWriteProcessor;
+import org.rec.planets.jupiter.context.ActionContext;
+import org.rec.planets.jupiter.processor.AbstractReadWriteAction;
 import org.springframework.util.Assert;
 
 /**
@@ -11,12 +11,12 @@ import org.springframework.util.Assert;
  *
  */
 @SuppressWarnings("rawtypes")
-public class ConverterWrappedTransferer extends AbstractReadWriteProcessor {
+public class ConverterWrappedTransferer extends AbstractReadWriteAction {
 	private Converter converter;
 	private Class clazz;
 
 	@Override
-	protected Object processInternal(CrawlContext crawlContext, Object source)
+	protected Object processInternal(ActionContext context, Object source)
 			throws Exception {
 		Assert.notNull(converter, "converter is null");
 		return converter.convert(clazz, source);

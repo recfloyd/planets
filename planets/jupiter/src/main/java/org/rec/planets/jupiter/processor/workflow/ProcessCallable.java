@@ -2,22 +2,22 @@ package org.rec.planets.jupiter.processor.workflow;
 
 import java.util.concurrent.Callable;
 
-import org.rec.planets.jupiter.bean.CrawlContext;
-import org.rec.planets.jupiter.processor.CrawlProcessor;
+import org.rec.planets.jupiter.context.ActionContext;
+import org.rec.planets.jupiter.processor.Action;
 
 public class ProcessCallable implements Callable<Void> {
-	private CrawlProcessor processor;
-	private CrawlContext crawlContext;
+	private Action action;
+	private ActionContext context;
 
-	public ProcessCallable(CrawlProcessor processor,
-			CrawlContext crawlContext) {
-		this.processor = processor;
-		this.crawlContext = crawlContext;
+	public ProcessCallable(Action action,
+			ActionContext context) {
+		this.action = action;
+		this.context = context;
 	}
 
 	@Override
 	public Void call() throws Exception {
-		processor.process(crawlContext);
+		action.execute(context);
 		return null;
 	}
 }

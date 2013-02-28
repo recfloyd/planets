@@ -6,7 +6,7 @@ import java.util.List;
 import org.rec.planets.mercury.domain.AbstractBean;
 import org.rec.planets.mercury.domain.CrawlURL;
 
-public class CrawlURLPropagation extends AbstractBean  implements Serializable {
+public class CrawlPropagation extends AbstractBean implements Serializable {
 	private static final long serialVersionUID = 1429890258172932955L;
 	private Long parentId;
 	private List<CrawlURL> children;

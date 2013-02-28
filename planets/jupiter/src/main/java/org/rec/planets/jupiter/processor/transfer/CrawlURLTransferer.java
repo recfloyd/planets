@@ -1,33 +1,33 @@
 package org.rec.planets.jupiter.processor.transfer;
 
-import org.rec.planets.jupiter.bean.CrawlContext;
-import org.rec.planets.jupiter.processor.CrawlProcessor;
-import org.rec.planets.jupiter.processor.accessor.CrawlContextReader;
+import org.rec.planets.jupiter.context.ActionContext;
+import org.rec.planets.jupiter.context.accessor.ContextReader;
+import org.rec.planets.jupiter.processor.Action;
 import org.rec.planets.mercury.domain.CrawlURL;
 import org.rec.planets.mercury.url.processor.URLProcessor;
 
-public class CrawlURLTransferer implements CrawlProcessor {
-	private CrawlContextReader baseURLReader;
-	private CrawlContextReader crawlURLReader;
+public class CrawlURLTransferer implements Action {
+	private ContextReader baseURLReader;
+	private ContextReader crawlURLReader;
 	private URLProcessor urlProcessor;
 	private String crawlURLKey;
 	private String baseURLKey;
 
 	@Override
-	public void process(CrawlContext crawlContext) throws Exception {
-		CrawlURL crawlURL = (CrawlURL) crawlURLReader.get(crawlContext,
+	public void execute(ActionContext context) throws Exception {
+		CrawlURL crawlURL = (CrawlURL) crawlURLReader.read(context,
 				crawlURLKey);
 		CrawlURL baseURL = null;
 		if (baseURLReader != null)
-			baseURL = (CrawlURL) baseURLReader.get(crawlContext, baseURLKey);
+			baseURL = (CrawlURL) baseURLReader.read(context, baseURLKey);
 		urlProcessor.process(crawlURL, baseURL);
 	}
 
-	public void setBaseURLReader(CrawlContextReader baseURLReader) {
+	public void setBaseURLReader(ContextReader baseURLReader) {
 		this.baseURLReader = baseURLReader;
 	}
 
-	public void setCrawlURLReader(CrawlContextReader crawlURLReader) {
+	public void setCrawlURLReader(ContextReader crawlURLReader) {
 		this.crawlURLReader = crawlURLReader;
 	}
 

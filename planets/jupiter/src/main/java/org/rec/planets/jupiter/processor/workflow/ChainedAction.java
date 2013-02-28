@@ -2,32 +2,33 @@ package org.rec.planets.jupiter.processor.workflow;
 
 import java.util.List;
 
-import org.rec.planets.jupiter.bean.CrawlContext;
-import org.rec.planets.jupiter.processor.CrawlProcessor;
+import org.rec.planets.jupiter.context.ActionContext;
+import org.rec.planets.jupiter.processor.Action;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * 链式处理器,将一连串的处理包装为一组
+ * 
  * @author rec
- *
+ * 
  */
-public class ChainedCrawlProcessor implements CrawlProcessor {
+public class ChainedAction implements Action {
 	private static final Logger logger = LoggerFactory
-			.getLogger(ChainedCrawlProcessor.class);
-	private List<CrawlProcessor> processors;
+			.getLogger(ChainedAction.class);
+	private List<Action> actions;
 	private boolean omitException;
 
 	@Override
-	public void process(CrawlContext crawlContext) throws Exception {
-		for (CrawlProcessor processor : processors) {
+	public void execute(ActionContext context) throws Exception {
+		for (Action action : actions) {
 			try {
-				processor.process(crawlContext);
+				action.execute(context);
 			} catch (Exception e) {
 				if (omitException) {
 					logger.warn(
 							"error occured and omitted when process crawlURL: "
-									+ crawlContext.getCrawlURL(), e);
+									+ context.getCrawlURL(), e);
 					continue;
 				} else {
 					throw e;
@@ -36,12 +37,11 @@ public class ChainedCrawlProcessor implements CrawlProcessor {
 		}
 	}
 
-	public void setProcessors(List<CrawlProcessor> processors) {
-		this.processors = processors;
+	public void setActions(List<Action> actions) {
+		this.actions = actions;
 	}
 
 	public void setOmitException(boolean omitException) {
 		this.omitException = omitException;
 	}
-
 }

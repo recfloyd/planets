@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.rec.planets.jupiter.bean.CrawlContext;
+import org.rec.planets.jupiter.context.ActionContext;
 
 import com.google.common.primitives.Ints;
 
@@ -17,7 +17,7 @@ import com.google.common.primitives.Ints;
 public class AllMatchDomParser extends AbstractDomParser {
 
 	@Override
-	protected Object extract(Elements elements, CrawlContext crawlContext) {
+	protected Object extract(Elements elements, ActionContext context) {
 		List<String> result = new ArrayList<String>();
 		Element e = null;
 		int[] indexes = domElement.getIndexes();

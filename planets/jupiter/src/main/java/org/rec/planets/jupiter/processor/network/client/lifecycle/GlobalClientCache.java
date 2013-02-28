@@ -1,8 +1,8 @@
-package org.rec.planets.jupiter.processor.network.client.lifeCycle;
+package org.rec.planets.jupiter.processor.network.client.lifecycle;
 
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.rec.planets.jupiter.bean.CrawlContext;
+import org.rec.planets.jupiter.context.ActionContext;
 import org.rec.planets.jupiter.processor.network.client.Client;
 import org.rec.planets.jupiter.processor.network.client.factory.ClientFactory;
 
@@ -14,7 +14,7 @@ import org.rec.planets.jupiter.processor.network.client.factory.ClientFactory;
 public final class GlobalClientCache {
 	private ConcurrentHashMap<Short, Client> clientCache;
 
-	public Client getClient(CrawlContext crawlContext,
+	public Client getClient(ActionContext crawlContext,
 			ClientFactory clientFactory) {
 		Short websiteId = crawlContext.getCrawlURL().getWebsiteId();
 		Client client = clientCache.get(websiteId);

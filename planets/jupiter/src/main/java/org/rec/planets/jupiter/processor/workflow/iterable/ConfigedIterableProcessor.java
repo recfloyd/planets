@@ -1,6 +1,6 @@
 package org.rec.planets.jupiter.processor.workflow.iterable;
 
-import org.rec.planets.jupiter.bean.CrawlContext;
+import org.rec.planets.jupiter.context.ActionContext;
 
 /**
  * 循环处理器
@@ -16,7 +16,7 @@ public class ConfigedIterableProcessor extends AbstractIterableProcessor {
 	}
 
 	@Override
-	protected Object getItems(CrawlContext crawlContext) {
+	protected Object getItems(ActionContext crawlContext) {
 		return items;
 	}
 

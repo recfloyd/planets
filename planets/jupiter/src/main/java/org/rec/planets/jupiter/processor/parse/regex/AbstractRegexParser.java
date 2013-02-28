@@ -1,7 +1,7 @@
 package org.rec.planets.jupiter.processor.parse.regex;
 
-import org.rec.planets.jupiter.bean.CrawlContext;
-import org.rec.planets.jupiter.processor.AbstractReadWriteProcessor;
+import org.rec.planets.jupiter.context.ActionContext;
+import org.rec.planets.jupiter.processor.AbstractReadWriteAction;
 import org.rec.planets.mercury.parse.bean.Regex;
 
 /**
@@ -10,12 +10,12 @@ import org.rec.planets.mercury.parse.bean.Regex;
  * @author rec
  * 
  */
-public abstract class AbstractRegexParser extends AbstractReadWriteProcessor {
+public abstract class AbstractRegexParser extends AbstractReadWriteAction {
 	protected Regex regex;
 	protected boolean strictRegex;
 
 	@Override
-	protected Object processInternal(CrawlContext crawlContext, Object source)
+	protected Object processInternal(ActionContext context, Object source)
 			throws Exception {
 		String text = (String) source;
 		return find(text);

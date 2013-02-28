@@ -1,7 +1,7 @@
 package org.rec.planets.jupiter.processor.workflow.iterable;
 
-import org.rec.planets.jupiter.bean.CrawlContext;
-import org.rec.planets.jupiter.processor.CrawlProcessor;
+import org.rec.planets.jupiter.context.ActionContext;
+import org.rec.planets.jupiter.processor.Action;
 import org.rec.planets.jupiter.processor.workflow.ProcessCallable;
 import org.rec.planets.jupiter.processor.workflow.iterable.bean.IterableItem;
 import org.rec.planets.jupiter.processor.workflow.iterable.bean.IterableItemStackHolder;
@@ -14,8 +14,8 @@ import org.rec.planets.jupiter.processor.workflow.iterable.bean.IterableItemStac
 public class IterableProcessCallable extends ProcessCallable {
 	private IterableItem item;
 
-	public IterableProcessCallable(CrawlProcessor processor,
-			CrawlContext crawlContext, IterableItem item) {
+	public IterableProcessCallable(Action processor,
+			ActionContext crawlContext, IterableItem item) {
 		super(processor, crawlContext);
 		this.item = item;
 	}

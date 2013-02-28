@@ -5,8 +5,8 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
-import org.rec.planets.jupiter.bean.CrawlContext;
-import org.rec.planets.jupiter.processor.CrawlProcessor;
+import org.rec.planets.jupiter.context.ActionContext;
+import org.rec.planets.jupiter.processor.Action;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,19 +16,19 @@ import org.slf4j.LoggerFactory;
  * @author rec
  * 
  */
-public class ParallelCrawlProcessor implements CrawlProcessor {
+public class ParallelAction implements Action {
 	private static final Logger logger = LoggerFactory
-			.getLogger(ParallelCrawlProcessor.class);
-	private List<CrawlProcessor> processors;
+			.getLogger(ParallelAction.class);
+	private List<Action> actions;
 	private boolean omitException;
 	private ExecutorService threadPool;
 
 	@Override
-	public void process(final CrawlContext crawlContext) throws Exception {
+	public void execute(final ActionContext context) throws Exception {
 		List<ProcessCallable> tasks = new ArrayList<ProcessCallable>(
-				processors.size());
-		for (CrawlProcessor processor : processors) {
-			tasks.add(new ProcessCallable(processor, crawlContext));
+				actions.size());
+		for (Action action : actions) {
+			tasks.add(new ProcessCallable(action, context));
 		}
 
 		List<Future<Void>> reaults = threadPool.invokeAll(tasks);
@@ -39,9 +39,9 @@ public class ParallelCrawlProcessor implements CrawlProcessor {
 				if (omitException) {
 					logger.warn(
 							"error occured and omitted when process crawlURL: "
-									+ crawlContext.getCrawlURL()
-									+ " and processor index is " + i
-									+ " and processor is " + processors.get(i),
+									+ context.getCrawlURL()
+									+ " and action index is " + i
+									+ " and action is " + actions.get(i),
 							e);
 					continue;
 				} else {
@@ -51,8 +51,8 @@ public class ParallelCrawlProcessor implements CrawlProcessor {
 		}
 	}
 
-	public void setProcessors(List<CrawlProcessor> processors) {
-		this.processors = processors;
+	public void setActions(List<Action> actions) {
+		this.actions = actions;
 	}
 
 	public void setOmitException(boolean omitException) {

@@ -11,7 +11,7 @@ public class JobResult extends AbstractBean  implements Serializable {
 	private Long jobId;
 	private Short nodeId;
 	private Date createTime;
-	private List<CrawlURLPropagation> crawlURLPropagations;// 衍生的url
+	private List<CrawlPropagation> crawlPropagations;// 衍生的url
 	private List<CrawlEntity> crawlEntities;// 抽取的实体
 	private List<Long> unmodified;// 内容未改变的url
 	private List<Long> disabled;// 已失效的url
@@ -42,13 +42,12 @@ public class JobResult extends AbstractBean  implements Serializable {
 		this.createTime = createTime;
 	}
 
-	public List<CrawlURLPropagation> getCrawlURLPropagations() {
-		return crawlURLPropagations;
+	public List<CrawlPropagation> getCrawlPropagations() {
+		return crawlPropagations;
 	}
 
-	public void setCrawlURLPropagations(
-			List<CrawlURLPropagation> crawlURLPropagations) {
-		this.crawlURLPropagations = crawlURLPropagations;
+	public void setCrawlPropagations(List<CrawlPropagation> crawlPropagations) {
+		this.crawlPropagations = crawlPropagations;
 	}
 
 	public List<CrawlEntity> getCrawlEntities() {

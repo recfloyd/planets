@@ -13,7 +13,7 @@ import org.rec.planets.mercury.domain.Job;
  * @author rec
  * 
  */
-public interface CrawlSlot {
+public interface Slot {
 	/**
 	 * 当前正在执行的任务
 	 * @author rec

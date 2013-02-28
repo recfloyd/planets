@@ -1,7 +1,7 @@
 package org.rec.planets.jupiter.processor.workflow.conditioned;
 
-import org.rec.planets.jupiter.bean.CrawlContext;
-import org.rec.planets.jupiter.processor.CrawlProcessor;
+import org.rec.planets.jupiter.context.ActionContext;
+import org.rec.planets.jupiter.processor.Action;
 
 /**
  * 执行while-do循环的处理器
@@ -9,15 +9,15 @@ import org.rec.planets.jupiter.processor.CrawlProcessor;
  *
  */
 public class WhiledoProcessor extends AbstractConditionedProcessor {
-	private CrawlProcessor nestedProcessor;
+	private Action nestedProcessor;
 
 	@Override
-	public void process(CrawlContext crawlContext) throws Exception {
+	public void execute(ActionContext crawlContext) throws Exception {
 		while (eval(crawlContext))
-			nestedProcessor.process(crawlContext);
+			nestedProcessor.execute(crawlContext);
 	}
 
-	public void setNestedProcessor(CrawlProcessor nestedProcessor) {
+	public void setNestedProcessor(Action nestedProcessor) {
 		this.nestedProcessor = nestedProcessor;
 	}
 }
