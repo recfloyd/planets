@@ -1,7 +1,7 @@
 package org.rec.planets.jupiter.context.accessor;
 
+import org.rec.planets.jupiter.action.workflow.iterable.bean.IterableItemStackHolder;
 import org.rec.planets.jupiter.context.ActionContext;
-import org.rec.planets.jupiter.processor.workflow.iterable.bean.IterableItemStackHolder;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
 

@@ -2,7 +2,7 @@ package org.rec.planets.jupiter.rule;
 
 import java.util.Map;
 
-import org.rec.planets.jupiter.processor.Action;
+import org.rec.planets.jupiter.action.Action;
 import org.rec.planets.mercury.domain.AbstractBean;
 
 /**
