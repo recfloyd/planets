@@ -6,6 +6,11 @@ import org.rec.planets.jupiter.context.ActionContext;
 import org.rec.planets.jupiter.context.accessor.ContextReader;
 import org.rec.planets.jupiter.context.accessor.ContextWriter;
 
+/**
+ * Bean初始化组装器
+ * @author rec
+ *
+ */
 public class BeanInitAssambler implements Action {
 	private ContextReader contextReader;
 	private ContextWriter contextWriter;
