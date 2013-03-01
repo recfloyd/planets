@@ -1,11 +1,11 @@
-package org.rec.planets.jupiter.action.workflow;
+package org.rec.planets.jupiter.action.workflow.parallel;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
 import org.rec.planets.jupiter.action.Action;
+import org.rec.planets.jupiter.action.workflow.ProcessCallable;
 import org.rec.planets.jupiter.context.ActionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,7 +21,7 @@ public class ParallelAction implements Action {
 			.getLogger(ParallelAction.class);
 	private List<Action> actions;
 	private boolean omitException;
-	private ExecutorService threadPool;
+	private ThreadPoolFactory threadPoolFactory;
 
 	@Override
 	public void execute(final ActionContext context) throws Exception {
@@ -31,7 +31,8 @@ public class ParallelAction implements Action {
 			tasks.add(new ProcessCallable(action, context));
 		}
 
-		List<Future<Void>> reaults = threadPool.invokeAll(tasks);
+		List<Future<Void>> reaults = threadPoolFactory.getThreadPool(context)
+				.invokeAll(tasks);
 		for (int i = 0; i < reaults.size(); i++) {
 			try {
 				reaults.get(i);
@@ -41,8 +42,7 @@ public class ParallelAction implements Action {
 							"error occured and omitted when process crawlURL: "
 									+ context.getCrawlURL()
 									+ " and action index is " + i
-									+ " and action is " + actions.get(i),
-							e);
+									+ " and action is " + actions.get(i), e);
 					continue;
 				} else {
 					throw e;
@@ -59,7 +59,7 @@ public class ParallelAction implements Action {
 		this.omitException = omitException;
 	}
 
-	public void setThreadPool(ExecutorService threadPool) {
-		this.threadPool = threadPool;
+	public void setThreadPoolFactory(ThreadPoolFactory threadPoolFactory) {
+		this.threadPoolFactory = threadPoolFactory;
 	}
 }

@@ -6,20 +6,19 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
 import org.rec.planets.jupiter.action.Action;
 import org.rec.planets.jupiter.action.workflow.iterable.bean.IterableItem;
 import org.rec.planets.jupiter.action.workflow.iterable.bean.IterableItemStackHolder;
+import org.rec.planets.jupiter.action.workflow.parallel.ThreadPoolFactory;
 import org.rec.planets.jupiter.context.ActionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 
 /**
- * 抽象的循环处理器
- * 此处理器通过getItems获取一个可以遍历的对象
+ * 抽象的循环处理器 此处理器通过getItems获取一个可以遍历的对象
  * 在遍历此对象的过程中,将每次遍历的实体封装为IterableItem对象保存在当前线程的ThreadLocal内
  * 对于每次遍历,执行一个内置的Processor的处理.
  * 此内置的Processor如果需要访问当前遍历实体,可以从IterableItemStackHolder内获取;
@@ -28,8 +27,9 @@ import org.springframework.util.Assert;
  * 此处理器还支持并发处理,注入一个线程池并将parallel设置为true,可以并行的进行遍历
  * 
  * 注意,遍历过程中如果需要访问遍历实体,那么必须在执行内置Processor的线程内进行,如果另外开启线程,因为访问不到IterableItemStack
+ * 
  * @author rec
- *
+ * 
  */
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public abstract class AbstractIterableAction implements Action {
@@ -42,7 +42,7 @@ public abstract class AbstractIterableAction implements Action {
 	protected boolean omitAbsence;
 	protected boolean parallel;
 	protected boolean omitException;
-	protected ExecutorService threadPool;
+	protected ThreadPoolFactory threadPoolFactory;
 
 	@Override
 	public void execute(ActionContext context) throws Exception {
@@ -73,15 +73,17 @@ public abstract class AbstractIterableAction implements Action {
 		}
 
 		if (parallel) {
-			Assert.notNull(threadPool, "property threadPool is not configed but parallel is true");
+			Assert.notNull(threadPoolFactory,
+					"property threadPoolFactory is not configed but parallel is true");
 
 			List<IterableProcessCallable> tasks = new ArrayList<IterableProcessCallable>(
 					list.size());
 			for (IterableItem item : list) {
-				tasks.add(new IterableProcessCallable(nestedAction,
-						context, item));
+				tasks.add(new IterableProcessCallable(nestedAction, context,
+						item));
 			}
-			List<Future<Void>> reaults = threadPool.invokeAll(tasks);
+			List<Future<Void>> reaults = threadPoolFactory.getThreadPool(
+					context).invokeAll(tasks);
 			for (int i = 0; i < reaults.size(); i++) {
 				try {
 					reaults.get(i);
@@ -91,8 +93,7 @@ public abstract class AbstractIterableAction implements Action {
 								"error occured and omitted when process crawlURL: "
 										+ context.getCrawlURL()
 										+ " and action index is " + i
-										+ " and action is "
-										+ nestedAction, e);
+										+ " and action is " + nestedAction, e);
 						continue;
 					} else {
 						throw e;
@@ -112,8 +113,7 @@ public abstract class AbstractIterableAction implements Action {
 								"error occured and omitted when process crawlURL: "
 										+ context.getCrawlURL()
 										+ " and action index is " + i
-										+ " and action is "
-										+ nestedAction, e);
+										+ " and action is " + nestedAction, e);
 						continue;
 					} else {
 						throw e;
@@ -188,7 +188,8 @@ public abstract class AbstractIterableAction implements Action {
 		this.omitException = omitException;
 	}
 
-	public void setThreadPool(ExecutorService threadPool) {
-		this.threadPool = threadPool;
+	public void setThreadPoolFactory(ThreadPoolFactory threadPoolFactory) {
+		this.threadPoolFactory = threadPoolFactory;
 	}
+
 }
