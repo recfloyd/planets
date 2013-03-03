@@ -9,6 +9,6 @@ import org.rec.planets.mercury.communication.bean.JobResult;
  * @author rec
  * 
  */
-public interface ResponseService {
-	String responseJob(JobResult jobResult);
+public interface PushResultService {
+	String push(JobResult jobResult);
 }

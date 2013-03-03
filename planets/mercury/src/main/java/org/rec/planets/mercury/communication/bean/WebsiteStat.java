@@ -2,6 +2,7 @@ package org.rec.planets.mercury.communication.bean;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 import org.rec.planets.mercury.domain.AbstractBean;
 
@@ -11,7 +12,7 @@ import org.rec.planets.mercury.domain.AbstractBean;
  * @author lijia
  * 
  */
-public class CrawlWebsiteStat extends AbstractBean  implements Serializable {
+public class WebsiteStat extends AbstractBean implements Serializable {
 	private static final long serialVersionUID = 1L;
 	/**
 	 * 网站id
@@ -37,6 +38,10 @@ public class CrawlWebsiteStat extends AbstractBean  implements Serializable {
 	 * 请求毫秒数
 	 */
 	private long requestMS;
+	/**
+	 * 当前正在运行的任务
+	 */
+	private List<CurrentJob> currentJobs;
 
 	public Short getWebsiteId() {
 		return websiteId;
@@ -84,5 +89,13 @@ public class CrawlWebsiteStat extends AbstractBean  implements Serializable {
 
 	public void setRequestMS(long requestMS) {
 		this.requestMS = requestMS;
+	}
+
+	public List<CurrentJob> getCurrentJobs() {
+		return currentJobs;
+	}
+
+	public void setCurrentJobs(List<CurrentJob> currentJobs) {
+		this.currentJobs = currentJobs;
 	}
 }

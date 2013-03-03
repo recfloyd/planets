@@ -6,7 +6,7 @@ import java.util.Map;
 
 import org.rec.planets.mercury.domain.AbstractBean;
 
-public class RequestEntity  extends AbstractBean implements Serializable {
+public class NodeInfo  extends AbstractBean implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	/**
@@ -20,7 +20,7 @@ public class RequestEntity  extends AbstractBean implements Serializable {
 	/**
 	 * 网站统计
 	 */
-	private List<CrawlWebsiteStat> websiteStats;
+	private List<WebsiteStat> websiteStats;
 
 	public Short getNodeId() {
 		return nodeId;
@@ -38,11 +38,11 @@ public class RequestEntity  extends AbstractBean implements Serializable {
 		this.ruleVersions = ruleVersions;
 	}
 
-	public List<CrawlWebsiteStat> getWebsiteStats() {
+	public List<WebsiteStat> getWebsiteStats() {
 		return websiteStats;
 	}
 
-	public void setWebsiteStats(List<CrawlWebsiteStat> websiteStats) {
+	public void setWebsiteStats(List<WebsiteStat> websiteStats) {
 		this.websiteStats = websiteStats;
 	}
 

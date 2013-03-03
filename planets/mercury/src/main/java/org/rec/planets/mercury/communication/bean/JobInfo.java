@@ -12,7 +12,7 @@ import org.rec.planets.mercury.domain.Job;
  * @author rec
  * 
  */
-public class ResponseInfo extends AbstractBean implements Serializable {
+public class JobInfo extends AbstractBean implements Serializable {
 	private static final long serialVersionUID = -2241341711546183203L;
 	private List<Job> jobs;// 任务
 	private String command;// 命令
