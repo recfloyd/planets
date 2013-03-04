@@ -27,6 +27,7 @@ import org.rec.planets.jupiter.context.ActionContext;
 import org.rec.planets.jupiter.context.ActionContextConstants;
 import org.rec.planets.jupiter.rule.Rule;
 import org.rec.planets.jupiter.rule.RuleConstants;
+import org.rec.planets.jupiter.slot.SlotFactory.RuleVersionHook;
 import org.rec.planets.mercury.communication.bean.CanceledJob;
 import org.rec.planets.mercury.communication.bean.CrawlEntity;
 import org.rec.planets.mercury.communication.bean.CrawlPropagation;
@@ -46,10 +47,12 @@ public class DefaultSlot implements Slot {
 	private final ConcurrentMap<String, Object> slotContext;
 	private final Map<Long, JobConter> jobCounters;
 	private final ConcurrentMap<Long, AtomicInteger> versionCounters;
+	private final RuleVersionHook hook;
 
-	public DefaultSlot(Short websiteId, Rule rule) {
-		this.websiteId = websiteId;
+	public DefaultSlot(Rule rule, RuleVersionHook hook) {
+		this.websiteId = rule.getWebsiteId();
 		this.rule = new AtomicReference<Rule>(rule);
+		this.hook = hook;
 		int maxThread = RuleConstants.DEFAULT_MAX_THREAD;
 		Map<String, Object> websiteProperties = rule.getWebsiteProperties();
 		if (websiteProperties != null) {
@@ -109,6 +112,7 @@ public class DefaultSlot implements Slot {
 								if (!version.equals(rule.get().getVersion())) {
 									// TODO: 一个旧版本的规则已经不再被引用,这时候删除并销毁它
 									versionCounters.remove(version);
+									hook.destroyRuleVersion(websiteId, version);
 								}
 							}
 						}
