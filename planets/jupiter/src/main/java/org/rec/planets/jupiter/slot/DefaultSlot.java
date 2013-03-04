@@ -1,21 +1,24 @@
 package org.rec.planets.jupiter.slot;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
+import java.util.concurrent.CancellationException;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.Executors;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import java.util.concurrent.FutureTask;
 import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -42,6 +45,7 @@ public class DefaultSlot implements Slot {
 	private final PausableThreadPoolExecutor threadPool;
 	private final ConcurrentMap<String, Object> slotContext;
 	private final Map<Long, JobConter> jobCounters;
+	private final ConcurrentMap<Long, AtomicInteger> versionCounters;
 
 	public DefaultSlot(Short websiteId, Rule rule) {
 		this.websiteId = websiteId;
@@ -58,6 +62,7 @@ public class DefaultSlot implements Slot {
 				TimeUnit.MILLISECONDS, new PriorityBlockingQueue<Runnable>());
 		slotContext = new ConcurrentHashMap<String, Object>();
 		jobCounters = new ConcurrentHashMap<Long, JobConter>();
+		versionCounters = new ConcurrentHashMap<Long, AtomicInteger>();
 	}
 
 	/**
@@ -77,41 +82,49 @@ public class DefaultSlot implements Slot {
 	}
 
 	/**
-	 * 具备执行优先级的线程
+	 * 具备执行优先级的FutureTask,所有任务转化为此类的实例,并且向线程池提交时必须使用execute方法,否则其队列优先级无法保证
 	 * 
 	 * @author rec
 	 * 
 	 */
-	private final class PriorityWorkingThread implements Runnable,
-			Comparable<PriorityWorkingThread> {
+	private final class PriorityFutureTask extends FutureTask<Void> implements
+			Comparable<PriorityFutureTask> {
 		private final Long jobId;
 		private final byte priority;
-		private Action action;
-		private ActionContext context;
+		private final CrawlURL crawlURL;
 
-		private PriorityWorkingThread(Long jobId, byte priority, Action action,
-				ActionContext context) {
+		private PriorityFutureTask(final Long jobId, final byte priority,
+				final Action action, final ActionContext context,
+				final Long version) {
+			super(new Callable<Void>() {
+				@Override
+				public Void call() throws Exception {
+					try {
+						action.execute(context);
+						return null;
+					} finally {
+						if (jobCounters.get(jobId).todo.decrementAndGet() <= 0) {
+							// TODO: 一个任务已经完成
+							if (versionCounters.get(version).decrementAndGet() <= 0) {
+								if (!version.equals(rule.get().getVersion())) {
+									// TODO: 一个旧版本的规则已经不再被引用,这时候删除并销毁它
+									versionCounters.remove(version);
+								}
+							}
+						}
+					}
+				}
+			});
 			this.jobId = jobId;
 			this.priority = priority;
-			this.action = action;
-			this.context = context;
+			this.crawlURL = context.getCrawlURL();
 		}
 
 		@Override
-		public int compareTo(PriorityWorkingThread other) {
+		public int compareTo(PriorityFutureTask other) {
 			return this.priority - other.priority;
 		}
 
-		@Override
-		public void run() {
-			try {
-				action.execute(context);
-			} catch (Exception e) {
-				throw new RuntimeException(e);
-			} finally {
-				jobCounters.get(jobId).todo.decrementAndGet();
-			}
-		}
 	}
 
 	@Override
@@ -142,18 +155,25 @@ public class DefaultSlot implements Slot {
 	@Override
 	public void submitJob(Job job) {
 		Long id = job.getId();
-		this.jobCounters.put(id, new JobConter(job.getUrls().size()));
+		List<CrawlURL> urls = job.getUrls();
+		this.jobCounters.put(id, new JobConter(urls.size()));
 
 		Rule rule = this.rule.get();
 		Action action = rule.getAction();
 		Map<String, Object> websiteProperties = rule.getWebsiteProperties();
+		Long version = rule.getVersion();
+		this.versionCounters.putIfAbsent(version, new AtomicInteger(0));
+		this.versionCounters.get(version).incrementAndGet();
 
-		Runnable task = null;
-		for (CrawlURL crawlURL : job.getUrls()) {
-			task = new PriorityWorkingThread(id, THREAD_PRIORITY_MEDIUM,
-					action, new ActionContext(crawlURL, websiteProperties,
-							slotContext));
-			this.threadPool.submit(task);
+		PriorityFutureTask task = null;
+		for (CrawlURL crawlURL : urls) {
+			task = new PriorityFutureTask(
+					id,
+					THREAD_PRIORITY_MEDIUM,
+					action,
+					new ActionContext(crawlURL, websiteProperties, slotContext),
+					version);
+			this.threadPool.execute(task);
 		}
 	}
 
@@ -175,29 +195,35 @@ public class DefaultSlot implements Slot {
 	@Override
 	public JobResult runJob(Job job) {
 		Long id = job.getId();
-		this.jobCounters.put(id, new JobConter(job.getUrls().size()));
+		List<CrawlURL> urls = job.getUrls();
+		this.jobCounters.put(id, new JobConter(urls.size()));
 
 		Rule rule = this.rule.get();
 		Action action = rule.getAction();
 		Map<String, Object> websiteProperties = rule.getWebsiteProperties();
+		Long version = rule.getVersion();
+		this.versionCounters.putIfAbsent(version, new AtomicInteger(0));
+		this.versionCounters.get(version).incrementAndGet();
 
 		JobResult jobResult = this.initEmptyJobResult(job);
-		Runnable task = null;
+		PriorityFutureTask task = null;
 		ActionContext context = null;
-		List<Future<?>> futures = new ArrayList<Future<?>>();
+		List<PriorityFutureTask> futures = new ArrayList<PriorityFutureTask>(
+				urls.size());
 
-		for (CrawlURL crawlURL : job.getUrls()) {
+		for (CrawlURL crawlURL : urls) {
 			context = new ActionContext(crawlURL, websiteProperties,
 					slotContext);
 			context.getUrlcontext().put(ActionContextConstants.KEY_JOB_RESULT,
 					jobResult);
-			task = new PriorityWorkingThread(id, THREAD_PRIORITY_HIGH, action,
-					context);
-			futures.add(this.threadPool.submit(task));
+			task = new PriorityFutureTask(id, THREAD_PRIORITY_HIGH, action,
+					context, version);
+			futures.add(task);
+			this.threadPool.execute(task);
 		}
 
 		// 等待所有任务完成
-		for (Future<?> future : futures) {
+		for (Future<Void> future : futures) {
 			try {
 				future.get();
 			} catch (Exception e) {
@@ -212,41 +238,76 @@ public class DefaultSlot implements Slot {
 	@Override
 	public JobResult runJob(Job job, long timeout, TimeUnit timeUnit) {
 		Long id = job.getId();
-		this.jobCounters.put(id, new JobConter(job.getUrls().size()));
+		List<CrawlURL> urls = job.getUrls();
+		this.jobCounters.put(id, new JobConter(urls.size()));
 
 		Rule rule = this.rule.get();
 		Action action = rule.getAction();
 		Map<String, Object> websiteProperties = rule.getWebsiteProperties();
+		Long version = rule.getVersion();
+		this.versionCounters.putIfAbsent(version, new AtomicInteger(0));
+		this.versionCounters.get(version).incrementAndGet();
 
 		JobResult jobResult = this.initEmptyJobResult(job);
-		Runnable task = null;
+		PriorityFutureTask task = null;
 		ActionContext context = null;
-		Collection<Callable<Object>> tasks = new ArrayList<Callable<Object>>();
-		for (CrawlURL crawlURL : job.getUrls()) {
+		List<PriorityFutureTask> futures = new ArrayList<PriorityFutureTask>(
+				urls.size());
+
+		for (CrawlURL crawlURL : urls) {
 			context = new ActionContext(crawlURL, websiteProperties,
 					slotContext);
 			context.getUrlcontext().put(ActionContextConstants.KEY_JOB_RESULT,
 					jobResult);
-			task = new PriorityWorkingThread(id, THREAD_PRIORITY_HIGH, action,
-					context);
-			tasks.add(Executors.callable(task));
+			task = new PriorityFutureTask(id, THREAD_PRIORITY_HIGH, action,
+					context, version);
+			futures.add(task);
 		}
-		List<Future<Object>> futures = null;
+
+		long nanos = timeUnit.toNanos(timeout);
+		boolean done = false;
 		try {
-			futures = this.threadPool.invokeAll(tasks, timeout, timeUnit);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-			// TODO 写日志
-			return null;
+
+			long lastTime = System.nanoTime();
+			// Interleave time checks and calls to execute in case
+			// executor doesn't have any/much parallelism.
+			Iterator<PriorityFutureTask> it = futures.iterator();
+			while (it.hasNext()) {
+				this.threadPool.execute(it.next());
+				long now = System.nanoTime();
+				nanos -= now - lastTime;
+				lastTime = now;
+				if (nanos <= 0)
+					return jobResult;
+			}
+
+			for (PriorityFutureTask f : futures) {
+				if (!f.isDone()) {
+					if (nanos <= 0)
+						return jobResult;
+					try {
+						f.get(nanos, TimeUnit.NANOSECONDS);
+					} catch (InterruptedException ignore) {
+					} catch (CancellationException ignore) {
+					} catch (ExecutionException ignore) {
+					} catch (TimeoutException toe) {
+						return jobResult;
+					}
+					long now = System.nanoTime();
+					nanos -= now - lastTime;
+					lastTime = now;
+				}
+			}
+			done = true;
+			return jobResult;
+		} finally {
+			if (!done) {
+				for (PriorityFutureTask f : futures)
+					f.cancel(true);
+				this.threadPool.purge();
+			}
 		}
 
-		for (Future<Object> future : futures) {
-			future.cancel(true);
-		}
-
-		this.threadPool.purge();
-
-		return jobResult;
 	}
 
 	@Override
@@ -309,11 +370,11 @@ public class DefaultSlot implements Slot {
 		List<CanceledJob> result = new ArrayList<CanceledJob>();
 		Map<Long, List<CrawlURL>> jobs = new HashMap<Long, List<CrawlURL>>();
 
-		PriorityWorkingThread task = null;
+		PriorityFutureTask task = null;
 		List<CrawlURL> urls = null;
 		CanceledJob canceledJob = null;
 		for (Runnable thread : runnables) {
-			task = (PriorityWorkingThread) thread;
+			task = (PriorityFutureTask) thread;
 			urls = jobs.get(task.jobId);
 			if (urls == null) {
 				urls = new ArrayList<CrawlURL>();
@@ -322,7 +383,7 @@ public class DefaultSlot implements Slot {
 				canceledJob.setJobId(task.jobId);
 				canceledJob.setUrls(urls);
 			}
-			urls.add(task.context.getCrawlURL());
+			urls.add(task.crawlURL);
 		}
 		return result;
 	}
