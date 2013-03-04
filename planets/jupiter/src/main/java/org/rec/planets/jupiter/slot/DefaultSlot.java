@@ -3,6 +3,7 @@ package org.rec.planets.jupiter.slot;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -15,6 +16,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.rec.planets.jupiter.action.Action;
 import org.rec.planets.jupiter.context.ActionContext;
@@ -26,7 +29,6 @@ import org.rec.planets.mercury.communication.bean.CrawlEntity;
 import org.rec.planets.mercury.communication.bean.CrawlPropagation;
 import org.rec.planets.mercury.communication.bean.CurrentJob;
 import org.rec.planets.mercury.communication.bean.JobResult;
-import org.rec.planets.mercury.communication.bean.PlainCurrentJob;
 import org.rec.planets.mercury.concurrent.PausableThreadPoolExecutor;
 import org.rec.planets.mercury.domain.CrawlURL;
 import org.rec.planets.mercury.domain.Job;
@@ -36,14 +38,14 @@ public class DefaultSlot implements Slot {
 	private static final byte THREAD_PRIORITY_MEDIUM = 50;
 
 	private final Short websiteId;
-	private Rule rule;
+	private AtomicReference<Rule> rule;
 	private final PausableThreadPoolExecutor threadPool;
 	private final ConcurrentMap<String, Object> slotContext;
-	private final Map<Long, ThreadSafeCurrentJob> currentJobs;
+	private final Map<Long, JobConter> jobCounters;
 
 	public DefaultSlot(Short websiteId, Rule rule) {
 		this.websiteId = websiteId;
-		this.rule = rule;
+		this.rule = new AtomicReference<Rule>(rule);
 		int maxThread = RuleConstants.DEFAULT_MAX_THREAD;
 		Map<String, Object> websiteProperties = rule.getWebsiteProperties();
 		if (websiteProperties != null) {
@@ -55,7 +57,23 @@ public class DefaultSlot implements Slot {
 		threadPool = new PausableThreadPoolExecutor(maxThread, maxThread, 0,
 				TimeUnit.MILLISECONDS, new PriorityBlockingQueue<Runnable>());
 		slotContext = new ConcurrentHashMap<String, Object>();
-		currentJobs = new ConcurrentHashMap<Long, ThreadSafeCurrentJob>();
+		jobCounters = new ConcurrentHashMap<Long, JobConter>();
+	}
+
+	/**
+	 * 任务执行情况计数器
+	 * 
+	 * @author rec
+	 * 
+	 */
+	private final class JobConter {
+		private final int totalSize;
+		private AtomicInteger todo;
+
+		private JobConter(int totalSize) {
+			this.totalSize = totalSize;
+			this.todo = new AtomicInteger(totalSize);
+		}
 	}
 
 	/**
@@ -64,14 +82,16 @@ public class DefaultSlot implements Slot {
 	 * @author rec
 	 * 
 	 */
-	public static final class PriorityWorkingThread implements Runnable,
+	private final class PriorityWorkingThread implements Runnable,
 			Comparable<PriorityWorkingThread> {
-		private byte priority;
+		private final Long jobId;
+		private final byte priority;
 		private Action action;
 		private ActionContext context;
 
-		private PriorityWorkingThread(byte priority, Action action,
+		private PriorityWorkingThread(Long jobId, byte priority, Action action,
 				ActionContext context) {
+			this.jobId = jobId;
 			this.priority = priority;
 			this.action = action;
 			this.context = context;
@@ -88,9 +108,10 @@ public class DefaultSlot implements Slot {
 				action.execute(context);
 			} catch (Exception e) {
 				throw new RuntimeException(e);
+			} finally {
+				jobCounters.get(jobId).todo.decrementAndGet();
 			}
 		}
-
 	}
 
 	@Override
@@ -120,17 +141,18 @@ public class DefaultSlot implements Slot {
 
 	@Override
 	public void submitJob(Job job) {
-		ThreadSafeCurrentJob currentJob = new ThreadSafeCurrentJob(job.getId(),
-				job.getUrls().size());
-		this.currentJobs.put(job.getId(), currentJob);
+		Long id = job.getId();
+		this.jobCounters.put(id, new JobConter(job.getUrls().size()));
+
+		Rule rule = this.rule.get();
+		Action action = rule.getAction();
+		Map<String, Object> websiteProperties = rule.getWebsiteProperties();
+
 		Runnable task = null;
-		Action action = this.rule.getAction();
-		Map<String, Object> websiteProperties = this.rule
-				.getWebsiteProperties();
 		for (CrawlURL crawlURL : job.getUrls()) {
-			task = new PriorityWorkingThread(THREAD_PRIORITY_MEDIUM, action,
-					new ActionContext(crawlURL, websiteProperties, slotContext,
-							currentJob));
+			task = new PriorityWorkingThread(id, THREAD_PRIORITY_MEDIUM,
+					action, new ActionContext(crawlURL, websiteProperties,
+							slotContext));
 			this.threadPool.submit(task);
 		}
 	}
@@ -152,80 +174,86 @@ public class DefaultSlot implements Slot {
 
 	@Override
 	public JobResult runJob(Job job) {
-		ThreadSafeCurrentJob currentJob = new ThreadSafeCurrentJob(job.getId(),
-				job.getUrls().size());
-		this.currentJobs.put(job.getId(), currentJob);
+		Long id = job.getId();
+		this.jobCounters.put(id, new JobConter(job.getUrls().size()));
+
+		Rule rule = this.rule.get();
+		Action action = rule.getAction();
+		Map<String, Object> websiteProperties = rule.getWebsiteProperties();
+
 		JobResult jobResult = this.initEmptyJobResult(job);
 		Runnable task = null;
 		ActionContext context = null;
-		Action action = this.rule.getAction();
-		Map<String, Object> websiteProperties = this.rule
-				.getWebsiteProperties();
-		List<Future<?>> futures=new ArrayList<Future<?>>();
+		List<Future<?>> futures = new ArrayList<Future<?>>();
+
 		for (CrawlURL crawlURL : job.getUrls()) {
-			context=new ActionContext(crawlURL, websiteProperties, slotContext,
-					currentJob);
-			context.getUrlcontext().put(ActionContextConstants.KEY_JOB_RESULT,jobResult);
-			task=new PriorityWorkingThread(THREAD_PRIORITY_HIGH, action, context);
+			context = new ActionContext(crawlURL, websiteProperties,
+					slotContext);
+			context.getUrlcontext().put(ActionContextConstants.KEY_JOB_RESULT,
+					jobResult);
+			task = new PriorityWorkingThread(id, THREAD_PRIORITY_HIGH, action,
+					context);
 			futures.add(this.threadPool.submit(task));
 		}
-		
-		//等待所有任务完成
-		for(Future<?> future:futures){
+
+		// 等待所有任务完成
+		for (Future<?> future : futures) {
 			try {
 				future.get();
 			} catch (Exception e) {
 				e.printStackTrace();
-				//TODO 写日志
+				// TODO 写日志
 			}
 		}
-		
+
 		return jobResult;
 	}
 
 	@Override
 	public JobResult runJob(Job job, long timeout, TimeUnit timeUnit) {
-		ThreadSafeCurrentJob currentJob = new ThreadSafeCurrentJob(job.getId(),
-				job.getUrls().size());
-		this.currentJobs.put(job.getId(), currentJob);
+		Long id = job.getId();
+		this.jobCounters.put(id, new JobConter(job.getUrls().size()));
+
+		Rule rule = this.rule.get();
+		Action action = rule.getAction();
+		Map<String, Object> websiteProperties = rule.getWebsiteProperties();
+
 		JobResult jobResult = this.initEmptyJobResult(job);
 		Runnable task = null;
 		ActionContext context = null;
-		Action action = this.rule.getAction();
-		Map<String, Object> websiteProperties = this.rule
-				.getWebsiteProperties();
-		Collection<Callable<Object>> tasks=new ArrayList<Callable<Object>>();
+		Collection<Callable<Object>> tasks = new ArrayList<Callable<Object>>();
 		for (CrawlURL crawlURL : job.getUrls()) {
-			context=new ActionContext(crawlURL, websiteProperties, slotContext,
-					currentJob);
-			context.getUrlcontext().put(ActionContextConstants.KEY_JOB_RESULT,jobResult);
-			task=new PriorityWorkingThread(THREAD_PRIORITY_HIGH, action, context);
+			context = new ActionContext(crawlURL, websiteProperties,
+					slotContext);
+			context.getUrlcontext().put(ActionContextConstants.KEY_JOB_RESULT,
+					jobResult);
+			task = new PriorityWorkingThread(id, THREAD_PRIORITY_HIGH, action,
+					context);
 			tasks.add(Executors.callable(task));
 		}
-		List<Future<Object>> futures=null;
+		List<Future<Object>> futures = null;
 		try {
-			futures = this.threadPool.invokeAll(tasks,timeout,timeUnit);
+			futures = this.threadPool.invokeAll(tasks, timeout, timeUnit);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
-			//TODO 写日志
+			// TODO 写日志
 			return null;
 		}
-		
-		for(Future<Object> future:futures){
+
+		for (Future<Object> future : futures) {
 			future.cancel(true);
 		}
-		
+
 		this.threadPool.purge();
-		
+
 		return jobResult;
 	}
 
 	@Override
 	public int getJobCount() {
 		int jobCount = 0;
-		for (Map.Entry<Long, ThreadSafeCurrentJob> entry : currentJobs
-				.entrySet()) {
-			if (entry.getValue().getTodoSize() > 0)
+		for (Map.Entry<Long, JobConter> entry : jobCounters.entrySet()) {
+			if (entry.getValue().todo.get() > 0)
 				jobCount++;
 		}
 		return jobCount;
@@ -235,15 +263,12 @@ public class DefaultSlot implements Slot {
 	public List<CurrentJob> getCurrentJob() {
 		List<CurrentJob> result = new ArrayList<CurrentJob>();
 		Set<Long> tobeDeleted = new HashSet<Long>();
-		CurrentJob stored = null;
-		PlainCurrentJob tmp = null;
-		for (Map.Entry<Long, ThreadSafeCurrentJob> entry : currentJobs
-				.entrySet()) {
-			stored = entry.getValue();
-			tmp = new PlainCurrentJob();
-			tmp.setJobId(stored.getJobId());
-			tmp.setTotalSize(stored.getTotalSize());
-			tmp.setTodoSize(stored.getTodoSize());
+		CurrentJob tmp = null;
+		for (Map.Entry<Long, JobConter> entry : jobCounters.entrySet()) {
+			tmp = new CurrentJob();
+			tmp.setJobId(entry.getKey());
+			tmp.setTotalSize(entry.getValue().totalSize);
+			tmp.setTodoSize(entry.getValue().todo.get());
 			result.add(tmp);
 
 			if (tmp.getTodoSize() < 1) {// 如果任务已经完成,顺便删除掉
@@ -252,7 +277,7 @@ public class DefaultSlot implements Slot {
 		}
 
 		for (Long jobId : tobeDeleted) {
-			this.currentJobs.remove(jobId);
+			this.jobCounters.remove(jobId);
 		}
 
 		return result;
@@ -260,38 +285,69 @@ public class DefaultSlot implements Slot {
 
 	@Override
 	public void shutdown() {
-		// TODO Auto-generated method stub
-
+		this.shutdown(Integer.MAX_VALUE, TimeUnit.DAYS);
 	}
 
 	@Override
 	public void shutdown(long timeout, TimeUnit timeUnit) {
-		// TODO Auto-generated method stub
+		this.threadPool.shutdown();
+		try {
+			this.threadPool.awaitTermination(timeout, timeUnit);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+			// TODO 写日志
+		}
+	}
 
+	/**
+	 * 将已取消的任务封装为CanceledJob
+	 * 
+	 * @param runnables
+	 * @return
+	 */
+	private List<CanceledJob> handleCanceledJob(List<Runnable> runnables) {
+		List<CanceledJob> result = new ArrayList<CanceledJob>();
+		Map<Long, List<CrawlURL>> jobs = new HashMap<Long, List<CrawlURL>>();
+
+		PriorityWorkingThread task = null;
+		List<CrawlURL> urls = null;
+		CanceledJob canceledJob = null;
+		for (Runnable thread : runnables) {
+			task = (PriorityWorkingThread) thread;
+			urls = jobs.get(task.jobId);
+			if (urls == null) {
+				urls = new ArrayList<CrawlURL>();
+				jobs.put(task.jobId, urls);
+				canceledJob = new CanceledJob();
+				canceledJob.setJobId(task.jobId);
+				canceledJob.setUrls(urls);
+			}
+			urls.add(task.context.getCrawlURL());
+		}
+		return result;
 	}
 
 	@Override
 	public List<CanceledJob> cancelAll() {
-		// TODO Auto-generated method stub
-		return null;
+		List<Runnable> canceled = new ArrayList<Runnable>();
+		this.threadPool.getQueue().drainTo(canceled);
+		return this.handleCanceledJob(canceled);
 	}
 
 	@Override
 	public List<CanceledJob> shutdownNow() {
-		// TODO Auto-generated method stub
-		return null;
+		List<Runnable> canceled = this.threadPool.shutdownNow();
+		return this.handleCanceledJob(canceled);
 	}
 
 	@Override
 	public Long getRuleVersion() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.rule.get().getVersion();
 	}
 
 	@Override
 	public void setRule(Rule rule) {
-		// TODO Auto-generated method stub
-
+		this.rule.set(rule);
 	}
 
 }
