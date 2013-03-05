@@ -4,7 +4,7 @@ import org.rec.planets.mercury.communication.bean.NodeInfo;
 import org.rec.planets.mercury.communication.bean.JobInfo;
 
 /**
- * 请求服务
+ * slave-->master 拉取任务
  * 
  * @author rec
  * 

@@ -6,7 +6,7 @@ import org.rec.planets.mercury.communication.bean.JobResult;
 
 
 /**
- * 汇报服务
+ * slave --> master 推送结果
  * 
  * @author rec
  * 
