@@ -27,7 +27,7 @@ import org.rec.planets.jupiter.context.ActionContext;
 import org.rec.planets.jupiter.context.ActionContextConstants;
 import org.rec.planets.jupiter.rule.Rule;
 import org.rec.planets.jupiter.rule.RuleConstants;
-import org.rec.planets.jupiter.slot.SlotFactory.RuleVersionHook;
+import org.rec.planets.jupiter.slot.DefaultSlotFactory.RuleVersionHook;
 import org.rec.planets.mercury.communication.bean.CanceledJob;
 import org.rec.planets.mercury.communication.bean.CrawlEntity;
 import org.rec.planets.mercury.communication.bean.CrawlPropagation;

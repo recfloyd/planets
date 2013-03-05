@@ -16,7 +16,7 @@ public class NodeInfo  extends AbstractBean implements Serializable {
 	/**
 	 * 规则版本
 	 */
-	private Map<Short, Integer> ruleVersions;
+	private Map<Short, Long> ruleVersions;
 	/**
 	 * 网站统计
 	 */
@@ -30,11 +30,11 @@ public class NodeInfo  extends AbstractBean implements Serializable {
 		this.nodeId = nodeId;
 	}
 
-	public Map<Short, Integer> getRuleVersions() {
+	public Map<Short, Long> getRuleVersions() {
 		return ruleVersions;
 	}
 
-	public void setRuleVersions(Map<Short, Integer> ruleVersions) {
+	public void setRuleVersions(Map<Short, Long> ruleVersions) {
 		this.ruleVersions = ruleVersions;
 	}
 

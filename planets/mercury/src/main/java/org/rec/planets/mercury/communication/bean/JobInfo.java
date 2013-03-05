@@ -2,6 +2,7 @@ package org.rec.planets.mercury.communication.bean;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
 import org.rec.planets.mercury.domain.AbstractBean;
 import org.rec.planets.mercury.domain.Job;
@@ -15,7 +16,7 @@ import org.rec.planets.mercury.domain.Job;
 public class JobInfo extends AbstractBean implements Serializable {
 	private static final long serialVersionUID = -2241341711546183203L;
 	private List<Job> jobs;// 任务
-	private String command;// 命令
+	private Map<String,Object> command;// 命令
 
 	public List<Job> getJobs() {
 		return jobs;
@@ -25,11 +26,11 @@ public class JobInfo extends AbstractBean implements Serializable {
 		this.jobs = jobs;
 	}
 
-	public String getCommand() {
+	public Map<String,Object> getCommand() {
 		return command;
 	}
 
-	public void setCommand(String command) {
+	public void setCommand(Map<String,Object> command) {
 		this.command = command;
 	}
 }

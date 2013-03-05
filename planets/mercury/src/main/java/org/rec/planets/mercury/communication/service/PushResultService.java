@@ -1,5 +1,7 @@
 package org.rec.planets.mercury.communication.service;
 
+import java.util.Map;
+
 import org.rec.planets.mercury.communication.bean.JobResult;
 
 
@@ -10,5 +12,5 @@ import org.rec.planets.mercury.communication.bean.JobResult;
  * 
  */
 public interface PushResultService {
-	String push(JobResult jobResult);
+	Map<String,Object> push(JobResult jobResult);
 }

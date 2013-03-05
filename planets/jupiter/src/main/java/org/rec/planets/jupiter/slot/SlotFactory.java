@@ -1,24 +1,11 @@
 package org.rec.planets.jupiter.slot;
 
-import org.rec.planets.jupiter.rule.RuleVersionToDestroyEvent;
-import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.context.ApplicationEventPublisherAware;
+import java.util.Map;
 
-public class SlotFactory implements ApplicationEventPublisherAware {
-	class RuleVersionHook {
-		void destroyRuleVersion(Short websiteId, Long version) {
-			applicationEventPublisher
-					.publishEvent(new RuleVersionToDestroyEvent(websiteId,
-							version));
-		}
-	}
+public interface SlotFactory {
+	Slot getSlot(Short websiteId, String[] resources) throws Exception;
 
-	private ApplicationEventPublisher applicationEventPublisher;
+	void updateRule(Short websiteId, String[] resources) throws Exception;
 
-	@Override
-	public void setApplicationEventPublisher(
-			ApplicationEventPublisher applicationEventPublisher) {
-		this.applicationEventPublisher = applicationEventPublisher;
-	}
-
+	Map<Short, Long> getVersions();
 }
