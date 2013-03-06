@@ -9,5 +9,5 @@ import org.rec.planets.jupiter.context.ActionContext;
  *
  */
 public interface Interceptor {
-	void invoke(Action processor,ActionContext context) throws Exception;
+	void invoke(Action action,ActionContext context) throws Exception;
 }
