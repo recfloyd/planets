@@ -5,10 +5,10 @@ import org.rec.planets.jupiter.action.interceptor.Interceptor;
 import org.rec.planets.jupiter.action.network.bean.Response;
 import org.rec.planets.jupiter.context.ActionContext;
 import org.rec.planets.jupiter.context.ActionContextConstants;
-import org.rec.planets.jupiter.context.accessor.ContextReader;
 import org.rec.planets.jupiter.slot.snapshot.WebsiteSnapshotFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 
 /**
  * 带宽统计拦截器,该拦截器适合紧紧包装住下载器
@@ -16,11 +16,10 @@ import org.slf4j.LoggerFactory;
  * @author rec
  * 
  */
-public class BandwidthStatInterceptor implements Interceptor {
+public class BandwidthStatInterceptor extends AbstractResponseReadable
+		implements Interceptor {
 	private static final Logger logger = LoggerFactory
 			.getLogger(BandwidthStatInterceptor.class);
-	private String resultKey;
-	private ContextReader contextReader;
 
 	@Override
 	public void invoke(Action action, ActionContext context) throws Exception {
@@ -39,20 +38,17 @@ public class BandwidthStatInterceptor implements Interceptor {
 		action.execute(context);
 		time = System.currentTimeMillis() - time;
 
-		Response<?> response = (Response<?>) contextReader.read(context,
-				resultKey);
+		Response<?> response = getResponse(context);
+
+		if (response == null)
+			return;
+
 		int statusCode = response.getStatusCode();
-		if (statusCode / 100 == 2) {
+
+		HttpStatus.Series series = HttpStatus.Series.valueOf(statusCode);
+
+		if (series == HttpStatus.Series.SUCCESSFUL) {
 			websiteSnapshotFactory.record(response.getContentLength(), time);
 		}
 	}
-
-	public void setResultKey(String resultKey) {
-		this.resultKey = resultKey;
-	}
-
-	public void setContextReader(ContextReader contextReader) {
-		this.contextReader = contextReader;
-	}
-
 }

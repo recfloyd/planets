@@ -7,8 +7,9 @@ import org.rec.planets.jupiter.context.ActionContext;
 
 /**
  * 包装了一组拦截器和一个核心操作的处理器.类似于Struts中将一组Interceptor包装到一个Action上
+ * 
  * @author rec
- *
+ * 
  */
 public class InterceptorChainSupportedAction implements Action {
 	private Action action;
@@ -18,7 +19,9 @@ public class InterceptorChainSupportedAction implements Action {
 	@Override
 	public void execute(ActionContext context) throws Exception {
 		Action wrapped = action;
-		for (Interceptor interceptor : interceptors) {
+		Interceptor interceptor = null;
+		for (int i = interceptors.size() - 1; i > -1; i--) {
+			interceptor = interceptors.get(i);
 			wrapped = new InterceptedAction(wrapped, interceptor);
 		}
 		wrapped.execute(context);

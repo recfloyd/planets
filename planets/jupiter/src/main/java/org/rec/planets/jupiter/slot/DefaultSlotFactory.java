@@ -1,6 +1,8 @@
 package org.rec.planets.jupiter.slot;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -8,6 +10,9 @@ import java.util.concurrent.ConcurrentMap;
 import org.rec.planets.jupiter.rule.Rule;
 import org.rec.planets.jupiter.rule.RuleFactory;
 import org.rec.planets.jupiter.rule.RuleVersionToDestroyEvent;
+import org.rec.planets.mercury.communication.bean.snapshot.CurrentJobSnapshot;
+import org.rec.planets.mercury.communication.bean.snapshot.JobResultSnapshot;
+import org.rec.planets.mercury.communication.bean.snapshot.WebsiteSnapshot;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
@@ -77,7 +82,7 @@ public class DefaultSlotFactory implements SlotFactory,
 	}
 
 	@Override
-	public Map<Short, Long> getVersions() {
+	public Map<Short, Long> getRuleVersions() {
 		Map<Short, Long> result = new HashMap<Short, Long>(slots.size());
 		for (Map.Entry<Short, Slot> entry : slots.entrySet()) {
 			result.put(entry.getKey(), entry.getValue().getRuleVersion());
@@ -93,6 +98,33 @@ public class DefaultSlotFactory implements SlotFactory,
 	public void setRuleFactory(RuleFactory ruleFactory) {
 		this.ruleFactory = ruleFactory;
 		hook = new RuleVersionHook();
+	}
+
+	@Override
+	public List<JobResultSnapshot> getJobResultSnapshots() {
+		List<JobResultSnapshot> result = new ArrayList<JobResultSnapshot>();
+		for (Slot slot : slots.values()) {
+			result.addAll(slot.getJobResultSnapshots());
+		}
+		return result;
+	}
+
+	@Override
+	public List<CurrentJobSnapshot> getCurrentJobSnapshots() {
+		List<CurrentJobSnapshot> result = new ArrayList<CurrentJobSnapshot>();
+		for (Slot slot : slots.values()) {
+			result.addAll(slot.getCurrentJobSnapshot());
+		}
+		return result;
+	}
+
+	@Override
+	public List<WebsiteSnapshot> getWebsiteSnapshots() {
+		List<WebsiteSnapshot> result = new ArrayList<WebsiteSnapshot>();
+		for (Slot slot : slots.values()) {
+			result.add(slot.getWebsiteSnapshot());
+		}
+		return result;
 	}
 
 }
