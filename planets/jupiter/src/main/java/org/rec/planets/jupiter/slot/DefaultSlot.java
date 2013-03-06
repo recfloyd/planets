@@ -1,7 +1,6 @@
 package org.rec.planets.jupiter.slot;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -12,7 +11,6 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
@@ -28,11 +26,13 @@ import org.rec.planets.jupiter.context.ActionContextConstants;
 import org.rec.planets.jupiter.rule.Rule;
 import org.rec.planets.jupiter.rule.RuleConstants;
 import org.rec.planets.jupiter.slot.DefaultSlotFactory.RuleVersionHook;
+import org.rec.planets.jupiter.slot.snapshot.CurrentJobSnapshotFactory;
+import org.rec.planets.jupiter.slot.snapshot.JobResultSnapshotFactory;
+import org.rec.planets.jupiter.slot.snapshot.WebsiteSnapshotFactory;
 import org.rec.planets.mercury.communication.bean.CanceledJob;
-import org.rec.planets.mercury.communication.bean.CrawlEntity;
-import org.rec.planets.mercury.communication.bean.CrawlPropagation;
-import org.rec.planets.mercury.communication.bean.CurrentJob;
-import org.rec.planets.mercury.communication.bean.JobResult;
+import org.rec.planets.mercury.communication.bean.snapshot.CurrentJobSnapshot;
+import org.rec.planets.mercury.communication.bean.snapshot.JobResultSnapshot;
+import org.rec.planets.mercury.communication.bean.snapshot.WebsiteSnapshot;
 import org.rec.planets.mercury.concurrent.PausableThreadPoolExecutor;
 import org.rec.planets.mercury.domain.CrawlURL;
 import org.rec.planets.mercury.domain.Job;
@@ -45,9 +45,11 @@ public class DefaultSlot implements Slot {
 	private AtomicReference<Rule> rule;
 	private final PausableThreadPoolExecutor threadPool;
 	private final ConcurrentMap<String, Object> slotContext;
-	private final Map<Long, JobConter> jobCounters;
 	private final ConcurrentMap<Long, AtomicInteger> versionCounters;
 	private final RuleVersionHook hook;
+	private final WebsiteSnapshotFactory websiteSnapshotFactory;
+	private final Map<Long, JobResultSnapshotFactory> jobResultSnapshotFactories;
+	private final Map<Long, CurrentJobSnapshotFactory> currentJobSnapshotFactories;
 
 	public DefaultSlot(Rule rule, RuleVersionHook hook) {
 		this.websiteId = rule.getWebsiteId();
@@ -64,24 +66,10 @@ public class DefaultSlot implements Slot {
 		threadPool = new PausableThreadPoolExecutor(maxThread, maxThread, 0,
 				TimeUnit.MILLISECONDS, new PriorityBlockingQueue<Runnable>());
 		slotContext = new ConcurrentHashMap<String, Object>();
-		jobCounters = new ConcurrentHashMap<Long, JobConter>();
 		versionCounters = new ConcurrentHashMap<Long, AtomicInteger>();
-	}
-
-	/**
-	 * 任务执行情况计数器
-	 * 
-	 * @author rec
-	 * 
-	 */
-	private final class JobConter {
-		private final int totalSize;
-		private AtomicInteger todo;
-
-		private JobConter(int totalSize) {
-			this.totalSize = totalSize;
-			this.todo = new AtomicInteger(totalSize);
-		}
+		websiteSnapshotFactory = new WebsiteSnapshotFactory(websiteId);
+		jobResultSnapshotFactories = new ConcurrentHashMap<Long, JobResultSnapshotFactory>();
+		currentJobSnapshotFactories = new ConcurrentHashMap<Long, CurrentJobSnapshotFactory>();
 	}
 
 	/**
@@ -106,7 +94,7 @@ public class DefaultSlot implements Slot {
 						action.execute(context);
 						return null;
 					} finally {
-						if (jobCounters.get(jobId).todo.decrementAndGet() <= 0) {
+						if (currentJobSnapshotFactories.get(jobId).doneOne() <= 0) {
 							// TODO: 一个任务已经完成
 							if (versionCounters.get(version).decrementAndGet() <= 0) {
 								if (!version.equals(rule.get().getVersion())) {
@@ -160,7 +148,6 @@ public class DefaultSlot implements Slot {
 	public void submitJob(Job job) {
 		Long id = job.getId();
 		List<CrawlURL> urls = job.getUrls();
-		this.jobCounters.put(id, new JobConter(urls.size()));
 
 		Rule rule = this.rule.get();
 		Action action = rule.getAction();
@@ -169,38 +156,40 @@ public class DefaultSlot implements Slot {
 		this.versionCounters.putIfAbsent(version, new AtomicInteger(0));
 		this.versionCounters.get(version).incrementAndGet();
 
+		JobResultSnapshotFactory jobResultSnapshotFactory = new JobResultSnapshotFactory(
+				id);
+		CurrentJobSnapshotFactory currentJobSnapshotFactory = new CurrentJobSnapshotFactory(
+				id, urls.size());
+
+		this.jobResultSnapshotFactories.put(id, jobResultSnapshotFactory);
+		this.currentJobSnapshotFactories.put(id, currentJobSnapshotFactory);
+
 		PriorityFutureTask task = null;
+		ActionContext context = null;
 		for (CrawlURL crawlURL : urls) {
-			task = new PriorityFutureTask(
-					id,
-					THREAD_PRIORITY_MEDIUM,
-					action,
-					new ActionContext(crawlURL, websiteProperties, slotContext),
-					version);
+			context = new ActionContext(crawlURL, websiteProperties,
+					slotContext);
+			context.getUrlcontext().put(
+					ActionContextConstants.KEY_JOB_RESULT_SNAPSHORT_FACTORY,
+					jobResultSnapshotFactory);
+			context.getUrlcontext().put(
+					ActionContextConstants.KEY_CURRENT_JOB_SNAPSHOT_FACTORY,
+					currentJobSnapshotFactory);
+			context.getUrlcontext().put(
+					ActionContextConstants.KEY_WEBSITE_SNAPSHOT_FACTORY,
+					websiteSnapshotFactory);
+			task = new PriorityFutureTask(id, THREAD_PRIORITY_HIGH, action,
+					context, version);
+			task = new PriorityFutureTask(id, THREAD_PRIORITY_MEDIUM, action,
+					context, version);
 			this.threadPool.execute(task);
 		}
 	}
 
-	private JobResult initEmptyJobResult(Job job) {
-		JobResult jobResult = new JobResult();
-		jobResult.setJobId(job.getId());
-		// TODO:nodeId
-		jobResult.setCreateTime(new Date());
-		jobResult
-				.setCrawlPropagations(new CopyOnWriteArrayList<CrawlPropagation>());
-		jobResult.setCrawlEntities(new CopyOnWriteArrayList<CrawlEntity>());
-		jobResult.setUnmodified(new CopyOnWriteArrayList<Long>());
-		jobResult.setDisabled(new CopyOnWriteArrayList<Long>());
-		jobResult.setDownloadFailed(new CopyOnWriteArrayList<Long>());
-		jobResult.setProcessFailed(new CopyOnWriteArrayList<Long>());
-		return jobResult;
-	}
-
 	@Override
-	public JobResult runJob(Job job) {
+	public JobResultSnapshot runJob(Job job) {
 		Long id = job.getId();
 		List<CrawlURL> urls = job.getUrls();
-		this.jobCounters.put(id, new JobConter(urls.size()));
 
 		Rule rule = this.rule.get();
 		Action action = rule.getAction();
@@ -209,7 +198,13 @@ public class DefaultSlot implements Slot {
 		this.versionCounters.putIfAbsent(version, new AtomicInteger(0));
 		this.versionCounters.get(version).incrementAndGet();
 
-		JobResult jobResult = this.initEmptyJobResult(job);
+		JobResultSnapshotFactory jobResultSnapshotFactory = new JobResultSnapshotFactory(
+				id);
+		CurrentJobSnapshotFactory currentJobSnapshotFactory = new CurrentJobSnapshotFactory(
+				id, urls.size());
+
+		this.currentJobSnapshotFactories.put(id, currentJobSnapshotFactory);
+
 		PriorityFutureTask task = null;
 		ActionContext context = null;
 		List<PriorityFutureTask> futures = new ArrayList<PriorityFutureTask>(
@@ -218,8 +213,15 @@ public class DefaultSlot implements Slot {
 		for (CrawlURL crawlURL : urls) {
 			context = new ActionContext(crawlURL, websiteProperties,
 					slotContext);
-			context.getUrlcontext().put(ActionContextConstants.KEY_JOB_RESULT,
-					jobResult);
+			context.getUrlcontext().put(
+					ActionContextConstants.KEY_JOB_RESULT_SNAPSHORT_FACTORY,
+					jobResultSnapshotFactory);
+			context.getUrlcontext().put(
+					ActionContextConstants.KEY_CURRENT_JOB_SNAPSHOT_FACTORY,
+					currentJobSnapshotFactory);
+			context.getUrlcontext().put(
+					ActionContextConstants.KEY_WEBSITE_SNAPSHOT_FACTORY,
+					websiteSnapshotFactory);
 			task = new PriorityFutureTask(id, THREAD_PRIORITY_HIGH, action,
 					context, version);
 			futures.add(task);
@@ -236,14 +238,15 @@ public class DefaultSlot implements Slot {
 			}
 		}
 
-		return jobResult;
+		this.currentJobSnapshotFactories.remove(id);
+
+		return jobResultSnapshotFactory.getSnapshot();
 	}
 
 	@Override
-	public JobResult runJob(Job job, long timeout, TimeUnit timeUnit) {
+	public JobResultSnapshot runJob(Job job, long timeout, TimeUnit timeUnit) {
 		Long id = job.getId();
 		List<CrawlURL> urls = job.getUrls();
-		this.jobCounters.put(id, new JobConter(urls.size()));
 
 		Rule rule = this.rule.get();
 		Action action = rule.getAction();
@@ -252,7 +255,13 @@ public class DefaultSlot implements Slot {
 		this.versionCounters.putIfAbsent(version, new AtomicInteger(0));
 		this.versionCounters.get(version).incrementAndGet();
 
-		JobResult jobResult = this.initEmptyJobResult(job);
+		JobResultSnapshotFactory jobResultSnapshotFactory = new JobResultSnapshotFactory(
+				id);
+		CurrentJobSnapshotFactory currentJobSnapshotFactory = new CurrentJobSnapshotFactory(
+				id, urls.size());
+
+		this.currentJobSnapshotFactories.put(id, currentJobSnapshotFactory);
+
 		PriorityFutureTask task = null;
 		ActionContext context = null;
 		List<PriorityFutureTask> futures = new ArrayList<PriorityFutureTask>(
@@ -261,8 +270,15 @@ public class DefaultSlot implements Slot {
 		for (CrawlURL crawlURL : urls) {
 			context = new ActionContext(crawlURL, websiteProperties,
 					slotContext);
-			context.getUrlcontext().put(ActionContextConstants.KEY_JOB_RESULT,
-					jobResult);
+			context.getUrlcontext().put(
+					ActionContextConstants.KEY_JOB_RESULT_SNAPSHORT_FACTORY,
+					jobResultSnapshotFactory);
+			context.getUrlcontext().put(
+					ActionContextConstants.KEY_CURRENT_JOB_SNAPSHOT_FACTORY,
+					currentJobSnapshotFactory);
+			context.getUrlcontext().put(
+					ActionContextConstants.KEY_WEBSITE_SNAPSHOT_FACTORY,
+					websiteSnapshotFactory);
 			task = new PriorityFutureTask(id, THREAD_PRIORITY_HIGH, action,
 					context, version);
 			futures.add(task);
@@ -282,20 +298,20 @@ public class DefaultSlot implements Slot {
 				nanos -= now - lastTime;
 				lastTime = now;
 				if (nanos <= 0)
-					return jobResult;
+					return jobResultSnapshotFactory.getSnapshot();
 			}
 
 			for (PriorityFutureTask f : futures) {
 				if (!f.isDone()) {
 					if (nanos <= 0)
-						return jobResult;
+						return jobResultSnapshotFactory.getSnapshot();
 					try {
 						f.get(nanos, TimeUnit.NANOSECONDS);
 					} catch (InterruptedException ignore) {
 					} catch (CancellationException ignore) {
 					} catch (ExecutionException ignore) {
 					} catch (TimeoutException toe) {
-						return jobResult;
+						return jobResultSnapshotFactory.getSnapshot();
 					}
 					long now = System.nanoTime();
 					nanos -= now - lastTime;
@@ -303,7 +319,7 @@ public class DefaultSlot implements Slot {
 				}
 			}
 			done = true;
-			return jobResult;
+			return jobResultSnapshotFactory.getSnapshot();
 		} finally {
 			if (!done) {
 				for (PriorityFutureTask f : futures)
@@ -317,32 +333,30 @@ public class DefaultSlot implements Slot {
 	@Override
 	public int getJobCount() {
 		int jobCount = 0;
-		for (Map.Entry<Long, JobConter> entry : jobCounters.entrySet()) {
-			if (entry.getValue().todo.get() > 0)
+		for (CurrentJobSnapshotFactory currentJobSnapshotFactory : currentJobSnapshotFactories
+				.values()) {
+			if (currentJobSnapshotFactory.getTodoSize() > 0)
 				jobCount++;
 		}
 		return jobCount;
 	}
 
 	@Override
-	public List<CurrentJob> getCurrentJob() {
-		List<CurrentJob> result = new ArrayList<CurrentJob>();
+	public List<CurrentJobSnapshot> getCurrentJobSnapshot() {
+		List<CurrentJobSnapshot> result = new ArrayList<CurrentJobSnapshot>();
 		Set<Long> tobeDeleted = new HashSet<Long>();
-		CurrentJob tmp = null;
-		for (Map.Entry<Long, JobConter> entry : jobCounters.entrySet()) {
-			tmp = new CurrentJob();
-			tmp.setJobId(entry.getKey());
-			tmp.setTotalSize(entry.getValue().totalSize);
-			tmp.setTodoSize(entry.getValue().todo.get());
+		CurrentJobSnapshot tmp = null;
+		for (Map.Entry<Long, CurrentJobSnapshotFactory> entry : currentJobSnapshotFactories
+				.entrySet()) {
+			tmp = entry.getValue().getSnapshot();
 			result.add(tmp);
-
 			if (tmp.getTodoSize() < 1) {// 如果任务已经完成,顺便删除掉
 				tobeDeleted.add(entry.getKey());
 			}
 		}
 
 		for (Long jobId : tobeDeleted) {
-			this.jobCounters.remove(jobId);
+			this.currentJobSnapshotFactories.remove(jobId);
 		}
 
 		return result;
@@ -413,6 +427,36 @@ public class DefaultSlot implements Slot {
 	@Override
 	public void setRule(Rule rule) {
 		this.rule.set(rule);
+	}
+
+	@Override
+	public WebsiteSnapshot getWebsiteSnapshot() {
+		return websiteSnapshotFactory.getsSnapshot();
+	}
+
+	@Override
+	public List<JobResultSnapshot> getJobResultSnapshots() {
+		List<JobResultSnapshot> result = new ArrayList<JobResultSnapshot>();
+		List<Long> tobeDeleted = new ArrayList<Long>();
+		Long jobId = null;
+		CurrentJobSnapshotFactory currentJobSnapshotFactory = null;
+		for (Map.Entry<Long, JobResultSnapshotFactory> entry : jobResultSnapshotFactories
+				.entrySet()) {
+			jobId = entry.getKey();
+			result.add(entry.getValue().getSnapshot());
+
+			currentJobSnapshotFactory = currentJobSnapshotFactories.get(jobId);
+			if (currentJobSnapshotFactory == null
+					|| currentJobSnapshotFactory.getTodoSize() < 1) {
+				tobeDeleted.add(jobId);
+			}
+		}
+
+		for (Long id : tobeDeleted) {
+			jobResultSnapshotFactories.remove(id);
+		}
+
+		return result;
 	}
 
 }

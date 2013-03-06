@@ -5,8 +5,9 @@ import java.util.concurrent.TimeUnit;
 
 import org.rec.planets.jupiter.rule.Rule;
 import org.rec.planets.mercury.communication.bean.CanceledJob;
-import org.rec.planets.mercury.communication.bean.CurrentJob;
-import org.rec.planets.mercury.communication.bean.JobResult;
+import org.rec.planets.mercury.communication.bean.snapshot.CurrentJobSnapshot;
+import org.rec.planets.mercury.communication.bean.snapshot.JobResultSnapshot;
+import org.rec.planets.mercury.communication.bean.snapshot.WebsiteSnapshot;
 import org.rec.planets.mercury.domain.Job;
 
 /**
@@ -75,7 +76,7 @@ public interface Slot {
 	 * @param job
 	 * @return
 	 */
-	JobResult runJob(Job job);
+	JobResultSnapshot runJob(Job job);
 
 	/**
 	 * 同步执行一个任务,如果任务超时则取消
@@ -85,7 +86,7 @@ public interface Slot {
 	 * @param timeUnit
 	 * @return
 	 */
-	JobResult runJob(Job job, long timeout, TimeUnit timeUnit);
+	JobResultSnapshot runJob(Job job, long timeout, TimeUnit timeUnit);
 
 	/**
 	 * 返回任务总数
@@ -99,7 +100,21 @@ public interface Slot {
 	 * 
 	 * @return
 	 */
-	List<CurrentJob> getCurrentJob();
+	List<CurrentJobSnapshot> getCurrentJobSnapshot();
+
+	/**
+	 * 返回网站带宽数据
+	 * 
+	 * @return
+	 */
+	WebsiteSnapshot getWebsiteSnapshot();
+
+	/**
+	 * 返回任务结果
+	 * 
+	 * @return
+	 */
+	List<JobResultSnapshot> getJobResultSnapshots();
 
 	/**
 	 * 平滑关闭任务槽

@@ -1,7 +1,7 @@
 package org.rec.planets.mercury.communication.service;
 
-import org.rec.planets.mercury.communication.bean.NodeInfo;
-import org.rec.planets.mercury.communication.bean.JobInfo;
+import org.rec.planets.mercury.communication.bean.pack.JobPack;
+import org.rec.planets.mercury.communication.bean.pack.PollPack;
 
 /**
  * slave-->master 拉取任务
@@ -10,5 +10,5 @@ import org.rec.planets.mercury.communication.bean.JobInfo;
  * 
  */
 public interface PollJobService {
-	JobInfo poll(NodeInfo nodeInfo);
+	JobPack poll(PollPack pollPack);
 }
