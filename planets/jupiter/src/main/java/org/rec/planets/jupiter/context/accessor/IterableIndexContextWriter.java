@@ -19,4 +19,14 @@ public class IterableIndexContextWriter implements ContextWriter {
 		BeanWrapper bw = new BeanWrapperImpl(context);
 		bw.setPropertyValue(newKey, result);
 	}
+
+	@Override
+	public Object remove(ActionContext context, String key) {
+		String newKey = String.format(key, IterableItemStackHolder.getItem()
+				.getIndex());
+		BeanWrapper bw = new BeanWrapperImpl(context);
+		Object value = bw.getPropertyValue(newKey);
+		bw.setPropertyValue(newKey, null);
+		return value;
+	}
 }

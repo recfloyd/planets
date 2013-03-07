@@ -1,6 +1,6 @@
 package org.rec.planets.jupiter.action.assemble;
 
-import org.rec.planets.jupiter.action.AbstractReadWriteAction;
+import org.rec.planets.jupiter.action.AbstractReadProcessWriteAction;
 import org.rec.planets.jupiter.context.ActionContext;
 
 /**
@@ -9,7 +9,7 @@ import org.rec.planets.jupiter.context.ActionContext;
  * @author rec
  * 
  */
-public class PropertySetAssambler extends AbstractReadWriteAction {
+public class PropertySetAssambler extends AbstractReadProcessWriteAction {
 
 	@Override
 	protected Object processInternal(ActionContext context, Object source)

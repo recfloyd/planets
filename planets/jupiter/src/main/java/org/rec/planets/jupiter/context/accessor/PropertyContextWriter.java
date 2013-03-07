@@ -14,10 +14,15 @@ public class PropertyContextWriter implements ContextWriter {
 
 	@Override
 	public void write(ActionContext context, String key, Object result) {
-		if (result != null) {
-			BeanWrapper bw = new BeanWrapperImpl(context);
-			bw.setPropertyValue(key, result);
-		}
+		BeanWrapper bw = new BeanWrapperImpl(context);
+		bw.setPropertyValue(key, result);
+	}
 
+	@Override
+	public Object remove(ActionContext context, String key) {
+		BeanWrapper bw = new BeanWrapperImpl(context);
+		Object obj = bw.getPropertyValue(key);
+		bw.setPropertyValue(key, null);
+		return obj;
 	}
 }

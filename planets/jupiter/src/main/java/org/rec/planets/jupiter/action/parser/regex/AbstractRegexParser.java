@@ -1,6 +1,6 @@
 package org.rec.planets.jupiter.action.parser.regex;
 
-import org.rec.planets.jupiter.action.AbstractReadWriteAction;
+import org.rec.planets.jupiter.action.AbstractReadProcessWriteAction;
 import org.rec.planets.jupiter.context.ActionContext;
 import org.rec.planets.mercury.parse.bean.Regex;
 
@@ -10,7 +10,7 @@ import org.rec.planets.mercury.parse.bean.Regex;
  * @author rec
  * 
  */
-public abstract class AbstractRegexParser extends AbstractReadWriteAction {
+public abstract class AbstractRegexParser extends AbstractReadProcessWriteAction {
 	protected Regex regex;
 	protected boolean strictRegex;
 

@@ -25,7 +25,7 @@ public class IterableItemStack extends AbstractBean {
 		return this.stack.getLast();
 	}
 	
-	public void clear(){
+	public void pop(){
 		this.stack.pollLast();
 	}
 }

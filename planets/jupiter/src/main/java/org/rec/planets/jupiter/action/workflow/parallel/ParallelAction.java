@@ -2,10 +2,11 @@ package org.rec.planets.jupiter.action.workflow.parallel;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
 import org.rec.planets.jupiter.action.Action;
-import org.rec.planets.jupiter.action.workflow.ProcessCallable;
 import org.rec.planets.jupiter.context.ActionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,18 +26,18 @@ public class ParallelAction implements Action {
 
 	@Override
 	public void execute(final ActionContext context) throws Exception {
-		List<ProcessCallable> tasks = new ArrayList<ProcessCallable>(
-				actions.size());
+		ExecutorService threadPool = threadPoolFactory.getThreadPool(context);
+		List<Future<Void>> reaults = new ArrayList<Future<Void>>(actions.size());
+		ActionFutureTask task = null;
 		for (Action action : actions) {
-			tasks.add(new ProcessCallable(action, context));
+			task = new ActionFutureTask(action, context);
+			threadPool.execute(task);
+			reaults.add(task);
 		}
-
-		List<Future<Void>> reaults = threadPoolFactory.getThreadPool(context)
-				.invokeAll(tasks);
 		for (int i = 0; i < reaults.size(); i++) {
 			try {
-				reaults.get(i);
-			} catch (Exception e) {
+				reaults.get(i).get();
+			} catch (ExecutionException e) {
 				if (omitException) {
 					logger.warn(
 							"error occured and omitted when process crawlURL: "

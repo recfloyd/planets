@@ -28,6 +28,6 @@ public abstract class IterableItemStackHolder {
 	public static final void popItem() {
 		IterableItemStack stack = THREAD_LOCAL.get();
 		if (stack != null)
-			stack.clear();
+			stack.pop();
 	}
 }

@@ -6,6 +6,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
 import org.rec.planets.jupiter.action.Action;
@@ -76,18 +78,20 @@ public abstract class AbstractIterableAction implements Action {
 			Assert.notNull(threadPoolFactory,
 					"property threadPoolFactory is not configed but parallel is true");
 
-			List<IterableProcessCallable> tasks = new ArrayList<IterableProcessCallable>(
+			ExecutorService threadPool = threadPoolFactory
+					.getThreadPool(context);
+			List<Future<Void>> reaults = new ArrayList<Future<Void>>(
 					list.size());
+			IterableActionFutureTask task = null;
 			for (IterableItem item : list) {
-				tasks.add(new IterableProcessCallable(nestedAction, context,
-						item));
+				task = new IterableActionFutureTask(nestedAction, context, item);
+				threadPool.execute(task);
+				reaults.add(task);
 			}
-			List<Future<Void>> reaults = threadPoolFactory.getThreadPool(
-					context).invokeAll(tasks);
 			for (int i = 0; i < reaults.size(); i++) {
 				try {
-					reaults.get(i);
-				} catch (Exception e) {
+					reaults.get(i).get();
+				} catch (ExecutionException e) {
 					if (omitException) {
 						logger.warn(
 								"error occured and omitted when process crawlURL: "
@@ -122,8 +126,6 @@ public abstract class AbstractIterableAction implements Action {
 					IterableItemStackHolder.popItem();
 				}
 			}
-
-			IterableItemStackHolder.popItem();
 		}
 	}
 

@@ -3,7 +3,7 @@ package org.rec.planets.jupiter.action.parser.dom;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.rec.planets.jupiter.action.AbstractReadWriteAction;
+import org.rec.planets.jupiter.action.AbstractReadProcessWriteAction;
 import org.rec.planets.jupiter.action.parser.dom.bean.DomElement;
 import org.rec.planets.jupiter.context.ActionContext;
 import org.springframework.util.CollectionUtils;
@@ -16,7 +16,7 @@ import com.google.common.base.Strings;
  * @author rec
  * 
  */
-public abstract class AbstractDomParser extends AbstractReadWriteAction {
+public abstract class AbstractDomParser extends AbstractReadProcessWriteAction {
 	protected DomElement domElement;
 
 	public void setDomElement(DomElement domElement) {

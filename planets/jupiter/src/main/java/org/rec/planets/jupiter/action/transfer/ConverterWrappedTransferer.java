@@ -1,7 +1,7 @@
 package org.rec.planets.jupiter.action.transfer;
 
 import org.apache.commons.beanutils.Converter;
-import org.rec.planets.jupiter.action.AbstractReadWriteAction;
+import org.rec.planets.jupiter.action.AbstractReadProcessWriteAction;
 import org.rec.planets.jupiter.context.ActionContext;
 import org.springframework.util.Assert;
 
@@ -11,7 +11,7 @@ import org.springframework.util.Assert;
  *
  */
 @SuppressWarnings("rawtypes")
-public class ConverterWrappedTransferer extends AbstractReadWriteAction {
+public class ConverterWrappedTransferer extends AbstractReadProcessWriteAction {
 	private Converter converter;
 	private Class clazz;
 
