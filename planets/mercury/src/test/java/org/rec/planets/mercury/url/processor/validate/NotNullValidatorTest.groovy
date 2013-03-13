@@ -10,9 +10,7 @@ class NotNullValidatorTest {
 	@Before
 	def void before(){
 		notNullValidator=new NotNullValidator()
-		notNullValidator.propertyNames=new HashSet<String>()
-		notNullValidator.propertyNames << "url"
-		notNullValidator.propertyNames << "fingerprint"
+		notNullValidator.propertyNames=["url","fingerprint"] as Set<String>
 	}
 
 	@Test(expected=Exception)

@@ -1,8 +1,13 @@
 package org.rec.planets.mercury.parse.bean;
 
-
 public class OrderedRegex extends Regex implements Comparable<OrderedRegex> {
 	private byte order;
+
+	public OrderedRegex(String expression, int[] groups, int flag,
+			boolean strict, byte order) {
+		super(expression, groups, flag, strict);
+		this.order = order;
+	}
 
 	public OrderedRegex(String expression, int[] groups, int flag, byte order) {
 		super(expression, groups, flag);
@@ -11,6 +16,11 @@ public class OrderedRegex extends Regex implements Comparable<OrderedRegex> {
 
 	public OrderedRegex(String expression, int[] groups, byte order) {
 		super(expression, groups);
+		this.order = order;
+	}
+
+	public OrderedRegex(String expression, boolean strict, byte order) {
+		super(expression, strict);
 		this.order = order;
 	}
 

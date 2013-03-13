@@ -4,11 +4,12 @@ import java.beans.PropertyDescriptor;
 import java.util.Set;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.rec.planets.mercury.domain.AbstractBean;
 import org.rec.planets.mercury.domain.CrawlURL;
 import org.rec.planets.mercury.url.processor.URLProcessor;
 import org.springframework.util.CollectionUtils;
 
-public class DirectPropertiesCopier implements URLProcessor {
+public class DirectPropertiesCopier extends AbstractBean implements URLProcessor {
 	/**
 	 * 如果为空,表示全部copy
 	 */

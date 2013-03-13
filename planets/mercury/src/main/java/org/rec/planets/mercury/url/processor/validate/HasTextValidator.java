@@ -2,6 +2,7 @@ package org.rec.planets.mercury.url.processor.validate;
 
 import java.util.Set;
 
+import org.rec.planets.mercury.domain.AbstractBean;
 import org.rec.planets.mercury.domain.CrawlURL;
 import org.rec.planets.mercury.url.processor.URLProcessor;
 import org.springframework.beans.BeanWrapper;
@@ -9,7 +10,7 @@ import org.springframework.beans.BeanWrapperImpl;
 
 import com.google.common.base.Strings;
 
-public class HasTextValidator implements URLProcessor {
+public class HasTextValidator extends AbstractBean implements URLProcessor {
 	private Set<String> propertyNames;
 
 	@Override

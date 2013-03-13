@@ -1,9 +1,10 @@
 package org.rec.planets.mercury.url.processor.modify;
 
+import org.rec.planets.mercury.domain.AbstractBean;
 import org.rec.planets.mercury.domain.CrawlURL;
 import org.rec.planets.mercury.url.processor.URLProcessor;
 
-public abstract class AbstractModifier implements URLProcessor {
+public abstract class AbstractModifier extends AbstractBean implements URLProcessor {
 
 	@Override
 	public void process(CrawlURL crawlURL, CrawlURL baseURL) throws Exception {

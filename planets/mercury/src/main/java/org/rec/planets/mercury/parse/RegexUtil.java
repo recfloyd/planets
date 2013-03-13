@@ -48,43 +48,52 @@ public abstract class RegexUtil {
 	}
 
 	/**
-	 * 检测字符串与正则表达式是否全量匹配
+	 * 检测一个字符串是否与给定正则匹配
 	 * 
 	 * @param string
 	 * @param regex
 	 * @return
 	 */
-	public static boolean matches(String string, Regex regex) {
-		return getMatcher(string, regex).matches();
+	public static boolean test(String string, Regex regex) {
+		Matcher matcher = getMatcher(string, regex);
+		return regex.isStrict() ? matcher.matches() : matcher.find();
 	}
 
 	/**
-	 * 检测字符串与正则表达式是否部分匹配
+	 * 检测一个字符串是否与给定正则表达式完全匹配
 	 * 
 	 * @param string
 	 * @param regex
 	 * @return
 	 */
-	public static boolean find(String string, Regex regex) {
-		return getMatcher(string, regex).find();
+	public static boolean matches(String string, String regex) {
+		return test(string, new Regex(regex, true));
 	}
 
 	/**
-	 * 根据正则表达式从字符串中抽取字段
+	 * 检测一个字符串是否与给定正则表达式部分匹配
 	 * 
 	 * @param string
 	 * @param regex
-	 * @param strict
-	 *            true为全量匹配,false为部分匹配
 	 * @return
 	 */
-	public static List<String> groupFirstMatch(String string, Regex regex,
-			boolean strict) {
+	public static boolean find(String string, String regex) {
+		return test(string, new Regex(regex, false));
+	}
+
+	/**
+	 * 根据正则表达式从字符串中抽取第一批捕获组
+	 * 
+	 * @param string
+	 * @param regex
+	 * @return
+	 */
+	public static List<String> getFirstGroups(String string, Regex regex) {
 		Matcher matcher = getMatcher(string, regex);
 
 		boolean tag = false;
 
-		tag = strict ? matcher.matches() : matcher.find();
+		tag = regex.isStrict() ? matcher.matches() : matcher.find();
 
 		if (!tag)
 			return null;
@@ -100,13 +109,13 @@ public abstract class RegexUtil {
 	}
 
 	/**
-	 * 根据正则表达式从字符串中抽取字段
+	 * 根据正则表达式从字符串中抽取全部捕获组
 	 * 
 	 * @param string
 	 * @param regex
 	 * @return
 	 */
-	public static List<List<String>> groupAllMatch(String string, Regex regex) {
+	public static List<List<String>> getAllGroups(String string, Regex regex) {
 		Matcher matcher = getMatcher(string, regex);
 		List<List<String>> result = new LinkedList<List<String>>();
 		MatchIterator matchIterator = matcher.findAll();
@@ -134,9 +143,24 @@ public abstract class RegexUtil {
 	 * @param replacement
 	 * @return
 	 */
-	public static String replaceAllMatch(String string, Regex regex,
+	public static String replaceAll(String string, Regex regex,
 			String replacement) {
 		Pattern pattern = getPattern(regex);
+		Replacer replacer = new Replacer(pattern, replacement);
+		return replacer.replace(string);
+	}
+
+	/**
+	 * 替换所有符合正则的字符串
+	 * 
+	 * @param string
+	 * @param regex
+	 * @param replacement
+	 * @return
+	 */
+	public static String replaceAll(String string, String regex,
+			String replacement) {
+		Pattern pattern = getPattern(new Regex(regex));
 		Replacer replacer = new Replacer(pattern, replacement);
 		return replacer.replace(string);
 	}

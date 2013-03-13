@@ -1,12 +1,14 @@
 package org.rec.planets.mercury.url.processor.recognize.fingerprint;
 
+import java.util.Collections;
 import java.util.List;
 
+import org.rec.planets.mercury.domain.AbstractBean;
 import org.rec.planets.mercury.domain.CrawlURL;
 import org.rec.planets.mercury.parse.RegexUtil;
 import org.rec.planets.mercury.parse.URLUtil;
-import org.rec.planets.mercury.parse.bean.OrderedRegex;
 import org.rec.planets.mercury.url.processor.URLProcessor;
+import org.rec.planets.mercury.url.processor.recognize.fingerprint.bean.FingerprintIndicator;
 import org.rec.planets.mercury.url.processor.recognize.fingerprint.calculator.Calculator;
 import org.rec.planets.mercury.url.processor.recognize.fingerprint.combiner.Combiner;
 import org.springframework.util.CollectionUtils;
@@ -19,7 +21,7 @@ import com.google.common.base.Joiner;
  * @author rec
  * 
  */
-public class FingerprintGenerator implements URLProcessor {
+public class FingerprintGenerator extends AbstractBean implements URLProcessor {
 	/**
 	 * 特征值分隔符
 	 */
@@ -27,15 +29,7 @@ public class FingerprintGenerator implements URLProcessor {
 	/**
 	 * 正则表达式组
 	 */
-	private List<OrderedRegex> regexes;
-	/**
-	 * 使用正则匹配时是否严谨匹配
-	 */
-	private boolean strict = true;
-	/**
-	 * 正则是否忽略了域名
-	 */
-	private boolean omitHost = true;
+	private List<FingerprintIndicator> indicators;
 	/**
 	 * 是否允许未知类型
 	 */
@@ -54,12 +48,14 @@ public class FingerprintGenerator implements URLProcessor {
 	private boolean overwriten;
 
 	protected String calculateEigenvalue(CrawlURL crawlURL) throws Exception {
-		String source = omitHost ? URLUtil.getRelativePath(crawlURL.getUrl())
-				: crawlURL.getUrl();
+		String url = crawlURL.getUrl();
+		String omitHostURL = URLUtil.getRelativePath(url);
 		List<String> s = null;
 		String eigenvalue = null;
-		for (OrderedRegex regex : regexes) {
-			s = RegexUtil.groupFirstMatch(source, regex, strict);
+
+		for (FingerprintIndicator indicator : indicators) {
+			s = RegexUtil.getFirstGroups(indicator.isOmitHost() ? url
+					: omitHostURL, indicator.getRegex());
 			if (!CollectionUtils.isEmpty(s))
 				break;
 		}
@@ -92,10 +88,6 @@ public class FingerprintGenerator implements URLProcessor {
 		this.eigenvalueSeperator = eigenvalueSeperator;
 	}
 
-	public void setRegexes(List<OrderedRegex> regexes) {
-		this.regexes = regexes;
-	}
-
 	public void setAllowUnknownType(boolean allowUnknownType) {
 		this.allowUnknownType = allowUnknownType;
 	}
@@ -108,15 +100,12 @@ public class FingerprintGenerator implements URLProcessor {
 		this.calculator = calculator;
 	}
 
-	public void setStrict(boolean strict) {
-		this.strict = strict;
-	}
-
-	public void setOmitHost(boolean omitHost) {
-		this.omitHost = omitHost;
-	}
-
 	public void setOverwriten(boolean overwriten) {
 		this.overwriten = overwriten;
+	}
+
+	public void setIndicators(List<FingerprintIndicator> indicators) {
+		this.indicators = indicators;
+		Collections.sort(this.indicators);
 	}
 }

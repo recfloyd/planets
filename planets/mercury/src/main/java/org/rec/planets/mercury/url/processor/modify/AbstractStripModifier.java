@@ -15,7 +15,7 @@ import com.google.common.base.Joiner;
 public abstract class AbstractStripModifier extends AbstractModifier {
 
 	protected String extractFromRegex(String url, Regex regex) {
-		List<String> s = RegexUtil.groupFirstMatch(url, regex, true);
+		List<String> s = RegexUtil.getFirstGroups(url, regex);
 		if (CollectionUtils.isEmpty(s))
 			return url;
 		else

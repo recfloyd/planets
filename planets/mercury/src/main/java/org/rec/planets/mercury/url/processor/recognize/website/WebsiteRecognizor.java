@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.rec.planets.mercury.domain.CrawlURL;
+import org.rec.planets.mercury.parse.RegexUtil;
 import org.rec.planets.mercury.url.processor.URLProcessor;
 
 /**
@@ -15,9 +16,9 @@ import org.rec.planets.mercury.url.processor.URLProcessor;
  */
 public class WebsiteRecognizor implements URLProcessor {
 	/**
-	 * 网站顶级域名映射,要求顶级域名都是小写的
+	 * 网站域名正则
 	 */
-	private Map<Short, Set<String>> topHostnames;
+	private Map<Short, Set<String>> hostRegexes;
 	/**
 	 * 如果网站id已经存在是否覆盖
 	 */
@@ -27,10 +28,10 @@ public class WebsiteRecognizor implements URLProcessor {
 	public void process(CrawlURL crawlURL, CrawlURL baseURL) throws Exception {
 		if (crawlURL.getWebsiteId() != null && !overwriten)
 			return;
-		String host = new URL(crawlURL.getUrl()).getHost().toLowerCase();
-		for (Map.Entry<Short, Set<String>> entry : topHostnames.entrySet()) {
-			for (String topHost : entry.getValue()) {
-				if (host.endsWith(topHost)) {
+		String host = new URL(crawlURL.getUrl()).getHost();
+		for (Map.Entry<Short, Set<String>> entry : hostRegexes.entrySet()) {
+			for (String hostRegex : entry.getValue()) {
+				if (RegexUtil.matches(host, hostRegex)) {
 					crawlURL.setWebsiteId(entry.getKey());
 					return;
 				}
@@ -41,8 +42,8 @@ public class WebsiteRecognizor implements URLProcessor {
 				+ crawlURL);
 	}
 
-	public void setTopHostnames(Map<Short, Set<String>> topHostnames) {
-		this.topHostnames = topHostnames;
+	public void setHostRegexes(Map<Short, Set<String>> hostRegexes) {
+		this.hostRegexes = hostRegexes;
 	}
 
 	public void setOverwriten(boolean overwriten) {

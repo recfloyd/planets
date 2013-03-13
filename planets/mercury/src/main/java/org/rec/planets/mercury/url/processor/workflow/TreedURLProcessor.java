@@ -1,5 +1,6 @@
 package org.rec.planets.mercury.url.processor.workflow;
 
+import org.rec.planets.mercury.domain.AbstractBean;
 import org.rec.planets.mercury.domain.CrawlURL;
 import org.rec.planets.mercury.tree.TreeNode;
 import org.rec.planets.mercury.tree.TreeNodeTraversalUtil;
@@ -13,7 +14,7 @@ import org.slf4j.LoggerFactory;
  * @author rec
  * 
  */
-public class TreedURLProcessor implements URLProcessor {
+public class TreedURLProcessor extends AbstractBean implements URLProcessor {
 	private static final Logger logger = LoggerFactory
 			.getLogger(TreedURLProcessor.class);
 	private TreeNode<CrawlURL, URLProcessor> tree;
