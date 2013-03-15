@@ -4,10 +4,13 @@ import java.util.Map;
 
 import org.rec.planets.mercury.domain.AbstractBean;
 
+import com.google.common.collect.Multimap;
+
 /**
  * http响应实体
+ * 
  * @author rec
- *
+ * 
  * @param <T>
  */
 public class Response<T> extends AbstractBean {
@@ -15,7 +18,7 @@ public class Response<T> extends AbstractBean {
 	private String contentType;
 	private String contentEncoding;
 	private long contentLength;
-	private Map<String, String> headers;
+	private Multimap<String, String> headers;
 	private Map<String, String> cookies;
 	private T content;
 
@@ -51,11 +54,11 @@ public class Response<T> extends AbstractBean {
 		this.contentLength = contentLength;
 	}
 
-	public Map<String, String> getHeaders() {
+	public Multimap<String, String> getHeaders() {
 		return headers;
 	}
 
-	public void setHeaders(Map<String, String> headers) {
+	public void setHeaders(Multimap<String, String> headers) {
 		this.headers = headers;
 	}
 

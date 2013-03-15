@@ -15,7 +15,7 @@ import com.google.common.collect.Multimap;
 public class Request extends AbstractBean {
 	private RequestMethod method;
 	private String url;
-	private Map<String, String> headers;
+	private Multimap<String, String> headers;
 	private Multimap<String, String> params;
 	private String encoding;
 	private Map<String, String> cookies;
@@ -37,11 +37,11 @@ public class Request extends AbstractBean {
 		this.url = url;
 	}
 
-	public Map<String, String> getHeaders() {
+	public Multimap<String, String> getHeaders() {
 		return headers;
 	}
 
-	public void setHeaders(Map<String, String> headers) {
+	public void setHeaders(Multimap<String, String> headers) {
 		this.headers = headers;
 	}
 
