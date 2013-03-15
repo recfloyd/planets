@@ -140,6 +140,11 @@ public class HC4Client implements Client {
 				emptyResponse.setContentEncoding(contentType.getCharset()
 						.name());
 				emptyResponse.setMimeType(contentType.getMimeType());
+			} else {
+				Header contentEncodingHeader = entity.getContentEncoding();
+				if (contentEncodingHeader != null)
+					emptyResponse.setContentEncoding(contentEncodingHeader
+							.getValue());
 			}
 			emptyResponse.setContentLength(entity.getContentLength());
 		}
