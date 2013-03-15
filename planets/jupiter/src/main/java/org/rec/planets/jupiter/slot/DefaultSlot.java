@@ -12,7 +12,6 @@ import java.util.concurrent.CancellationException;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.TimeUnit;
@@ -36,8 +35,12 @@ import org.rec.planets.mercury.communication.bean.snapshot.WebsiteSnapshot;
 import org.rec.planets.mercury.concurrent.PausableThreadPoolExecutor;
 import org.rec.planets.mercury.domain.CrawlURL;
 import org.rec.planets.mercury.domain.Job;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DefaultSlot implements Slot {
+	private static final Logger logger = LoggerFactory
+			.getLogger(DefaultSlot.class);
 	private static final byte THREAD_PRIORITY_HIGH = 0;
 	private static final byte THREAD_PRIORITY_MEDIUM = 50;
 
@@ -95,10 +98,10 @@ public class DefaultSlot implements Slot {
 						return null;
 					} finally {
 						if (currentJobSnapshotFactories.get(jobId).doneOne() <= 0) {
-							// TODO: 一个任务已经完成
+							// 一个任务已经完成
 							if (versionCounters.get(version).decrementAndGet() <= 0) {
 								if (!version.equals(rule.get().getVersion())) {
-									// TODO: 一个旧版本的规则已经不再被引用,这时候删除并销毁它
+									// 一个旧版本的规则已经不再被引用,这时候删除并销毁它
 									versionCounters.remove(version);
 									hook.destroyRuleVersion(websiteId, version);
 								}
@@ -229,12 +232,13 @@ public class DefaultSlot implements Slot {
 		}
 
 		// 等待所有任务完成
-		for (Future<Void> future : futures) {
+		for (PriorityFutureTask future : futures) {
 			try {
 				future.get();
 			} catch (Exception e) {
-				e.printStackTrace();
-				// TODO 写日志
+				logger.error("task error of crawlURL " + future.crawlURL
+						+ " cancelled", e);
+				future.cancel(true);
 			}
 		}
 
@@ -373,8 +377,7 @@ public class DefaultSlot implements Slot {
 		try {
 			this.threadPool.awaitTermination(timeout, timeUnit);
 		} catch (InterruptedException e) {
-			e.printStackTrace();
-			// TODO 写日志
+			logger.error("error when shutdown threadPool " + this.websiteId, e);
 		}
 	}
 

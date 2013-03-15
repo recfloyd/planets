@@ -1,0 +1,215 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta name="description"
+	content="Salesforce.com 客户安全登录页面。登录到您的 Salesforce.com 客户帐户。" />
+<title>Salesforce.com - 客户安全登录页面</title>
+<link rel="stylesheet" type="text/css" href="/css/security_page.css"
+	media="screen" />
+<link rel="stylesheet" type="text/css" href="/css/glowInput.css"
+	media="screen" />
+<style type="text/css">
+body {
+	background: #ffffff;
+}
+
+#header {
+	background-color: #0e9ecf;
+	border-radius: 10px;
+	-moz-border-radius: 10px;
+	-webkit-border-radius: 10px;
+}
+
+#headertext,#headertext a {
+	color: #ffffff;
+}
+
+#main-logo {
+	background: transparent url('/img/logo.png') no-repeat scroll left top
+}
+
+#contentwrap,.content {
+	border-radius: 18px;
+	-moz-border-radius: 18px;
+	-webkit-border-radius: 18px;
+}
+
+#loginpage .content,#contentwrap {
+	background-color: #ecf4f9;
+}
+
+#contentwrap {
+	border: 1px solid #ecf4f9;
+}
+
+#footer,#footer a {
+	color: #cccccc;
+}
+</style>
+<style type="text/css">
+html {
+	visibility: hidden;
+}
+</style>
+<script type="text/javascript">
+	if (self == top) {
+		document.documentElement.style.visibility = 'visible';
+	} else {
+		document.write = '';
+		top.location = self.location;
+		setTimeout(function() {
+			document.body.innerHTML = '';
+		}, 1);
+		window.self.onload = function(evt) {
+			document.body.innerHTML = '';
+		};
+	}
+</script>
+<script src="/jslibrary/1360895802000/sfdc/JiffyStubs.js"></script>
+<link rel="stylesheet" type="text/css"
+	href="/css/security_page_login.css" media="screen" />
+<style type="text/css">
+#login_form_box {
+	border: 3px solid #0e9ecf;
+}
+
+#login_form_box {
+	border-radius: 18px;
+	-moz-border-radius: 18px;
+	-webkit-border-radius: 18px;
+}
+
+#shoutoutframe {
+	border-radius: 25px;
+	-moz-border-radius: 25px;
+	-webkit-border-radius: 25px;
+}
+
+#infobarframe {
+	border-radius: 25px;
+	-moz-border-radius: 25px;
+	-webkit-border-radius: 25px;
+}
+</style>
+<script type="text/javascript">
+	function handleLogin() {
+		document.login.un.value = document.login.username.value;
+		document.login.width.value = screen.width;
+		document.login.height.value = screen.height;
+	}
+</script>
+<script type="text/javascript" src="/jslibrary/baselogin.js"></script>
+</head>
+<body id="loginpage" onload="if(this.bodyOnLoad) bodyOnLoad();"
+	onunload="if(this.bodyOnUnload) bodyOnUnload();">
+	<div id="pagewrap">
+		<a href="http://www.salesforce.com/cn" id="main-logo"></a>
+		<div id="headerwrap">
+			<div id="header"></div>
+		</div>
+		<!-- .headerwrap -->
+		<div id="contentwrap">
+			<div id="content" class="content">
+				<div id="login_form_box">
+					<form id="login" name="login" method="post"
+						onsubmit="handleLogin();" action="https://login.salesforce.com/"
+						target="_top" autocomplete="off">
+						<fieldset style="display: none">
+							<input type="hidden" name="un" value="" /> <input type="hidden"
+								name="width" value="" /> <input type="hidden" name="height"
+								value="" /> <input type="hidden" name="hasRememberUn"
+								value="true" /> <input type="hidden" name="startURL" value="" />
+							<input type="hidden" name="loginURL" value="" /> <input
+								type="hidden" name="loginType" value="" /> <input type="hidden"
+								name="useSecure" value="true" /> <input type="hidden"
+								name="local" value="" /> <input type="hidden" name="lt"
+								value="standard" /> <input type="hidden" name="qs" value="" />
+							<input type="hidden" name="locale" value="cn" /> <input
+								type="hidden" name="oauth_token" value="" /> <input
+								type="hidden" name="oauth_callback" value="" /> <input
+								type="hidden" name="login" value="" /> <input type="hidden"
+								name="serverid" value="" /> <input type="hidden" name="display"
+								value="page" />
+						</fieldset>
+						<div class="inputs">
+							<div class="inputbox">
+								<p>
+									<label for="username">用户名</label>
+								</p>
+								<span><input class="txtbox glow" type="text"
+									id="username" name="username" value="" /></span>
+							</div>
+							<div class="inputbox">
+								<p>
+									<label for="password">密码</label>
+								</p>
+								<span><input class="txtbox glow" type="password"
+									id="password" name="pw" size="18" autocomplete="off"
+									onkeypress="checkCaps(event)" /></span>
+							</div>
+							<div id="pwcaps" class="pwcaps" style="display: none">
+								<img src="/img/icon/warning16.png" alt="打开了 Caps Lock！"
+									width="16" height="16" /> 打开了 Caps Lock！
+							</div>
+							<div class="inputbox">
+								<input class="checkbox" type="checkbox" id="rememberUn"
+									name="rememberUn" /><label for="rememberUn">记住用户名</label>
+							</div>
+							<div class="inputbox">
+								<input class="loginButton" type="submit" id="Login" name="Login"
+									value="登录" /><a class="forgotpass"
+									href="/secur/forgotpassword.jsp?locale=cn">忘记了密码？</a>
+							</div>
+						</div>
+						<div class="hidesubmit">
+							<input type="image" src="/login/assets/trans.gif" alt="Submit"
+								value="Login" />
+						</div>
+					</form>
+					<div id="signupbox">
+						没有帐户？<a class="signup_link_button"
+							href="https://www.salesforce.com/cn/form/trial/freetrial.jsp?d=70130000000EndO">免费注册。</a>
+					</div>
+				</div>
+				<script type="text/javascript">
+					loader();
+				</script>
+				<iframe id="shoutoutframe"
+					src="https://www.salesforce.com/login-messages/cn/messages.html"
+					scrolling="no" frameborder="0" title="Marketing Messages"></iframe>
+				<iframe id="infobarframe"
+					src="https://www.salesforce.com/login-messages/cn/security.html"
+					scrolling="no" frameborder="0" title="Security Messages"></iframe>
+			</div>
+		</div>
+		<!-- #contentwrap -->
+		<div id="footer">Copyright &copy; 2000-2013 salesforce.com, inc.
+			公司版权所有。保留所有权利。</div>
+		<!-- #footer -->
+	</div>
+	<!-- #pagewrap -->
+
+
+	<!-- Body events -->
+	<script type="text/javascript">
+		function bodyOnLoad() {
+			if (window.PreferenceBits) {
+				window.PreferenceBits.prototype.csrfToken = "null";
+			}
+			;
+			if (window.Jiffy) {
+				if (Jiffy.onLoad)
+					Jiffy.onLoad();
+				if (Jiffy.ui && Jiffy.ui.onLoad)
+					Jiffy.ui.onLoad()
+			}
+		}
+		function bodyOnBeforeUnload() {
+		}
+		function bodyOnFocus() {
+		}
+		function bodyOnUnload() {
+		}
+	</script>
+</body>
+</html>

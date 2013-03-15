@@ -18,7 +18,17 @@
 		<level value="debug" />
 		<appender-ref ref="stdout" />
 	</logger>
-
+	
+	<logger name="org.apache.http.wire" additivity="false">
+		<level value="error" />
+		<appender-ref ref="stdout" />
+	</logger>
+	
+	<logger name="org.apache.http.headers" additivity="false">
+		<level value="debug" />
+		<appender-ref ref="stdout" />
+	</logger>
+	
 	<root>
 		<level value="info" />
 		<appender-ref ref="stdout" />

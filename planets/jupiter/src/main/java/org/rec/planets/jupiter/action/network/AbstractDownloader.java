@@ -7,6 +7,7 @@ import org.rec.planets.jupiter.action.network.client.Client;
 import org.rec.planets.jupiter.action.network.request.RequestBuilder;
 import org.rec.planets.jupiter.context.ActionContext;
 import org.rec.planets.jupiter.context.accessor.AbstractReadWriteSupport;
+import org.springframework.util.Assert;
 
 /**
  * 抽象下载器
@@ -24,6 +25,8 @@ public abstract class AbstractDownloader extends AbstractReadWriteSupport
 	@Override
 	public void execute(ActionContext context) throws Exception {
 		Client client = (Client) getSource(context);
+
+		Assert.notNull(client);
 
 		Request request = requestBuilder.build(context);
 

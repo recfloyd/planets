@@ -11,7 +11,6 @@ import org.apache.http.HttpResponse;
 import org.apache.http.HttpResponseInterceptor;
 import org.apache.http.client.entity.DeflateDecompressingEntity;
 import org.apache.http.client.entity.GzipDecompressingEntity;
-import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.PoolingClientConnectionManager;
 import org.apache.http.protocol.HttpContext;
@@ -27,6 +26,8 @@ import org.rec.planets.jupiter.context.ActionContextConstants;
  * 
  */
 public class HC4ClientFactory implements ClientFactory {
+	private static final int DEFAULT_MAX_TOTAL_CONNECTIONS = 100;
+	private static final int DEFAULT_MAX_CONNECTIONS_PER_ROUTE = 5;
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -37,7 +38,11 @@ public class HC4ClientFactory implements ClientFactory {
 			clientParam = (Map<String, Object>) websitePropertie
 					.get(ActionContextConstants.KEY_CLIENT_PARAM);
 
-		ClientConnectionManager multiThreadCollectionManager = new PoolingClientConnectionManager();
+		PoolingClientConnectionManager multiThreadCollectionManager = new PoolingClientConnectionManager();
+		multiThreadCollectionManager.setMaxTotal(DEFAULT_MAX_TOTAL_CONNECTIONS);
+		multiThreadCollectionManager
+				.setDefaultMaxPerRoute(DEFAULT_MAX_CONNECTIONS_PER_ROUTE);
+
 		DefaultHttpClient httpClient = new DefaultHttpClient(
 				multiThreadCollectionManager);
 		if (clientParam != null)

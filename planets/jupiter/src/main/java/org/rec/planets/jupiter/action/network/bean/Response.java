@@ -15,7 +15,7 @@ import com.google.common.collect.Multimap;
  */
 public class Response<T> extends AbstractBean {
 	private int statusCode;
-	private String contentType;
+	private String mimeType;
 	private String contentEncoding;
 	private long contentLength;
 	private Multimap<String, String> headers;
@@ -30,12 +30,12 @@ public class Response<T> extends AbstractBean {
 		this.statusCode = statusCode;
 	}
 
-	public String getContentType() {
-		return contentType;
+	public String getMimeType() {
+		return mimeType;
 	}
 
-	public void setContentType(String contentType) {
-		this.contentType = contentType;
+	public void setMimeType(String mimeType) {
+		this.mimeType = mimeType;
 	}
 
 	public String getContentEncoding() {

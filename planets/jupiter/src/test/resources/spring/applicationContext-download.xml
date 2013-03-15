@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="
+	http://www.springframework.org/schema/beans	
+	http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.springframework.org/schema/util
+	http://www.springframework.org/schema/util/spring-util.xsd
+	">
+
+	<bean id="loginPage" class="org.rec.planets.mercury.domain.CrawlURL">
+		<property name="id" value="1" />
+		<property name="pageType" value="10" />
+		<property name="url">
+			<value><![CDATA[https://login.salesforce.com/?locale=cn]]></value>
+		</property>
+	</bean>
+
+	<bean id="actionContext" class="org.rec.planets.jupiter.context.ActionContext">
+		<constructor-arg name="crawlURL" ref="loginPage" />
+		<constructor-arg name="websiteProperties" ref="websitePropertie" />
+		<constructor-arg name="slotContext">
+			<null />
+		</constructor-arg>
+	</bean>
+
+
+	<bean id="hc4ClientFactory"
+		class="org.rec.planets.jupiter.action.network.client.factory.HC4ClientFactory" />
+
+	<util:map id="clientParam" key-type="java.lang.String"
+		value-type="java.lang.Object" map-class="java.util.HashMap">
+		<entry key="http.protocol.content-charset">
+			<value>UTF-8</value>
+		</entry>
+		<entry key="http.protocol.element-charset">
+			<value>UTF-8</value>
+		</entry>
+		<entry key="http.useragent">
+			<value><![CDATA[Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.22 (KHTML, like Gecko) Chrome/25.0.1364.172 Safari/537.22]]></value>
+		</entry>
+
+		<entry key="http.connection.timeout">
+			<value type="java.lang.Integer">60000</value>
+		</entry>
+		<entry key="http.socket.timeout">
+			<value type="java.lang.Integer">60000</value>
+		</entry>
+
+		<entry key="http.protocol.allow-circular-redirects">
+			<value type="java.lang.Boolean">true</value>
+		</entry>
+		<entry key="http.conn-manager.timeout">
+			<value type="java.lang.Long">60000</value>
+		</entry>
+		<entry key="http.protocol.cookie-policy">
+			<value>compatibility</value>
+		</entry>
+		<entry key="http.default-headers">
+			<util:list>
+				<bean class="org.apache.http.message.BasicHeader">
+					<constructor-arg name="name" value="Accept" />
+					<constructor-arg name="value">
+						<value><![CDATA[text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8]]></value>
+					</constructor-arg>
+				</bean>
+				<bean class="org.apache.http.message.BasicHeader">
+					<constructor-arg name="name" value="Accept-Encoding" />
+					<constructor-arg name="value">
+						<value><![CDATA[gzip,deflate]]></value>
+					</constructor-arg>
+				</bean>
+			</util:list>
+		</entry>
+		<entry key="http.protocol.handle-redirects">
+			<value type="java.lang.Boolean">true</value>
+		</entry>
+		<entry key="http.protocol.max-redirects">
+			<value type="java.lang.Integer">25</value>
+		</entry>
+		<entry key="http.protocol.reject-relative-redirect">
+			<value type="java.lang.Boolean">false</value>
+		</entry>
+	</util:map>
+
+	<util:map id="websitePropertie" key-type="java.lang.String"
+		value-type="java.lang.Object" map-class="java.util.HashMap">
+		<entry value-ref="clientParam">
+			<key>
+				<util:constant static-field="org.rec.planets.jupiter.context.ActionContextConstants.KEY_CLIENT_PARAM"/>
+			</key>
+		</entry>
+	</util:map>
+
+	<bean id="textDownloader" class="org.rec.planets.jupiter.action.network.TextDownloader">
+		<property name="sourceKey">
+			<value><![CDATA[urlcontext['key_client']]]></value>
+		</property>
+		<property name="omitSourceNull" value="false" />
+		<property name="contextReader">
+			<bean class="org.rec.planets.jupiter.context.accessor.ELContextReader" />
+		</property>
+		<property name="resultKey">
+			<value><![CDATA[urlcontext['key_http_response']]]></value>
+		</property>
+		<property name="omitResultNull" value="false" />
+		<property name="contextWriter">
+			<bean
+				class="org.rec.planets.jupiter.context.accessor.PropertyContextWriter" />
+		</property>
+		<property name="requestBuilder">
+			<bean
+				class="org.rec.planets.jupiter.action.network.request.BasicRequestBuilder"
+				factory-method="getInstance" />
+		</property>
+	</bean>
+</beans>

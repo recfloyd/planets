@@ -14,7 +14,7 @@ import org.springframework.beans.factory.DisposableBean;
  * 
  */
 public final class GlobalClientCache implements DisposableBean {
-	private ConcurrentHashMap<Short, Client> clientCache;
+	private ConcurrentHashMap<Short, Client> clientCache = new ConcurrentHashMap<Short, Client>();
 
 	public Client getClient(ActionContext crawlContext,
 			ClientFactory clientFactory) {

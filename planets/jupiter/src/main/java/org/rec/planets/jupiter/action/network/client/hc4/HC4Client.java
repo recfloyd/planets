@@ -19,6 +19,7 @@ import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.protocol.ClientContext;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.cookie.Cookie;
+import org.apache.http.entity.ContentType;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.cookie.BasicClientCookie;
 import org.apache.http.message.BasicNameValuePair;
@@ -101,13 +102,14 @@ public class HC4Client implements Client {
 
 		try {
 			response = httpClient.execute(httpRequest, context);
-		} finally {
+		} catch (Exception e) {
 			httpRequest.abort();
+			throw e;
 		}
 
 		StatusLine statusLine = response.getStatusLine();
 		if (statusLine != null) {
-			response.setStatusCode(statusLine.getStatusCode());
+			emptyResponse.setStatusCode(statusLine.getStatusCode());
 		}
 
 		Header[] allHeaders = response.getAllHeaders();
@@ -132,16 +134,13 @@ public class HC4Client implements Client {
 		HttpEntity entity = response.getEntity();
 
 		if (entity != null) {
-			Header contentEncodingHeader = entity.getContentEncoding();
-			if (contentEncodingHeader != null) {
-				emptyResponse.setContentEncoding(contentEncodingHeader
-						.getValue());
+			ContentType contentType = ContentType.get(entity);
+
+			if (contentType != null) {
+				emptyResponse.setContentEncoding(contentType.getCharset()
+						.name());
+				emptyResponse.setMimeType(contentType.getMimeType());
 			}
-
-			Header contentType = entity.getContentType();
-			if (contentType != null)
-				emptyResponse.setContentType(contentType.getValue());
-
 			emptyResponse.setContentLength(entity.getContentLength());
 		}
 
@@ -158,11 +157,17 @@ public class HC4Client implements Client {
 				encoding = request.getEncoding();
 			if (Strings.isNullOrEmpty(encoding))
 				encoding = Charsets.UTF_8.name();
+
+			String content = null;
 			try {
-				emptyResponse
-						.setContent(EntityUtils.toString(entity, encoding));
+				content = EntityUtils.toString(entity, encoding);
 			} finally {
 				EntityUtils.consumeQuietly(entity);
+			}
+			emptyResponse.setContent(content);
+			if (emptyResponse.getContentLength() < 0 && content != null) {
+				emptyResponse
+						.setContentLength(content.getBytes(encoding).length);
 			}
 		}
 
@@ -174,10 +179,15 @@ public class HC4Client implements Client {
 		Response<byte[]> emptyResponse = new Response<byte[]>();
 		HttpEntity entity = this.request(request, emptyResponse);
 		if (entity != null) {
+			byte[] content = null;
 			try {
-				emptyResponse.setContent(EntityUtils.toByteArray(entity));
+				content = EntityUtils.toByteArray(entity);
 			} finally {
 				EntityUtils.consumeQuietly(entity);
+			}
+			emptyResponse.setContent(content);
+			if (emptyResponse.getContentLength() < 0 && content != null) {
+				emptyResponse.setContentLength(content.length);
 			}
 		}
 
