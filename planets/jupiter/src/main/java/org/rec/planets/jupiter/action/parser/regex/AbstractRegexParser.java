@@ -12,7 +12,6 @@ import org.rec.planets.mercury.parse.bean.Regex;
  */
 public abstract class AbstractRegexParser extends AbstractReadProcessWriteAction {
 	protected Regex regex;
-	protected boolean strictRegex;
 
 	@Override
 	protected Object processInternal(ActionContext context, Object source)
@@ -25,9 +24,5 @@ public abstract class AbstractRegexParser extends AbstractReadProcessWriteAction
 
 	public void setRegex(Regex regex) {
 		this.regex = regex;
-	}
-
-	public void setStrictRegex(boolean strictRegex) {
-		this.strictRegex = strictRegex;
 	}
 }

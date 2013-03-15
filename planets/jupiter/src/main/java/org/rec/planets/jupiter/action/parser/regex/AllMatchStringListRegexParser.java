@@ -12,6 +12,6 @@ public class AllMatchStringListRegexParser extends AbstractRegexParser {
 
 	@Override
 	protected Object find(String text) {
-		return RegexUtil.groupAllMatch(text, regex);
+		return RegexUtil.getAllGroups(text, regex);
 	}
 }

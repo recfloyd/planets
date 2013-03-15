@@ -9,15 +9,16 @@ import com.google.common.base.Joiner;
 
 /**
  * 首次匹配正则解析器,它匹配的结果是一个String,是由joiner字符串连接的各group的值
+ * 
  * @author rec
- *
+ * 
  */
 public class FirstMatchStringRegexParser extends AbstractRegexParser {
 	protected String joiner = "";
 
 	@Override
 	protected Object find(String text) {
-		List<String> result = RegexUtil.groupFirstMatch(text, regex, strictRegex);
+		List<String> result = RegexUtil.getFirstGroups(text, regex);
 		if (!CollectionUtils.isEmpty(result))
 			return Joiner.on(joiner).join(result);
 		else

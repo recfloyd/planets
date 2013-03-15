@@ -10,6 +10,6 @@ import org.rec.planets.mercury.parse.RegexUtil;
 public class FirstMatchStringListRegexParser extends AbstractRegexParser {
 	@Override
 	protected Object find(String text) {
-		return RegexUtil.groupFirstMatch(text, regex, strictRegex);
+		return RegexUtil.getFirstGroups(text, regex);
 	}
 }
