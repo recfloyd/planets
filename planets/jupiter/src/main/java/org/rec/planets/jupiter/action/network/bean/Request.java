@@ -1,16 +1,18 @@
 package org.rec.planets.jupiter.action.network.bean;
 
+import java.util.Collection;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.rec.planets.mercury.domain.AbstractBean;
-import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.google.common.collect.Multimap;
 
 /**
  * http请求实体
+ * 
  * @author rec
- *
+ * 
  */
 public class Request extends AbstractBean {
 	private RequestMethod method;
@@ -75,5 +77,23 @@ public class Request extends AbstractBean {
 
 	public void setClientSetting(Map<String, Object> clientSetting) {
 		this.clientSetting = clientSetting;
+	}
+
+	public String getSingleHeader(String name) {
+		if (this.headers == null)
+			return null;
+		Collection<String> values = this.headers.get(name);
+		if (CollectionUtils.isEmpty(values))
+			return null;
+		return values.iterator().next();
+	}
+
+	public String getSingleParam(String name) {
+		if (this.params == null)
+			return null;
+		Collection<String> values = this.params.get(name);
+		if (CollectionUtils.isEmpty(values))
+			return null;
+		return values.iterator().next();
 	}
 }

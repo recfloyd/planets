@@ -1,7 +1,9 @@
 package org.rec.planets.jupiter.action.network.bean;
 
+import java.util.Collection;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.rec.planets.mercury.domain.AbstractBean;
 
 import com.google.common.collect.Multimap;
@@ -76,5 +78,14 @@ public class Response<T> extends AbstractBean {
 
 	public void setContent(T content) {
 		this.content = content;
+	}
+
+	public String getSingleHeader(String name) {
+		if (this.headers == null)
+			return null;
+		Collection<String> values = this.headers.get(name);
+		if (CollectionUtils.isEmpty(values))
+			return null;
+		return values.iterator().next();
 	}
 }

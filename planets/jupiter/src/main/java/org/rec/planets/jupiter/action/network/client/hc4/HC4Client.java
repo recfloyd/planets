@@ -1,5 +1,6 @@
 package org.rec.planets.jupiter.action.network.client.hc4;
 
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -27,10 +28,10 @@ import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
 import org.rec.planets.jupiter.action.network.bean.Request;
+import org.rec.planets.jupiter.action.network.bean.RequestMethod;
 import org.rec.planets.jupiter.action.network.bean.Response;
 import org.rec.planets.jupiter.action.network.client.Client;
 import org.springframework.util.CollectionUtils;
-import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Strings;
@@ -137,10 +138,12 @@ public class HC4Client implements Client {
 			ContentType contentType = ContentType.get(entity);
 
 			if (contentType != null) {
-				emptyResponse.setContentEncoding(contentType.getCharset()
-						.name());
 				emptyResponse.setMimeType(contentType.getMimeType());
-			} else {
+				Charset charset = contentType.getCharset();
+				if (charset != null)
+					emptyResponse.setContentEncoding(charset.name());
+			}
+			if (emptyResponse.getContentEncoding() == null) {
 				Header contentEncodingHeader = entity.getContentEncoding();
 				if (contentEncodingHeader != null)
 					emptyResponse.setContentEncoding(contentEncodingHeader
@@ -157,22 +160,16 @@ public class HC4Client implements Client {
 		Response<String> emptyResponse = new Response<String>();
 		HttpEntity entity = this.request(request, emptyResponse);
 		if (entity != null) {
-			String encoding = emptyResponse.getContentEncoding();
-			if (Strings.isNullOrEmpty(encoding))
-				encoding = request.getEncoding();
-			if (Strings.isNullOrEmpty(encoding))
-				encoding = Charsets.UTF_8.name();
-
 			String content = null;
 			try {
-				content = EntityUtils.toString(entity, encoding);
+				content = EntityUtils.toString(entity);
 			} finally {
 				EntityUtils.consumeQuietly(entity);
 			}
 			emptyResponse.setContent(content);
+			// 如果contentLength没有的话,那么使用body的长度作为近似长度
 			if (emptyResponse.getContentLength() < 0 && content != null) {
-				emptyResponse
-						.setContentLength(content.getBytes(encoding).length);
+				emptyResponse.setContentLength(content.getBytes().length);
 			}
 		}
 
