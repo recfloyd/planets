@@ -2,8 +2,8 @@ package org.rec.planets.jupiter.action.network.request;
 
 import org.rec.planets.jupiter.action.AbstractReadProcessWriteAction;
 import org.rec.planets.jupiter.action.network.bean.Request;
-import org.rec.planets.jupiter.action.network.bean.RequestMethod;
 import org.rec.planets.jupiter.context.ActionContext;
+import org.springframework.http.HttpMethod;
 
 import com.google.common.base.Strings;
 
@@ -19,7 +19,7 @@ public class BasicContextURLRequestPrepairAction extends
 		else {
 			Request request = new Request();
 			request.setUrl(url);
-			request.setMethod(RequestMethod.GET);
+			request.setMethod(HttpMethod.GET);
 
 			return request;
 		}

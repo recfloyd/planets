@@ -2,7 +2,7 @@ package org.rec.planets.jupiter.action.network.client.lifecycle;
 
 import org.rec.planets.jupiter.action.Action;
 import org.rec.planets.jupiter.action.network.client.Client;
-import org.rec.planets.jupiter.action.network.client.factory.ClientFactory;
+import org.rec.planets.jupiter.action.network.client.ClientFactory;
 import org.rec.planets.jupiter.context.ActionContext;
 import org.rec.planets.jupiter.context.accessor.AbstractReadWriteSupport;
 

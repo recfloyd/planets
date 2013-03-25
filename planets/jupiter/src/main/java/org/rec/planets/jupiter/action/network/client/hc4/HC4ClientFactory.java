@@ -1,4 +1,4 @@
-package org.rec.planets.jupiter.action.network.client.factory;
+package org.rec.planets.jupiter.action.network.client.hc4;
 
 import java.io.IOException;
 import java.util.Map;
@@ -15,7 +15,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.PoolingClientConnectionManager;
 import org.apache.http.protocol.HttpContext;
 import org.rec.planets.jupiter.action.network.client.Client;
-import org.rec.planets.jupiter.action.network.client.hc4.HC4Client;
+import org.rec.planets.jupiter.action.network.client.ClientFactory;
 import org.rec.planets.jupiter.context.ActionContext;
 import org.rec.planets.jupiter.context.ActionContextConstants;
 

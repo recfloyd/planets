@@ -8,7 +8,8 @@ import org.rec.planets.jupiter.context.ActionContextConstants;
 import org.rec.planets.jupiter.slot.snapshot.WebsiteSnapshotFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 
 /**
  * 带宽统计拦截器,该拦截器适合紧紧包装住下载器
@@ -23,6 +24,14 @@ public class BandwidthStatInterceptor extends AbstractResponseReadable
 
 	@Override
 	public void invoke(Action action, ActionContext context) throws Exception {
+		long time = System.currentTimeMillis();
+		action.execute(context);
+		time = System.currentTimeMillis() - time;
+
+		Response<?> response = getResponse(context);
+		if (response == null)
+			return;
+
 		WebsiteSnapshotFactory websiteSnapshotFactory = (WebsiteSnapshotFactory) context
 				.getUrlcontext().get(
 						ActionContextConstants.KEY_WEBSITE_SNAPSHOT_FACTORY);
@@ -34,21 +43,26 @@ public class BandwidthStatInterceptor extends AbstractResponseReadable
 			return;
 		}
 
-		long time = System.currentTimeMillis();
-		action.execute(context);
-		time = System.currentTimeMillis() - time;
-
-		Response<?> response = getResponse(context);
-
-		if (response == null)
-			return;
-
-		int statusCode = response.getStatusCode();
-
-		HttpStatus.Series series = HttpStatus.Series.valueOf(statusCode);
-
-		if (series == HttpStatus.Series.SUCCESSFUL) {
-			websiteSnapshotFactory.record(response.getContentLength(), time);
+		ResponseEntity<?> responseEntity = response.getHttpResponse();
+		long contentLength = -1;
+		if (responseEntity.hasBody()) {
+			HttpHeaders httpHeaders = responseEntity.getHeaders();
+			if (httpHeaders != null) {
+				contentLength = httpHeaders.getContentLength();
+			}
+			if (contentLength < 0) {// 如果从头信息中拿不到contentLength,那么尝试从body中近似获取
+				Object body = responseEntity.getBody();
+				if (body instanceof String) {
+					contentLength = ((String) body).getBytes().length;
+				} else if (body instanceof byte[]) {
+					contentLength = ((byte[]) body).length;
+				} else {
+					contentLength = 0;
+				}
+			}
+		} else {
+			contentLength = 0;
 		}
+		websiteSnapshotFactory.record(contentLength, time);
 	}
 }

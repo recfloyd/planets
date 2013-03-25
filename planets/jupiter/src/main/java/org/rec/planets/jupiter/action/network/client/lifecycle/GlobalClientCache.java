@@ -3,7 +3,7 @@ package org.rec.planets.jupiter.action.network.client.lifecycle;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.rec.planets.jupiter.action.network.client.Client;
-import org.rec.planets.jupiter.action.network.client.factory.ClientFactory;
+import org.rec.planets.jupiter.action.network.client.ClientFactory;
 import org.rec.planets.jupiter.context.ActionContext;
 import org.springframework.beans.factory.DisposableBean;
 

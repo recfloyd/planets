@@ -15,7 +15,7 @@ public class DomPrepairAction extends AbstractReadProcessWriteAction {
 		@SuppressWarnings("unchecked")
 		Response<String> response = (Response<String>) source;
 		if (response != null) {
-			String content = response.getContent();
+			String content = response.getHttpResponse().getBody();
 			if (Strings.isNullOrEmpty(content))
 				return null;
 			else {

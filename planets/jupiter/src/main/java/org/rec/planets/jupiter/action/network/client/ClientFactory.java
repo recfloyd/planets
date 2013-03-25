@@ -1,6 +1,5 @@
-package org.rec.planets.jupiter.action.network.client.factory;
+package org.rec.planets.jupiter.action.network.client;
 
-import org.rec.planets.jupiter.action.network.client.Client;
 import org.rec.planets.jupiter.context.ActionContext;
 
 /**

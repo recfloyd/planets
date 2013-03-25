@@ -1,7 +1,7 @@
 package org.rec.planets.jupiter.action.network.client.hc4;
 
+import java.io.IOException;
 import java.net.HttpCookie;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -11,9 +11,10 @@ import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
-import org.apache.http.StatusLine;
+import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.CookieStore;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -21,7 +22,6 @@ import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.protocol.ClientContext;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.cookie.Cookie;
-import org.apache.http.entity.ContentType;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.cookie.BasicClientCookie;
 import org.apache.http.message.BasicNameValuePair;
@@ -29,16 +29,18 @@ import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
 import org.rec.planets.jupiter.action.network.bean.Request;
-import org.rec.planets.jupiter.action.network.bean.RequestMethod;
 import org.rec.planets.jupiter.action.network.bean.Response;
 import org.rec.planets.jupiter.action.network.client.Client;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.MultiValueMap;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Multimap;
 
 public class HC4Client implements Client {
 	private final HttpClient httpClient;
@@ -47,10 +49,27 @@ public class HC4Client implements Client {
 		this.httpClient = httpClient;
 	}
 
-	private <T> HttpEntity request(Request request, Response<T> emptyResponse)
-			throws Exception {
-		RequestMethod method = request.getMethod();
-		method = method == null ? RequestMethod.GET : method;
+	private static final ResponseHandler<String> TEXT_RESPONSE_HANDLER = new ResponseHandler<String>() {
+		@Override
+		public String handleResponse(HttpResponse response)
+				throws ClientProtocolException, IOException {
+			HttpEntity entity = response.getEntity();
+			return entity == null ? null : EntityUtils.toString(entity);
+		}
+	};
+	private static final ResponseHandler<byte[]> BYTE_ARRAY_RESPONSE_HANDLER = new ResponseHandler<byte[]>() {
+		@Override
+		public byte[] handleResponse(HttpResponse response)
+				throws ClientProtocolException, IOException {
+			HttpEntity entity = response.getEntity();
+			return entity == null ? null : EntityUtils.toByteArray(entity);
+		}
+	};
+
+	private <T> Response<T> request(Request request,
+			ResponseHandler<T> responseHandler) throws Exception {
+		HttpMethod method = request.getMethod();
+		method = method == null ? HttpMethod.GET : method;
 		String encoding = request.getEncoding();
 		encoding = Strings.isNullOrEmpty(encoding) ? Charsets.UTF_8.name()
 				: encoding;
@@ -61,10 +80,12 @@ public class HC4Client implements Client {
 			httpRequest = new HttpPost(request.getUrl());
 			if (request.getParams() != null) {
 				List<NameValuePair> params = new ArrayList<NameValuePair>();
-				for (Map.Entry<String, String> kv : request.getParams()
-						.entries()) {
-					params.add(new BasicNameValuePair(kv.getKey(), kv
-							.getValue()));
+
+				for (Map.Entry<String, List<String>> entry : request
+						.getParams().entrySet()) {
+					for (String value : entry.getValue()) {
+						params.add(new BasicNameValuePair(entry.getKey(), value));
+					}
 				}
 				((HttpPost) httpRequest).setEntity(new UrlEncodedFormEntity(
 						params, encoding));
@@ -73,19 +94,23 @@ public class HC4Client implements Client {
 		default:
 			URIBuilder builder = new URIBuilder(request.getUrl());
 			if (request.getParams() != null) {
-				for (Map.Entry<String, String> kv : request.getParams()
-						.entries()) {
-					builder.addParameter(kv.getKey(), kv.getValue());
+				for (Map.Entry<String, List<String>> entry : request
+						.getParams().entrySet()) {
+					for (String value : entry.getValue()) {
+						builder.addParameter(entry.getKey(), value);
+					}
 				}
 			}
 			httpRequest = new HttpGet(builder.build());
 			break;
 		}
 
-		Multimap<String, String> headers = request.getHeaders();
+		MultiValueMap<String, String> headers = request.getHeaders();
 		if (headers != null) {
-			for (Map.Entry<String, String> kv : headers.entries()) {
-				httpRequest.addHeader(kv.getKey(), kv.getValue());
+			for (Map.Entry<String, List<String>> entry : headers.entrySet()) {
+				for (String value : entry.getValue()) {
+					httpRequest.addHeader(entry.getKey(), value);
+				}
 			}
 		}
 
@@ -102,7 +127,6 @@ public class HC4Client implements Client {
 		}
 
 		HttpResponse response = null;
-
 		try {
 			response = httpClient.execute(httpRequest, context);
 		} catch (Exception e) {
@@ -110,26 +134,21 @@ public class HC4Client implements Client {
 			throw e;
 		}
 
-		StatusLine statusLine = response.getStatusLine();
-		if (statusLine != null) {
-			emptyResponse.setStatusCode(statusLine.getStatusCode());
+		HttpStatus statusCode = HttpStatus.valueOf(response.getStatusLine()
+				.getStatusCode());
+
+		Header[] responseHeaders = response.getAllHeaders();
+		HttpHeaders httpHeaders = new HttpHeaders();
+		for (Header header : responseHeaders) {
+			httpHeaders.add(header.getName(), header.getValue());
 		}
 
-		Header[] allHeaders = response.getAllHeaders();
-		if (allHeaders != null && allHeaders.length > 0) {
-			Multimap<String, String> responseHeader = ArrayListMultimap
-					.create();
-			for (Header header : allHeaders) {
-				responseHeader.put(header.getName(), header.getValue());
-			}
-			emptyResponse.setHeaders(responseHeader);
-		}
-
-		List<Cookie> allCookies = cookieStore.getCookies();
-		if (!CollectionUtils.isEmpty(allCookies)) {
-			List<HttpCookie> responseCookies = new ArrayList<HttpCookie>();
+		List<HttpCookie> httpCookies = null;
+		List<Cookie> responseCookies = cookieStore.getCookies();
+		if (!CollectionUtils.isEmpty(responseCookies)) {
+			httpCookies = new ArrayList<HttpCookie>(responseCookies.size());
 			HttpCookie hc = null;
-			for (Cookie cookie : allCookies) {
+			for (Cookie cookie : responseCookies) {
 				hc = new HttpCookie(cookie.getName(), cookie.getValue());
 				hc.setComment(cookie.getComment());
 				hc.setCommentURL(cookie.getCommentURL());
@@ -143,73 +162,26 @@ public class HC4Client implements Client {
 						.on(',').join(Arrays.asList(cookie.getPorts())));
 				hc.setSecure(cookie.isSecure());
 				hc.setVersion(cookie.getVersion());
-				responseCookies.add(hc);
+				httpCookies.add(hc);
 			}
-			emptyResponse.setCookies(responseCookies);
 		}
 
-		HttpEntity entity = response.getEntity();
+		Response<T> result = new Response<T>();
+		result.setCookies(httpCookies);
+		result.setHttpResponse(new ResponseEntity<T>(responseHandler
+				.handleResponse(response), httpHeaders, statusCode));
 
-		if (entity != null) {
-			ContentType contentType = ContentType.get(entity);
-
-			if (contentType != null) {
-				emptyResponse.setMimeType(contentType.getMimeType());
-				Charset charset = contentType.getCharset();
-				if (charset != null)
-					emptyResponse.setContentEncoding(charset.name());
-			}
-			if (emptyResponse.getContentEncoding() == null) {
-				Header contentEncodingHeader = entity.getContentEncoding();
-				if (contentEncodingHeader != null)
-					emptyResponse.setContentEncoding(contentEncodingHeader
-							.getValue());
-			}
-			emptyResponse.setContentLength(entity.getContentLength());
-		}
-
-		return entity;
+		return result;
 	}
 
 	@Override
 	public Response<String> requestText(Request request) throws Exception {
-		Response<String> emptyResponse = new Response<String>();
-		HttpEntity entity = this.request(request, emptyResponse);
-		if (entity != null) {
-			String content = null;
-			try {
-				content = EntityUtils.toString(entity);
-			} finally {
-				EntityUtils.consumeQuietly(entity);
-			}
-			emptyResponse.setContent(content);
-			// 如果contentLength没有的话,那么使用body的长度作为近似长度
-			if (emptyResponse.getContentLength() < 0 && content != null) {
-				emptyResponse.setContentLength(content.getBytes().length);
-			}
-		}
-
-		return emptyResponse;
+		return this.request(request, TEXT_RESPONSE_HANDLER);
 	}
 
 	@Override
 	public Response<byte[]> requestByteArray(Request request) throws Exception {
-		Response<byte[]> emptyResponse = new Response<byte[]>();
-		HttpEntity entity = this.request(request, emptyResponse);
-		if (entity != null) {
-			byte[] content = null;
-			try {
-				content = EntityUtils.toByteArray(entity);
-			} finally {
-				EntityUtils.consumeQuietly(entity);
-			}
-			emptyResponse.setContent(content);
-			if (emptyResponse.getContentLength() < 0 && content != null) {
-				emptyResponse.setContentLength(content.length);
-			}
-		}
-
-		return emptyResponse;
+		return this.request(request, BYTE_ARRAY_RESPONSE_HANDLER);
 	}
 
 	@Override

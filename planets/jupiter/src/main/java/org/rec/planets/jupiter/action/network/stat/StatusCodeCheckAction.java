@@ -38,7 +38,7 @@ public class StatusCodeCheckAction extends AbstractResponseReadable implements
 			return;
 		}
 
-		HttpStatus status = HttpStatus.valueOf(response.getStatusCode());
+		HttpStatus status = response.getHttpResponse().getStatusCode();
 
 		if (status == HttpStatus.NOT_MODIFIED) {
 			jobResultSnapshotFactory.addUnmodified(context.getCrawlURL()

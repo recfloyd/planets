@@ -7,8 +7,9 @@ import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.rec.planets.mercury.domain.AbstractBean;
-
-import com.google.common.collect.Multimap;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.util.MultiValueMap;
 
 /**
  * http请求实体
@@ -17,19 +18,19 @@ import com.google.common.collect.Multimap;
  * 
  */
 public class Request extends AbstractBean {
-	private RequestMethod method;
 	private String url;
-	private Multimap<String, String> headers;
-	private Multimap<String, String> params;
+	private HttpMethod method;
+	private HttpHeaders headers;
+	private MultiValueMap<String, String> params;
 	private String encoding;
 	private List<HttpCookie> cookies;
 	private Map<String, Object> clientSetting;
 
-	public RequestMethod getMethod() {
+	public HttpMethod getMethod() {
 		return method;
 	}
 
-	public void setMethod(RequestMethod method) {
+	public void setMethod(HttpMethod method) {
 		this.method = method;
 	}
 
@@ -41,19 +42,19 @@ public class Request extends AbstractBean {
 		this.url = url;
 	}
 
-	public Multimap<String, String> getHeaders() {
+	public HttpHeaders getHeaders() {
 		return headers;
 	}
 
-	public void setHeaders(Multimap<String, String> headers) {
+	public void setHeaders(HttpHeaders headers) {
 		this.headers = headers;
 	}
 
-	public Multimap<String, String> getParams() {
+	public MultiValueMap<String, String> getParams() {
 		return params;
 	}
 
-	public void setParams(Multimap<String, String> params) {
+	public void setParams(MultiValueMap<String, String> params) {
 		this.params = params;
 	}
 
