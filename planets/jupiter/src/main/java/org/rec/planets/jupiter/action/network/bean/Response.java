@@ -1,7 +1,8 @@
 package org.rec.planets.jupiter.action.network.bean;
 
+import java.net.HttpCookie;
 import java.util.Collection;
-import java.util.Map;
+import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.rec.planets.mercury.domain.AbstractBean;
@@ -21,7 +22,7 @@ public class Response<T> extends AbstractBean {
 	private String contentEncoding;
 	private long contentLength;
 	private Multimap<String, String> headers;
-	private Map<String, String> cookies;
+	private List<HttpCookie> cookies;
 	private T content;
 
 	public int getStatusCode() {
@@ -64,11 +65,11 @@ public class Response<T> extends AbstractBean {
 		this.headers = headers;
 	}
 
-	public Map<String, String> getCookies() {
+	public List<HttpCookie> getCookies() {
 		return cookies;
 	}
 
-	public void setCookies(Map<String, String> cookies) {
+	public void setCookies(List<HttpCookie> cookies) {
 		this.cookies = cookies;
 	}
 

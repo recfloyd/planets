@@ -1,8 +1,9 @@
 package org.rec.planets.jupiter.action.network.client.hc4;
 
+import java.net.HttpCookie;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -34,6 +35,7 @@ import org.rec.planets.jupiter.action.network.client.Client;
 import org.springframework.util.CollectionUtils;
 
 import com.google.common.base.Charsets;
+import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
@@ -91,11 +93,11 @@ public class HC4Client implements Client {
 		CookieStore cookieStore = new BasicCookieStore();
 		context.setAttribute(ClientContext.COOKIE_STORE, cookieStore);
 
-		Map<String, String> cookies = request.getCookies();
+		List<HttpCookie> cookies = request.getCookies();
 		if (cookies != null) {
-			for (Map.Entry<String, String> kv : cookies.entrySet()) {
-				cookieStore.addCookie(new BasicClientCookie(kv.getKey(), kv
-						.getValue()));
+			for (HttpCookie cookie : cookies) {
+				cookieStore.addCookie(new BasicClientCookie(cookie.getName(),
+						cookie.getValue()));
 			}
 		}
 
@@ -125,9 +127,23 @@ public class HC4Client implements Client {
 
 		List<Cookie> allCookies = cookieStore.getCookies();
 		if (!CollectionUtils.isEmpty(allCookies)) {
-			Map<String, String> responseCookies = new HashMap<String, String>();
+			List<HttpCookie> responseCookies = new ArrayList<HttpCookie>();
+			HttpCookie hc = null;
 			for (Cookie cookie : allCookies) {
-				responseCookies.put(cookie.getName(), cookie.getValue());
+				hc = new HttpCookie(cookie.getName(), cookie.getValue());
+				hc.setComment(cookie.getComment());
+				hc.setCommentURL(cookie.getCommentURL());
+				hc.setDiscard(!cookie.isPersistent());
+				hc.setDomain(cookie.getDomain());
+				hc.setMaxAge(cookie.getExpiryDate() == null ? -1
+						: ((cookie.getExpiryDate().getTime() - System
+								.currentTimeMillis()) / 1000));
+				hc.setPath(cookie.getPath());
+				hc.setPortlist(cookie.getPorts() == null ? null : Joiner
+						.on(',').join(Arrays.asList(cookie.getPorts())));
+				hc.setSecure(cookie.isSecure());
+				hc.setVersion(cookie.getVersion());
+				responseCookies.add(hc);
 			}
 			emptyResponse.setCookies(responseCookies);
 		}
