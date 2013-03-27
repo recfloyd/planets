@@ -44,10 +44,11 @@ public class SpringRuleFactory implements RuleFactory, DisposableBean,
 
 	@Override
 	public synchronized void onApplicationEvent(RuleVersionToDestroyEvent event) {
-		AbstractApplicationContext ac = table.get(event.getWebsiteId(),
+		AbstractApplicationContext ac = table.remove(event.getWebsiteId(),
 				event.getVersion());
-		if (ac != null)
+		if (ac != null) {
 			ac.close();
+		}
 	}
 
 }
