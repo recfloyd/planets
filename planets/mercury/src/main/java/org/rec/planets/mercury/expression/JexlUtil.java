@@ -8,7 +8,7 @@ import org.apache.commons.jexl2.JexlEngine;
 import org.apache.commons.jexl2.MapContext;
 import org.apache.commons.jexl2.ObjectContext;
 
-public abstract class ELUtil {
+public abstract class JexlUtil {
 	private static final JexlEngine engine = new JexlEngine();
 	static {
 		engine.setCache(2048);

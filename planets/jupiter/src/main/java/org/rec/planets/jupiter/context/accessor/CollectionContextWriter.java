@@ -5,7 +5,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.rec.planets.jupiter.context.ActionContext;
-import org.rec.planets.mercury.expression.ELUtil;
+import org.rec.planets.mercury.expression.JexlUtil;
 import org.springframework.util.Assert;
 
 public class CollectionContextWriter implements ContextWriter {
@@ -13,7 +13,7 @@ public class CollectionContextWriter implements ContextWriter {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public void write(ActionContext context, String key, Object result) {
-		Object obj = ELUtil.evalFromObject(context, key);
+		Object obj = JexlUtil.evalFromObject(context, key);
 		Assert.notNull(obj, "collection asserted not be null of key " + key
 				+ " from crawlURL " + context.getCrawlURL());
 		Assert.isInstanceOf(
@@ -28,7 +28,7 @@ public class CollectionContextWriter implements ContextWriter {
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public Object remove(ActionContext context, String key) {
-		Object obj = ELUtil.evalFromObject(context, key);
+		Object obj = JexlUtil.evalFromObject(context, key);
 		Assert.notNull(obj, "collection asserted not be null of key " + key
 				+ " from crawlURL " + context.getCrawlURL());
 		Assert.isInstanceOf(

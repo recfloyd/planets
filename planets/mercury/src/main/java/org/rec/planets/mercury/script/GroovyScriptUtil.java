@@ -1,4 +1,4 @@
-package org.rec.planets.mercury.groovy;
+package org.rec.planets.mercury.script;
 
 import groovy.lang.GroovyShell;
 

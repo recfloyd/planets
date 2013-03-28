@@ -85,6 +85,10 @@
 			<artifactId>commons-jexl</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>org.mvel</groupId>
+			<artifactId>mvel2</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>
 		</dependency>

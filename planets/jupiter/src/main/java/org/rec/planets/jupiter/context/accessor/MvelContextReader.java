@@ -1,7 +1,7 @@
 package org.rec.planets.jupiter.context.accessor;
 
 import org.rec.planets.jupiter.context.ActionContext;
-import org.rec.planets.mercury.expression.ELUtil;
+import org.rec.planets.mercury.expression.MvelUtil;
 
 /**
  * 基本的上下文读取器,把传入的key当成一个el表达式处理
@@ -9,9 +9,9 @@ import org.rec.planets.mercury.expression.ELUtil;
  * @author rec
  * 
  */
-public class ELContextReader implements ContextReader {
+public class MvelContextReader implements ContextReader {
 	@Override
 	public Object read(ActionContext context, String key) {
-		return ELUtil.evalFromObject(context, key);
+		return MvelUtil.evalFromObject(context, key);
 	}
 }

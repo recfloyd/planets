@@ -1,6 +1,6 @@
 package org.rec.planets.mercury.tree;
 
-import org.rec.planets.mercury.expression.ELUtil;
+import org.rec.planets.mercury.expression.JexlUtil;
 
 
 /**
@@ -11,10 +11,10 @@ import org.rec.planets.mercury.expression.ELUtil;
  * @param <C>
  * @param <V>
  */
-public class ElReferenceTreeNode<C, V> extends
+public class JexlReferenceTreeNode<C, V> extends
 		AbstractExpressionReferenceTreeNode<C, V> {
 	@Override
 	protected Boolean evaluate(C context, String expression) {
-		return (Boolean) ELUtil.evalFromObject(context, this.expression);
+		return (Boolean) JexlUtil.evalFromObject(context, this.expression);
 	}
 }
