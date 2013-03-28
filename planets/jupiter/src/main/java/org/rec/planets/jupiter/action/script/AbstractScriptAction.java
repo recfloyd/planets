@@ -6,13 +6,19 @@ import java.util.Map;
 
 import org.rec.planets.jupiter.action.Action;
 import org.rec.planets.jupiter.context.ActionContext;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.io.Resource;
 import org.springframework.util.StreamUtils;
 
-public abstract class AbstractScriptAction implements Action {
-	public static final String BINDINGS_KEY = "script_bandings";
+public abstract class AbstractScriptAction implements Action,
+		ApplicationContextAware {
+	public static final String BINDINGS_KEY_APPLICATIONCONTEXT = "script_bandings_applicationContext";
+	public static final String BINDINGS_KEY_ACTIONCONTEXT = "script_bandings_actionContext";
+
 	protected Resource resource;
 	protected String encoding = "UTF-8";
+	protected ApplicationContext applicationContext;
 
 	@Override
 	public void execute(ActionContext context) throws Exception {
@@ -20,7 +26,8 @@ public abstract class AbstractScriptAction implements Action {
 		String script = StreamUtils.copyToString(resource.getInputStream(),
 				charset);
 		Map<String, Object> bindings = new HashMap<String, Object>();
-		bindings.put(BINDINGS_KEY, context);
+		bindings.put(BINDINGS_KEY_APPLICATIONCONTEXT, applicationContext);
+		bindings.put(BINDINGS_KEY_ACTIONCONTEXT, context);
 		runScript(script, bindings);
 	}
 
@@ -33,5 +40,9 @@ public abstract class AbstractScriptAction implements Action {
 
 	public void setEncoding(String encoding) {
 		this.encoding = encoding;
+	}
+
+	public void setApplicationContext(ApplicationContext applicationContext) {
+		this.applicationContext = applicationContext;
 	}
 }
