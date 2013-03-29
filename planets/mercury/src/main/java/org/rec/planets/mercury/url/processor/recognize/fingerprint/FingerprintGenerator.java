@@ -1,35 +1,26 @@
 package org.rec.planets.mercury.url.processor.recognize.fingerprint;
 
-import java.util.Collections;
-import java.util.List;
-
 import org.rec.planets.mercury.domain.AbstractBean;
 import org.rec.planets.mercury.domain.CrawlURL;
-import org.rec.planets.mercury.parse.RegexUtil;
-import org.rec.planets.mercury.parse.URLUtil;
 import org.rec.planets.mercury.url.processor.URLProcessor;
-import org.rec.planets.mercury.url.processor.recognize.fingerprint.bean.FingerprintIndicator;
 import org.rec.planets.mercury.url.processor.recognize.fingerprint.calculator.Calculator;
 import org.rec.planets.mercury.url.processor.recognize.fingerprint.combiner.Combiner;
-import org.springframework.util.CollectionUtils;
-
-import com.google.common.base.Joiner;
+import org.rec.planets.mercury.url.processor.recognize.fingerprint.eigen.EigenPicker;
 
 /**
- * 指纹生成器,这个类首先通过一个正则表达式计算url的特征值
+ * 指纹生成器,通过3个步骤生成指纹<br/>
+ * 1.抽取特征值<br/>
+ * 2.生成特征字符串<br/>
+ * 3.根据特征字符串计算指纹<br/>
  * 
  * @author rec
  * 
  */
 public class FingerprintGenerator extends AbstractBean implements URLProcessor {
 	/**
-	 * 特征值分隔符
+	 * 特征值抽取器
 	 */
-	private String eigenvalueSeperator = "&";
-	/**
-	 * 正则表达式组
-	 */
-	private List<FingerprintIndicator> indicators;
+	private EigenPicker eigenPicker;
 	/**
 	 * 是否允许未知类型
 	 */
@@ -48,30 +39,17 @@ public class FingerprintGenerator extends AbstractBean implements URLProcessor {
 	private boolean overwriten;
 
 	protected String calculateEigenvalue(CrawlURL crawlURL) throws Exception {
-		String url = crawlURL.getUrl();
-		String omitHostURL = URLUtil.getRelativePath(url);
-		List<String> s = null;
-		String eigenvalue = null;
-
-		for (FingerprintIndicator indicator : indicators) {
-			s = RegexUtil.getFirstGroups(indicator.isOmitHost() ? url
-					: omitHostURL, indicator.getRegex());
-			if (!CollectionUtils.isEmpty(s))
-				break;
-		}
-
-		if (CollectionUtils.isEmpty(s)) {
+		String eigen = this.eigenPicker.pickup(crawlURL);
+		if (eigen == null) {
 			if (allowUnknownType) {
-				eigenvalue = crawlURL.getUrl();// 如果允许未知类型的url计算特征值,那么以全部url作为特征值
+				eigen = crawlURL.getUrl();// 如果允许未知类型的url计算特征值,那么以全部url作为特征值
 			} else {
 				throw new IllegalArgumentException(
 						"cannot find calculate eigenvalue for crawlURL: "
 								+ crawlURL);
 			}
-		} else {
-			eigenvalue = Joiner.on(eigenvalueSeperator).skipNulls().join(s);
 		}
-		return eigenvalue;
+		return eigen;
 	}
 
 	@Override
@@ -82,10 +60,6 @@ public class FingerprintGenerator extends AbstractBean implements URLProcessor {
 		String combinedString = combiner.combine(crawlURL, eigenvalue);
 		long fingerprint = calculator.calculate(combinedString);
 		crawlURL.setFingerprint(fingerprint);
-	}
-
-	public void setEigenvalueSeperator(String eigenvalueSeperator) {
-		this.eigenvalueSeperator = eigenvalueSeperator;
 	}
 
 	public void setAllowUnknownType(boolean allowUnknownType) {
@@ -102,10 +76,5 @@ public class FingerprintGenerator extends AbstractBean implements URLProcessor {
 
 	public void setOverwriten(boolean overwriten) {
 		this.overwriten = overwriten;
-	}
-
-	public void setIndicators(List<FingerprintIndicator> indicators) {
-		this.indicators = indicators;
-		Collections.sort(this.indicators);
 	}
 }

@@ -1,19 +1,19 @@
-package org.rec.planets.mercury.url.processor.recognize.fingerprint.bean;
+package org.rec.planets.mercury.url.processor.recognize.fingerprint.eigen;
 
 import org.rec.planets.mercury.domain.AbstractBean;
 import org.rec.planets.mercury.parse.bean.OrderedRegex;
 
-public class FingerprintIndicator extends AbstractBean implements
-		Comparable<FingerprintIndicator> {
+public class EigenRegex extends AbstractBean implements
+		Comparable<EigenRegex> {
 	private boolean omitHost;
 	private OrderedRegex regex;
 
-	public FingerprintIndicator(boolean omitHost, OrderedRegex regex) {
+	public EigenRegex(boolean omitHost, OrderedRegex regex) {
 		this.omitHost = omitHost;
 		this.regex = regex;
 	}
 
-	public FingerprintIndicator(OrderedRegex regex) {
+	public EigenRegex(OrderedRegex regex) {
 		this(false, regex);
 	}
 
@@ -26,7 +26,7 @@ public class FingerprintIndicator extends AbstractBean implements
 	}
 
 	@Override
-	public int compareTo(FingerprintIndicator o) {
+	public int compareTo(EigenRegex o) {
 		return this.regex.compareTo(o.regex);
 	}
 
