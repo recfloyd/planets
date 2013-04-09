@@ -7,6 +7,8 @@ package org.rec.planets.mercury.url.processor.modify;
  * 
  */
 public final class LowercaseModifier extends AbstractModifier {
+	private static final long serialVersionUID = 2931118026633979167L;
+
 	private LowercaseModifier() {
 	}
 

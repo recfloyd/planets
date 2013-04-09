@@ -1,6 +1,5 @@
 package org.rec.planets.mercury.domain;
 
-import java.io.Serializable;
 import java.util.Map;
 
 import org.rec.planets.mercury.domain.constant.CrawlType;
@@ -11,7 +10,7 @@ import org.rec.planets.mercury.domain.constant.CrawlType;
  * @author rec
  * 
  */
-public class CrawlURL extends BusinessEntity implements Serializable {
+public class CrawlURL extends BusinessEntity{
 	private static final long serialVersionUID = 3822094611022925273L;
 	private Long id;
 	/**

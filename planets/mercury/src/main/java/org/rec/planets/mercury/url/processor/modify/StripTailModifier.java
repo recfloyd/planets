@@ -7,6 +7,8 @@ package org.rec.planets.mercury.url.processor.modify;
  * 
  */
 public final class StripTailModifier extends AbstractStripModifier {
+	private static final long serialVersionUID = 5418713115584472031L;
+
 	private StripTailModifier() {
 	}
 

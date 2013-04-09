@@ -1,6 +1,5 @@
 package org.rec.planets.mercury.communication.bean.pack;
 
-import java.io.Serializable;
 import java.util.Map;
 
 import org.rec.planets.mercury.domain.AbstractBean;
@@ -11,7 +10,7 @@ import org.rec.planets.mercury.domain.AbstractBean;
  * @author rec
  * 
  */
-public class PollPack extends AbstractBean implements Serializable {
+public class PollPack extends AbstractBean {
 	private static final long serialVersionUID = 2227311609594706545L;
 	private Short nodeId;
 	private Map<Short, Long> ruleVersions;

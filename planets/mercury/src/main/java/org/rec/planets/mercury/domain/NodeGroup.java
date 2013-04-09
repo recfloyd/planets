@@ -1,6 +1,5 @@
 package org.rec.planets.mercury.domain;
 
-import java.io.Serializable;
 
 /**
  * 节点组
@@ -8,7 +7,7 @@ import java.io.Serializable;
  * @author lijia
  * 
  */
-public class NodeGroup extends BusinessEntity implements Serializable {
+public class NodeGroup extends BusinessEntity {
 	private static final long serialVersionUID = 5037406935792860698L;
 	private Integer id;
 	/**

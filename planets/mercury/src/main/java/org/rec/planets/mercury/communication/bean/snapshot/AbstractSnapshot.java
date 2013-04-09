@@ -9,6 +9,7 @@ import org.rec.planets.mercury.domain.AbstractBean;
  * 
  */
 public class AbstractSnapshot extends AbstractBean {
+	private static final long serialVersionUID = -8413122431848966750L;
 	protected long snapshotStart;
 	protected long snapshotEnd;
 

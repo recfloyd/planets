@@ -1,6 +1,5 @@
 package org.rec.planets.mercury.communication.bean.pack;
 
-import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
@@ -13,7 +12,7 @@ import org.rec.planets.mercury.domain.Job;
  * @author rec
  * 
  */
-public class JobPack extends AbstractBean implements Serializable {
+public class JobPack extends AbstractBean {
 	private static final long serialVersionUID = 8969586934109142394L;
 	private List<Job> jobs;// 任务
 	private Map<String, Object> command;// 命令

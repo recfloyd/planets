@@ -1,6 +1,5 @@
 package org.rec.planets.mercury.domain;
 
-import java.io.Serializable;
 import java.util.List;
 
 import org.rec.planets.mercury.domain.constant.CrawlType;
@@ -11,7 +10,7 @@ import org.rec.planets.mercury.domain.constant.CrawlType;
  * @author rec
  * 
  */
-public class Website extends BusinessEntity implements Serializable {
+public class Website extends BusinessEntity{
 	private static final long serialVersionUID = -186361245479562089L;
 	private Short id;
 	/**

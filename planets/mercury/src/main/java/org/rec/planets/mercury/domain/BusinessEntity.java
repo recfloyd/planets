@@ -11,6 +11,7 @@ import org.rec.planets.mercury.domain.constant.EntityStatus;
  * 
  */
 public abstract class BusinessEntity extends AbstractBean {
+	private static final long serialVersionUID = 5843565863958301299L;
 	/**
 	 * 状态
 	 */

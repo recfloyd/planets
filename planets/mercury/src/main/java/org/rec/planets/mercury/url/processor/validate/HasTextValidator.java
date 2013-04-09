@@ -11,6 +11,7 @@ import org.springframework.beans.BeanWrapperImpl;
 import com.google.common.base.Strings;
 
 public class HasTextValidator extends AbstractBean implements URLProcessor {
+	private static final long serialVersionUID = 5344977646918228027L;
 	private Set<String> propertyNames;
 
 	@Override

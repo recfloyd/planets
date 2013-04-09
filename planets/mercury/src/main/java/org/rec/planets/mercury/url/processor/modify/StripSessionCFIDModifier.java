@@ -3,6 +3,8 @@ package org.rec.planets.mercury.url.processor.modify;
 import org.rec.planets.mercury.parse.bean.Regex;
 
 public final class StripSessionCFIDModifier extends AbstractStripModifier {
+	private static final long serialVersionUID = 3564482478577515159L;
+
 	private StripSessionCFIDModifier() {
 	}
 

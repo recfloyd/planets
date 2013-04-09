@@ -14,6 +14,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 import org.rec.planets.mercury.domain.AbstractBean;
 
 public class ClientCookies extends AbstractBean {
+	private static final long serialVersionUID = 3772852854072370864L;
 	private final Set<HttpCookie> cookies;
 	private final long timestamp;
 	private AtomicInteger readCount;

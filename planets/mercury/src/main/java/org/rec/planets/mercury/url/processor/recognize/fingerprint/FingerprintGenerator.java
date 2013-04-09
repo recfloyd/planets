@@ -17,6 +17,7 @@ import org.rec.planets.mercury.url.processor.recognize.fingerprint.eigen.EigenPi
  * 
  */
 public class FingerprintGenerator extends AbstractBean implements URLProcessor {
+	private static final long serialVersionUID = -4183903929327447311L;
 	/**
 	 * 特征值抽取器
 	 */

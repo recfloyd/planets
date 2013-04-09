@@ -11,6 +11,7 @@ import com.google.common.base.Strings;
  * 
  */
 public class DecodeModifier extends AbstractModifier {
+	private static final long serialVersionUID = 1744950916344873764L;
 	private String encoding;
 
 	@Override

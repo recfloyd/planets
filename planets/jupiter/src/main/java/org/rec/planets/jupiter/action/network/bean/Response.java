@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
  * @param <T>
  */
 public class Response<T> extends AbstractBean {
+	private static final long serialVersionUID = 7714340103219141631L;
 	private ResponseEntity<T> httpResponse;
 	private List<HttpCookie> cookies;
 

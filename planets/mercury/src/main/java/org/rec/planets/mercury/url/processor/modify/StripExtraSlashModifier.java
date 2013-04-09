@@ -11,6 +11,8 @@ import jregex.REFlags;
  * 
  */
 public final class StripExtraSlashModifier extends AbstractModifier {
+	private static final long serialVersionUID = 8981683208806598137L;
+
 	private StripExtraSlashModifier() {
 	}
 

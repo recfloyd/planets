@@ -5,6 +5,7 @@ import org.rec.planets.mercury.parse.bean.OrderedRegex;
 
 public class PageTypeIndicator extends AbstractBean implements
 		Comparable<PageTypeIndicator> {
+	private static final long serialVersionUID = 3279551713327808146L;
 	private byte pageType;
 	private boolean omitHost;
 	private OrderedRegex regex;

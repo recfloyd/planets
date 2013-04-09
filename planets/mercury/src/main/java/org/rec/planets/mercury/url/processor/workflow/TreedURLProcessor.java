@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
  * 
  */
 public class TreedURLProcessor extends AbstractBean implements URLProcessor {
+	private static final long serialVersionUID = -69893626640602323L;
 	private static final Logger logger = LoggerFactory
 			.getLogger(TreedURLProcessor.class);
 	private TreeNode<CrawlURL, URLProcessor> tree;

@@ -18,6 +18,7 @@ import org.rec.planets.mercury.url.processor.recognize.page.bean.PageTypeIndicat
  * 
  */
 public class PageTypeRecognizor extends AbstractBean implements URLProcessor {
+	private static final long serialVersionUID = -8150592030280047250L;
 	/**
 	 * 与pageType相关的正则表达式组
 	 */

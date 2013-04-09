@@ -18,6 +18,7 @@ import org.springframework.util.MultiValueMap;
  * 
  */
 public class Request extends AbstractBean {
+	private static final long serialVersionUID = -7097206152336746018L;
 	private String url;
 	private HttpMethod method;
 	private HttpHeaders headers;

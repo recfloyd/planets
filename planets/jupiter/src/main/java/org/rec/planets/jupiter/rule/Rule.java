@@ -12,6 +12,7 @@ import org.rec.planets.mercury.domain.AbstractBean;
  * 
  */
 public class Rule extends AbstractBean {
+	private static final long serialVersionUID = 6729153572329461890L;
 	private Short websiteId;
 	private Long version;
 	private Map<String, Object> websiteProperties;

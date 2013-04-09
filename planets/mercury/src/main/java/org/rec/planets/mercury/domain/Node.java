@@ -1,7 +1,5 @@
 package org.rec.planets.mercury.domain;
 
-import java.io.Serializable;
-
 import org.rec.planets.mercury.domain.constant.BandwidthType;
 
 /**
@@ -10,7 +8,7 @@ import org.rec.planets.mercury.domain.constant.BandwidthType;
  * @author lijia
  * 
  */
-public class Node extends BusinessEntity implements Serializable {
+public class Node extends BusinessEntity{
 	private static final long serialVersionUID = 8835583580164714349L;
 	private Short id;
 	/**

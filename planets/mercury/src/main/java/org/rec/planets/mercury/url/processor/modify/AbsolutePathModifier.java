@@ -9,6 +9,8 @@ import org.rec.planets.mercury.parse.URLUtil;
  * 
  */
 public final class AbsolutePathModifier extends AbstractModifier {
+	private static final long serialVersionUID = -8553035868207344611L;
+
 	private AbsolutePathModifier() {
 	}
 

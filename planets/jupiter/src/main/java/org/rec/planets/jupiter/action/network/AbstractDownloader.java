@@ -16,6 +16,7 @@ import org.rec.planets.mercury.domain.AbstractBean;
  * 
  */
 public abstract class AbstractDownloader extends AbstractBean implements Action {
+	private static final long serialVersionUID = -3056956080600420620L;
 	protected ContextReader clientReader;
 	protected String clientKey;
 	protected ContextReader requestReader;

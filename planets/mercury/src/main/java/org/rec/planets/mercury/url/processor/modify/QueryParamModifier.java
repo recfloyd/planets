@@ -11,6 +11,7 @@ import org.rec.planets.mercury.parse.URLUtil;
  * 
  */
 public class QueryParamModifier extends AbstractModifier {
+	private static final long serialVersionUID = -7985058607909556284L;
 	/**
 	 * 参数名列表
 	 */

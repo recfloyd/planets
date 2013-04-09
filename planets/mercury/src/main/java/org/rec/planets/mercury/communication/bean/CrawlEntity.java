@@ -1,11 +1,10 @@
 package org.rec.planets.mercury.communication.bean;
 
-import java.io.Serializable;
 import java.util.Map;
 
 import org.rec.planets.mercury.domain.AbstractBean;
 
-public class CrawlEntity extends AbstractBean implements Serializable {
+public class CrawlEntity extends AbstractBean {
 	private static final long serialVersionUID = 1552755965705097511L;
 	/**
 	 * 爬行URL

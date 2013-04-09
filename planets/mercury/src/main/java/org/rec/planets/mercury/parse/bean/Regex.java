@@ -13,6 +13,7 @@ import com.google.common.base.Objects;
  * 
  */
 public class Regex extends AbstractBean {
+	private static final long serialVersionUID = -6265301024511630364L;
 	private String expression;// 表达式
 	private int[] groups;// 捕获组
 	private int flag;

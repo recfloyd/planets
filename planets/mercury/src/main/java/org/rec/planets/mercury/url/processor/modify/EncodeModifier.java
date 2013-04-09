@@ -11,6 +11,7 @@ import com.google.common.base.Strings;
  * 
  */
 public class EncodeModifier extends AbstractModifier {
+	private static final long serialVersionUID = -963870389762781758L;
 	private String encoding;
 	private boolean encodePath;
 	private boolean encodeQuery;

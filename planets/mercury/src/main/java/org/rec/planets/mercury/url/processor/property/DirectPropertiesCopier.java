@@ -9,7 +9,9 @@ import org.rec.planets.mercury.domain.CrawlURL;
 import org.rec.planets.mercury.url.processor.URLProcessor;
 import org.springframework.util.CollectionUtils;
 
-public class DirectPropertiesCopier extends AbstractBean implements URLProcessor {
+public class DirectPropertiesCopier extends AbstractBean implements
+		URLProcessor {
+	private static final long serialVersionUID = -7912220396329796590L;
 	/**
 	 * 如果为空,表示全部copy
 	 */

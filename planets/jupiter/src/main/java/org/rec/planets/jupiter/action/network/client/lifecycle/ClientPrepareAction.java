@@ -8,25 +8,26 @@ import org.rec.planets.jupiter.context.accessor.AbstractReadWriteSupport;
 
 /**
  * 全局客户端准备器
+ * 
  * @author rec
- *
+ * 
  */
-public class GlobalClientPrepareAction extends AbstractReadWriteSupport
-		implements Action {
-	private GlobalClientCache globalClientCache;
+public class ClientPrepareAction extends AbstractReadWriteSupport implements
+		Action {
+	private ClientCache clientCache;
 	private ClientFactory clientFactory;
 
 	@Override
 	public void execute(ActionContext context) throws Exception {
 		Client client = (Client) getSource(context);
 		if (client == null) {
-			client = globalClientCache.getClient(context, clientFactory);
+			client = clientCache.getClient(context, clientFactory);
 			writeResult(context, client);
 		}
 	}
 
-	public void setGlobalClientCache(GlobalClientCache globalClientCache) {
-		this.globalClientCache = globalClientCache;
+	public void setClientCache(ClientCache clientCache) {
+		this.clientCache = clientCache;
 	}
 
 	public void setClientFactory(ClientFactory clientFactory) {

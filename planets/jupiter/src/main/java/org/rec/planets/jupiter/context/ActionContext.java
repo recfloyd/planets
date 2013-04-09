@@ -14,6 +14,7 @@ import org.rec.planets.mercury.domain.CrawlURL;
  * 
  */
 public class ActionContext extends AbstractBean {
+	private static final long serialVersionUID = -4316356959627377335L;
 	private CrawlURL crawlURL;
 	private Map<String, Object> websiteProperties;
 	private ConcurrentMap<String, Object> slotContext;

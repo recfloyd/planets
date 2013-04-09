@@ -1,10 +1,8 @@
 package org.rec.planets.mercury.domain;
 
-import java.io.Serializable;
-
 import org.rec.planets.mercury.domain.constant.CrawlType;
 
-public class Application extends BusinessEntity implements Serializable {
+public class Application extends BusinessEntity{
 	private static final long serialVersionUID = 2194251834364836811L;
 	private Short id;
 	/**

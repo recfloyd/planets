@@ -7,6 +7,8 @@ package org.rec.planets.mercury.url.processor.modify;
  * 
  */
 public final class FixupQueryStringModifier extends AbstractModifier {
+	private static final long serialVersionUID = -5189741478011608310L;
+
 	private FixupQueryStringModifier() {
 	}
 

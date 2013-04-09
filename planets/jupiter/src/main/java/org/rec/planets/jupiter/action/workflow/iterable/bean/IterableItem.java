@@ -3,12 +3,13 @@ package org.rec.planets.jupiter.action.workflow.iterable.bean;
 import org.rec.planets.mercury.domain.AbstractBean;
 
 /**
- * 循环实体
- * 使用在循环处理器内
+ * 循环实体 使用在循环处理器内
+ * 
  * @author rec
- *
+ * 
  */
 public class IterableItem extends AbstractBean {
+	private static final long serialVersionUID = 6091248643886713577L;
 	private Object target;
 	private int index;
 	private int total;

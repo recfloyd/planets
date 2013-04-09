@@ -8,6 +8,7 @@ import org.rec.planets.mercury.parse.bean.Regex;
  *
  */
 public class StripByRegexModifier extends AbstractStripModifier {
+	private static final long serialVersionUID = -2722968695080374437L;
 	private Regex regex;
 
 	@Override

@@ -9,6 +9,8 @@ import org.rec.planets.mercury.parse.URLUtil;
  * 
  */
 public final class StripQueryModifier extends AbstractModifier {
+	private static final long serialVersionUID = -4211247485835158189L;
+
 	private StripQueryModifier() {
 	}
 

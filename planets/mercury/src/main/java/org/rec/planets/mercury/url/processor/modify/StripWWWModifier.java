@@ -9,6 +9,8 @@ import org.rec.planets.mercury.parse.bean.Regex;
  * 
  */
 public final class StripWWWModifier extends AbstractStripModifier {
+	private static final long serialVersionUID = 5297497868916108632L;
+
 	private StripWWWModifier() {
 	}
 

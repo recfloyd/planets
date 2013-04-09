@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
  * 
  */
 public class ChainedURLProcessor extends AbstractBean implements URLProcessor {
+	private static final long serialVersionUID = 3506281556057687467L;
 	private static final Logger logger = LoggerFactory
 			.getLogger(ChainedURLProcessor.class);
 	private List<URLProcessor> processors;

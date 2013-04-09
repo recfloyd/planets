@@ -11,6 +11,7 @@ import org.rec.planets.mercury.domain.AbstractBean;
  *
  */
 public class IterableItemStack extends AbstractBean {
+	private static final long serialVersionUID = -8208547476033137706L;
 	private Deque<IterableItem> stack;
 
 	public IterableItemStack() {

@@ -1,6 +1,5 @@
 package org.rec.planets.mercury.domain;
 
-import java.io.Serializable;
 import java.util.List;
 
 import org.rec.planets.mercury.domain.constant.JobMode;
@@ -11,7 +10,7 @@ import org.rec.planets.mercury.domain.constant.JobMode;
  * @author lijia
  * 
  */
-public class Job extends BusinessEntity implements Serializable {
+public class Job extends BusinessEntity{
 	private static final long serialVersionUID = 9170610141753990180L;
 	private Long id;
 	/**

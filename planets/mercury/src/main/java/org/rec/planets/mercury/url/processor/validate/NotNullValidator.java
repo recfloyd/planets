@@ -15,6 +15,7 @@ import org.springframework.beans.BeanWrapperImpl;
  * 
  */
 public class NotNullValidator extends AbstractBean implements URLProcessor {
+	private static final long serialVersionUID = 6838682617243404489L;
 	private Set<String> propertyNames;
 
 	@Override

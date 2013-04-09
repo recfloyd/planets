@@ -3,8 +3,8 @@ package org.rec.planets.mercury.url.processor.recognize.fingerprint.eigen;
 import org.rec.planets.mercury.domain.AbstractBean;
 import org.rec.planets.mercury.parse.bean.OrderedRegex;
 
-public class EigenRegex extends AbstractBean implements
-		Comparable<EigenRegex> {
+public class EigenRegex extends AbstractBean implements Comparable<EigenRegex> {
+	private static final long serialVersionUID = -549551302993155357L;
 	private boolean omitHost;
 	private OrderedRegex regex;
 

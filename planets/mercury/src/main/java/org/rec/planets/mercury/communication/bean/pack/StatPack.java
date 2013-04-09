@@ -1,13 +1,12 @@
 package org.rec.planets.mercury.communication.bean.pack;
 
-import java.io.Serializable;
 import java.util.List;
 
 import org.rec.planets.mercury.communication.bean.snapshot.CurrentJobSnapshot;
 import org.rec.planets.mercury.communication.bean.snapshot.WebsiteSnapshot;
 import org.rec.planets.mercury.domain.AbstractBean;
 
-public class StatPack extends AbstractBean implements Serializable {
+public class StatPack extends AbstractBean {
 	private static final long serialVersionUID = 6007211730985940912L;
 	private Short nodeId;
 	private List<CurrentJobSnapshot> currentJobSnapshots;

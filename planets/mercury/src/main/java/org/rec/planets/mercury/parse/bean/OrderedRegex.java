@@ -1,6 +1,7 @@
 package org.rec.planets.mercury.parse.bean;
 
 public class OrderedRegex extends Regex implements Comparable<OrderedRegex> {
+	private static final long serialVersionUID = 5489386567832218213L;
 	private byte order;
 
 	public OrderedRegex(String expression, int[] groups, int flag,
