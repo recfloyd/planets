@@ -12,7 +12,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * 并行处理器.它将一组可并行运行的处理器运行在一个线程池上,并等待所有处理结束之后再返回
+ * 并行处理器.它将一组可并行运行的处理器运行在一个线程池上,并等待所有处理结束之后再返回<br/>
+ * <code>
+ * 	<bean id="并行Action" class="">
+ * 		<property name="actions">
+ * 			<list>
+ * 				...
+ * 			</list>
+ * 		</property>
+ * 		<property name="threadPoolFactory" ref="并行线程池"/>
+ * 		<property name="omitException" ref="是否忽略异常"/>
+ * 	</bean>
+ * </code>
  * 
  * @author rec
  * 

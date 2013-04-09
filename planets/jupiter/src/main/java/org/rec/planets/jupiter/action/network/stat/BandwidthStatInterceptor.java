@@ -12,7 +12,14 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 
 /**
- * 带宽统计拦截器,该拦截器适合紧紧包装住下载器
+ * 带宽统计拦截器,该拦截器适合紧紧包装住下载器<br/>
+ * <code>
+ * 	<bean id="带宽拦截Interceptor" class="">
+ * 		<property name="contextReader" ref="响应读取器"/>
+ * 		<property name="resultKey" ref="响应读取键"/>
+ * 		<property name="omitNull" ref="..."/>
+ * 	</bean>
+ * </code>
  * 
  * @author rec
  * 

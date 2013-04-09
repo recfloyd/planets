@@ -8,7 +8,16 @@ import org.rec.planets.jupiter.context.ActionContext;
 import org.rec.planets.jupiter.context.accessor.AbstractReadWriteSupport;
 
 /**
- * http客户端准备拦截器,每次都创建新的客户端,并负责其销毁工作
+ * http客户端准备拦截器,每次都创建新的客户端,并负责其销毁工作<br/>
+ * <code>
+ * 	<bean id="客户端生命周期Interceptor" class="">
+ * 		<property name="contextWriter" ref="客户端写入器"/>
+ * 		<property name="resultKey" ref="客户端写入键"/>
+ * 		<property name="omitSourceNull" ref="false"/>
+ * 
+ * 		<property name="clientFactory" ref="..."/>
+ * 	</bean>
+ * </code>
  * 
  * @author rec
  * 

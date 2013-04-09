@@ -8,7 +8,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * 链式处理器,将一连串的处理包装为一组
+ * 链式处理器,将一连串的处理包装为一组<br/>
+ * <code>
+ * 	<bean id="链式Action" class="">
+ * 		<property name="actions">
+ * 			<list>
+ * 				...
+ * 			</list>
+ * 		</property>
+ * 		<property name="omitException" ref="是否忽略异常"/>
+ * 	</bean>
+ * </code>
  * 
  * @author rec
  * 

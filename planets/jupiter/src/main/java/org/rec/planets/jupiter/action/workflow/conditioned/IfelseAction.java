@@ -4,7 +4,15 @@ import org.rec.planets.jupiter.action.Action;
 import org.rec.planets.jupiter.context.ActionContext;
 
 /**
- * if-else处理器,分别注入2个处理器,在判断为if和else的时候执行各自的处理
+ * if-else处理器,分别注入2个处理器,在判断为if和else的时候执行各自的处理<br/>
+ * <code>
+ * 	<bean id="IfElseAction" class="">
+ * 		<property name="contextReader" ref="条件读取器"/>
+ * 		<property name="evalString" ref="条件读取键"/>
+ * 		<property name="ifAction" ref="..."/>
+ * 		<property name="elseAction" ref="..."/>
+ * 	</bean>
+ * </code>
  * @author rec
  *
  */

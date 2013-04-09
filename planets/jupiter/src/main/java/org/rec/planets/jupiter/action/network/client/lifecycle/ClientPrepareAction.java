@@ -7,7 +7,21 @@ import org.rec.planets.jupiter.context.ActionContext;
 import org.rec.planets.jupiter.context.accessor.AbstractReadWriteSupport;
 
 /**
- * 全局客户端准备器
+ * 全局客户端准备器<br/>
+ * <code>
+ * 	<bean id="客户端准备Action" class="">
+ * 		<property name="contextReader" ref="客户端读取器"/>
+ * 		<property name="sourceKey" ref="客户端读取键"/>
+ * 		<property name="omitSourceNull" ref="true"/>
+ * 
+ * 		<property name="contextWriter" ref="客户端写入器"/>
+ * 		<property name="resultKey" ref="客户端写入键"/>
+ * 		<property name="omitSourceNull" ref="false"/>
+ * 
+ * 		<property name="clientCache" ref="..."/>
+ * 		<property name="clientFactory" ref="..."/>
+ * 	</bean>
+ * </code>
  * 
  * @author rec
  * 

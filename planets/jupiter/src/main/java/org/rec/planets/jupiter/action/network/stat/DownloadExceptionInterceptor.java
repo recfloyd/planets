@@ -6,8 +6,17 @@ import org.rec.planets.jupiter.context.ActionContext;
 import org.rec.planets.jupiter.context.ActionContextConstants;
 import org.rec.planets.jupiter.slot.snapshot.JobResultSnapshotFactory;
 
-public class DownloadExceptionInterceptor extends AbstractResponseReadable
-		implements Interceptor {
+/**
+ * 下载异常拦截器,该拦截器适合紧紧包装住下载器<br/>
+ * <code>
+ * 	<bean id="下载异常Interceptor" class="">
+ * 	</bean>
+ * </code>
+ * 
+ * @author rec
+ * 
+ */
+public class DownloadExceptionInterceptor implements Interceptor {
 
 	@Override
 	public void invoke(Action action, ActionContext context) throws Exception {

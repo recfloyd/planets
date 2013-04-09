@@ -12,6 +12,23 @@ import org.springframework.http.HttpStatus;
 
 import com.google.common.base.Strings;
 
+/**
+ * 响应码检查器,该检查器适合紧跟下载器<br/>
+ * <code>
+ * 	<bean id="响应码检查Action" class="">
+ * 		<property name="contextReader" ref="响应读取器"/>
+ * 		<property name="resultKey" ref="响应读取键"/>
+ * 		<property name="omitNull" ref="..."/>
+ * 		<property name="omitException" ref="..."/><!--如果响应码不是200,是否抛出异常-->
+ * 		<!--以下2项可以省略,当返回304的时候,可以向context写入一个boolean值,方便后续判断-->
+ * 		<property name="contextWriter" ref="304写入器"/>
+ * 		<property name="notModifiedKey" ref="304写入键"/>
+ * 	</bean>
+ * </code>
+ * 
+ * @author rec
+ * 
+ */
 public class StatusCodeCheckAction extends AbstractResponseReadable implements
 		Action {
 	private static final Logger logger = LoggerFactory

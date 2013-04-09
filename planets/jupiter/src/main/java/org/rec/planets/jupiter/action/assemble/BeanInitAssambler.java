@@ -6,7 +6,20 @@ import org.rec.planets.jupiter.context.ActionContext;
 import org.rec.planets.jupiter.context.accessor.AbstractReadWriteSupport;
 
 /**
- * Bean初始化组装器
+ * Bean初始化组装器<br/>
+ * <code>
+ * 	<bean id="对象初始化Action" class="">
+ * 		<!--以下3个可以省略 如果已经存在则跳过处理-->
+ * 		<property name="contextReader" ref="对象读取器"/>
+ * 		<property name="sourceKey" ref="对象读取键"/>
+ * 		<property name="omitSourceNull" ref="true"/>
+ * 
+ * 		<property name="beanFactory" ref="对象工厂"/>
+ * 		<property name="contextWriter" ref="对象写入器"/>
+ * 		<property name="resultKey" ref="对象写入键"/>
+ * 		<property name="omitSourceNull" ref="..."/>
+ * 	</bean>
+ * </code>
  * 
  * @author rec
  * 

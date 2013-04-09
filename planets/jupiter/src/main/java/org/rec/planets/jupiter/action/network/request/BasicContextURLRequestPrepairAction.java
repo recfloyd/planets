@@ -7,6 +7,23 @@ import org.springframework.http.HttpMethod;
 
 import com.google.common.base.Strings;
 
+/**
+ * 基础请求创建器<br/>
+ * <code>
+ * 	<bean id="基础请求创建Action" class="">
+ * 		<!--以下3个可以省略 如果已经存在则跳过处理-->
+ * 		<property name="contextReader" ref="url读取器"/>
+ * 		<property name="sourceKey" ref="url读取键"/>
+ * 		<property name="omitSourceNull" ref="true"/>
+ * 		<property name="contextWriter" ref="请求写入器"/>
+ * 		<property name="resultKey" ref="请求写入键"/>
+ * 		<property name="omitSourceNull" ref="..."/>
+ * 	</bean>
+ * </code>
+ * 
+ * @author rec
+ * 
+ */
 public class BasicContextURLRequestPrepairAction extends
 		AbstractReadProcessWriteAction {
 

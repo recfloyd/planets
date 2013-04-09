@@ -8,7 +8,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * 树形处理器,用于在运行过程中进行分支
+ * 树形处理器,用于在运行过程中进行分支<br/>
+ * <code>
+ * 	<bean id="树形Action" class="">
+ * 		<property name="tree" ref="TreeNode根节点"/>
+ * 		<property name="allowNotFound" ref="是否忽略找不到action"/>
+ * 	</bean>
+ * </code>
  * @author rec
  *
  */

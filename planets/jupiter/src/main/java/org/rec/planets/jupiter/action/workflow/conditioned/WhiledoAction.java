@@ -4,7 +4,14 @@ import org.rec.planets.jupiter.action.Action;
 import org.rec.planets.jupiter.context.ActionContext;
 
 /**
- * 执行while-do循环的处理器
+ * 执行while-do循环的处理器</br>
+ * <code>
+ * 	<bean id="ForBreakAction" class="">
+ * 		<property name="contextReader" ref="条件读取器"/>
+ * 		<property name="evalString" ref="条件读取键"/>
+ * 		<property name="nestedAction" ref="..." />
+ * 	</bean>
+ * </code>
  * 
  * @author rec
  * 

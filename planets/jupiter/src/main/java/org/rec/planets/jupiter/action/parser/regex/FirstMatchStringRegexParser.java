@@ -8,7 +8,19 @@ import org.springframework.util.CollectionUtils;
 import com.google.common.base.Joiner;
 
 /**
- * 首次匹配正则解析器,它匹配的结果是一个String,是由joiner字符串连接的各group的值
+ * 首次匹配正则解析器,它匹配的结果是一个String,是由joiner字符串连接的各group的值<br/>
+ * <code>
+ * 	<bean id="正则解析Action" class="">
+ * 		<property name="contextReader" ref="文本读取器"/>
+ * 		<property name="sourceKey" ref="文本读取键"/>
+ * 		<property name="omitSourceNull" ref="false"/>
+ * 		<property name="contextWriter" ref="结果写入器"/>
+ * 		<property name="resultKey" ref="结果写入键"/>
+ * 		<property name="omitSourceNull" ref="true"/>
+ * 		<property name="regex" ref="..."/>
+ * 		<property name="joiner" ref="..."/>
+ * 	</bean>
+ * </code>
  * 
  * @author rec
  * 

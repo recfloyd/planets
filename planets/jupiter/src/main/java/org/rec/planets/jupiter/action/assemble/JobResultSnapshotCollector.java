@@ -9,8 +9,14 @@ import org.rec.planets.mercury.communication.bean.CrawlEntity;
 import org.rec.planets.mercury.communication.bean.CrawlPropagation;
 
 /**
- * 把CrawlEntity和CrawlPropagation提取出来放到快照里面,一般放在抽取正式完成后进行
- * 
+ * 把CrawlEntity和CrawlPropagation提取出来放到快照里面,一般放在抽取正式完成后进行<br/>
+ * <code>
+ * 	<bean id="结果收集Action" class="">
+ * 		<property name="contextReader" ref="结果读取器"/>
+ * 		<property name="sourceKey" ref="结果读取键"/>
+ * 		<property name="omitSourceNull" ref="..."/>
+ * 	</bean>
+ * </code>
  * @author rec
  * 
  */

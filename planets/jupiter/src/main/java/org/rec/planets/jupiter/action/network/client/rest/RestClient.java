@@ -21,7 +21,11 @@ public class RestClient implements Client {
 	private static final String REQUEST_COOKIE_HEAD = "Cookie";
 	private static final String RESPONSE_COOKIE_HEAD = "Set-Cookie";
 	private static final String RESPONSE_COOKIE_HEAD2 = "Set-Cookie2";
-	private RestTemplate restTemplate;
+	private final RestTemplate restTemplate;
+
+	public RestClient(RestTemplate restTemplate) {
+		this.restTemplate = restTemplate;
+	}
 
 	private String buildCookieRequest(List<HttpCookie> cookies) {
 		StringBuilder buffer = new StringBuilder();
@@ -108,22 +112,5 @@ public class RestClient implements Client {
 
 	@Override
 	public void destroy() {
-	}
-
-	public void setRestTemplate(RestTemplate restTemplate) {
-		this.restTemplate = restTemplate;
-	}
-
-	public static void main(String[] args) throws Exception {
-		RestTemplate restTemplate = new RestTemplate();
-		Request request = new Request();
-		request.setUrl("http://www.tmall.com");
-		request.setMethod(HttpMethod.GET);
-		request.setEncoding("UTF-8");
-
-		RestClient client = new RestClient();
-		client.setRestTemplate(restTemplate);
-		Response<String> text = client.requestText(request);
-		System.out.println(text);
 	}
 }

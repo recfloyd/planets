@@ -6,6 +6,20 @@ import org.rec.planets.jupiter.context.accessor.ContextReader;
 import org.rec.planets.mercury.domain.CrawlURL;
 import org.rec.planets.mercury.url.processor.URLProcessor;
 
+/**
+ * url转换器<br/>
+ * <code>
+ * 	<bean id="转换Action" class="">
+ * 		<property name="baseURLReader" ref="基本url读取器"/>
+ * 		<property name="baseURLKey" ref="基本url读取键"/>
+ * 		<property name="crawlURLReader" ref="目标url读取器"/>
+ * 		<property name="crawlURLKey" ref="目标url读取键"/>
+ * 		<property name="urlProcessor" ref="url处理器"/>
+ * 	</bean>
+ * </code>
+ * @author rec
+ *
+ */
 public class CrawlURLTransferer implements Action {
 	private ContextReader baseURLReader;
 	private ContextReader crawlURLReader;

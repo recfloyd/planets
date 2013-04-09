@@ -9,6 +9,20 @@ import org.rec.planets.jupiter.context.ActionContext;
 import org.rec.planets.jupiter.context.accessor.AbstractReadSupport;
 import org.springframework.util.CollectionUtils;
 
+/**
+ * cookie存储器<br/>
+ * <code>
+ * 	<bean id="cookie存储Action" class="">
+ * 		<property name="contextReader" ref="响应读取器"/>
+ * 		<property name="sourceKey" ref="响应读取键"/>
+ * 		<property name="omitSourceNull" ref="true"/>
+ * 		<property name="clientCookieCache" ref="..."/>
+ * 		<property name="cookieKey" ref="cookie包的键"/>
+ * 	</bean>
+ * </code>
+ * @author rec
+ *
+ */
 public class CookieSaveAction extends AbstractReadSupport implements Action {
 	private ClientCookieCache clientCookieCache;
 	private String cookieKey;

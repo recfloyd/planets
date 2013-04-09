@@ -7,6 +7,21 @@ import org.rec.planets.jupiter.context.ActionContext;
 
 import com.google.common.base.Strings;
 
+/**
+ * DOM准备器<br/>
+ * <code>
+ * 	<bean id="dom准备Action" class="">
+ * 		<property name="contextReader" ref="响应读取器"/>
+ * 		<property name="sourceKey" ref="响应读取键"/>
+ * 		<property name="omitSourceNull" ref="true"/>
+ * 		<property name="contextWriter" ref="DOM写入器"/>
+ * 		<property name="resultKey" ref="DOM写入键"/>
+ * 		<property name="omitSourceNull" ref="false"/>
+ * 	</bean>
+ * </code>
+ * @author rec
+ *
+ */
 public class DomPrepairAction extends AbstractReadProcessWriteAction {
 
 	@Override

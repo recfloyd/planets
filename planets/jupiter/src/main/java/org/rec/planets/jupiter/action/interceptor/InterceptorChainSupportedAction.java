@@ -6,8 +6,17 @@ import org.rec.planets.jupiter.action.Action;
 import org.rec.planets.jupiter.context.ActionContext;
 
 /**
- * 包装了一组拦截器和一个核心操作的处理器.类似于Struts中将一组Interceptor包装到一个Action上
- * 
+ * 包装了一组拦截器和一个核心操作的处理器.类似于Struts中将一组Interceptor包装到一个Action上<br/>
+ * <code>
+ * 	<bean id="增加了组拦截功能的Action" class="">
+ * 		<property name="action" ref="实际工作的action"/>
+ * 		<property name="interceptors">
+ * 			<list>
+ * 				...
+ * 			</list>
+ * 		</property>
+ * 	</bean>
+ * </code>
  * @author rec
  * 
  */

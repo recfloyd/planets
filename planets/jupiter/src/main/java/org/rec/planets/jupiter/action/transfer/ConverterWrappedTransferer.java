@@ -6,7 +6,19 @@ import org.rec.planets.jupiter.context.ActionContext;
 import org.springframework.util.Assert;
 
 /**
- * 封装了一个org.apache.commons.beanutils.Converter用于转换的转换器
+ * 封装了一个org.apache.commons.beanutils.Converter用于转换的转换器<br/>
+ * <code>
+ * 	<bean id="转换Action" class="">
+ * 		<property name="contextReader" ref="源读取器"/>
+ * 		<property name="sourceKey" ref="源读取键"/>
+ * 		<property name="omitSourceNull" ref="false"/>
+ * 		<property name="contextWriter" ref="目标写入器"/>
+ * 		<property name="resultKey" ref="目标写入键"/>
+ * 		<property name="omitSourceNull" ref="false"/>
+ * 		<property name="converter" ref="转换器"/>
+ * 		<property name="clazz" ref="..."/>
+ * 	</bean>
+ * </code>
  * @author rec
  *
  */

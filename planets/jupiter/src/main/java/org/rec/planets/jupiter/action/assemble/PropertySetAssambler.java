@@ -4,8 +4,18 @@ import org.rec.planets.jupiter.action.AbstractReadProcessWriteAction;
 import org.rec.planets.jupiter.context.ActionContext;
 
 /**
- * 属性设置组装器,它从某个地方读取一个值,不做任何处理直接复制到另外一个地方
+ * 属性设置组装器,它从某个地方读取一个值,不做任何处理直接复制到另外一个地方<br/>
+ * <code>
+ * 	<bean id="值转储Action" class="">
+ * 		<property name="contextReader" ref="源读取器"/>
+ * 		<property name="sourceKey" ref="源读取键"/>
+ * 		<property name="omitSourceNull" ref="..."/>
  * 
+ * 		<property name="contextWriter" ref="目标写入器"/>
+ * 		<property name="resultKey" ref="目标写入键"/>
+ * 		<property name="omitSourceNull" ref="..."/>
+ * 	</bean>
+ * </code>
  * @author rec
  * 
  */
