@@ -4,7 +4,11 @@
 **/.classpath
 
 # for maven build #
-**/target/
+**/target
 
 # for eclipse groovy #
 **/.groovy
+
+# for idea #
+*.iml
+**/.idea/
