@@ -10,7 +10,6 @@ import org.springframework.http.HttpMethod;
  * 基础请求创建器<br/>
  * <code>
  * 	<bean id="基础请求创建Action" class="">
- * 		<!--以下3个可以省略 如果已经存在则跳过处理-->
  * 		<property name="contextWriter" ref="请求写入器"/>
  * 		<property name="resultKey" ref="请求写入键"/>
  * 		<property name="omitSourceNull" ref="..."/>
