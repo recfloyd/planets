@@ -1,4 +1,4 @@
-package org.rec.planets.jupiter.action.network;
+package org.rec.planets.jupiter.action.network.downloader;
 
 import org.rec.planets.jupiter.action.Action;
 import org.rec.planets.jupiter.action.network.bean.Request;
