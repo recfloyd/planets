@@ -13,7 +13,7 @@ import org.rec.planets.jupiter.context.ActionContext;
  * 
  * 		<property name="contextWriter" ref="目标写入器"/>
  * 		<property name="resultKey" value="目标写入键"/>
- * 		<property name="omitSourceNull" value="..."/>
+ * 		<property name="omitResultNull" value="..."/>
  * 	</bean>
  * </code>
  * @author rec
