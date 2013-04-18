@@ -202,4 +202,22 @@ public abstract class URLUtil {
 
 		return builder.build().toUriString();
 	}
+
+	/**
+	 * 向url后面追加参数
+	 * 
+	 * @param url
+	 * @param params
+	 * @return
+	 */
+	public static String buildParam(String url,
+			MultiValueMap<String, String> params) {
+		UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(url);
+		if (params != null) {
+			for (Map.Entry<String, List<String>> entry : params.entrySet()) {
+				builder.queryParam(entry.getKey(), entry.getValue().toArray());
+			}
+		}
+		return builder.build().toUriString();
+	}
 }

@@ -19,28 +19,30 @@ public class DomElement {
 	 * 属性名,如果给出则表示取属性值,否则表示取value值
 	 */
 	private String attrabute;
+	
+	public DomElement(String selector, int[] indexes, String attrabute) {
+		this.selector = selector;
+		this.indexes = indexes;
+		this.attrabute = attrabute;
+	}
+	
+	public DomElement(String selector, String attrabute) {
+		this(selector, null, attrabute);
+	}
+
+	public DomElement(String selector) {
+		this(selector, null);
+	}
 
 	public String getSelector() {
 		return selector;
-	}
-
-	public void setSelector(String selector) {
-		this.selector = selector;
 	}
 
 	public int[] getIndexes() {
 		return indexes;
 	}
 
-	public void setIndexes(int[] indexes) {
-		this.indexes = indexes;
-	}
-
 	public String getAttrabute() {
 		return attrabute;
-	}
-
-	public void setAttrabute(String attrabute) {
-		this.attrabute = attrabute;
 	}
 }

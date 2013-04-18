@@ -16,7 +16,7 @@ import com.google.common.base.Strings;
  * 		<property name="omitSourceNull" value="true"/>
  * 		<property name="contextWriter" ref="DOM写入器"/>
  * 		<property name="resultKey" value="DOM写入键"/>
- * 		<property name="omitSourceNull" value="false"/>
+ * 		<property name="omitResultNull" value="false"/>
  * 	</bean>
  * </code>
  * @author rec

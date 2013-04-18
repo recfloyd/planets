@@ -31,19 +31,21 @@ public class ChainedAction implements Action {
 
 	@Override
 	public void execute(ActionContext context) throws Exception {
+		int index = 0;
 		for (Action action : actions) {
 			try {
 				action.execute(context);
 			} catch (Exception e) {
+				logger.warn("error occured in action index " + index
+						+ " when process crawlURL: " + context.getCrawlURL(), e);
 				if (omitException) {
-					logger.warn(
-							"error occured and omitted when process crawlURL: "
-									+ context.getCrawlURL(), e);
+					logger.info("exception ignored");
 					continue;
 				} else {
 					throw e;
 				}
 			}
+			index++;
 		}
 	}
 

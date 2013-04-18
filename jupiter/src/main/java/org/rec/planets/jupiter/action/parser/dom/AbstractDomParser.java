@@ -1,6 +1,5 @@
 package org.rec.planets.jupiter.action.parser.dom;
 
-import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.rec.planets.jupiter.action.AbstractReadProcessWriteAction;
@@ -18,6 +17,7 @@ import com.google.common.base.Strings;
  */
 public abstract class AbstractDomParser extends AbstractReadProcessWriteAction {
 	protected DomElement domElement;
+	protected boolean stringfy = true;
 
 	public void setDomElement(DomElement domElement) {
 		this.domElement = domElement;
@@ -26,16 +26,15 @@ public abstract class AbstractDomParser extends AbstractReadProcessWriteAction {
 	@Override
 	protected Object processInternal(ActionContext context, Object source)
 			throws Exception {
-		Document document = (Document) source;
-		Elements elements = document.select(domElement.getSelector());
+		Element element = (Element) source;
+		Elements elements = element.select(domElement.getSelector());
 		if (CollectionUtils.isEmpty(elements))
 			return null;
 		else
 			return extract(elements, context);
 	}
 
-	protected abstract Object extract(Elements elements,
-			ActionContext context);
+	protected abstract Object extract(Elements elements, ActionContext context);
 
 	protected String extractFromElement(Element element) {
 		if (Strings.isNullOrEmpty(domElement.getAttrabute())) {
@@ -43,5 +42,9 @@ public abstract class AbstractDomParser extends AbstractReadProcessWriteAction {
 		} else {
 			return element.attr(domElement.getAttrabute()).trim();
 		}
+	}
+
+	public void setStringfy(boolean stringfy) {
+		this.stringfy = stringfy;
 	}
 }

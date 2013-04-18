@@ -23,19 +23,21 @@ public class ChainedURLProcessor extends AbstractBean implements URLProcessor {
 
 	@Override
 	public void process(CrawlURL crawlURL, CrawlURL baseURL) throws Exception {
+		int index = 0;
 		for (URLProcessor processor : processors) {
 			try {
 				processor.process(crawlURL, baseURL);
 			} catch (Exception e) {
+				logger.warn("error occured in processor index " + index
+						+ " when process crawlURL: " + crawlURL, e);
 				if (omitException) {
-					logger.warn(
-							"error occured and omitted when process crawlURL: "
-									+ crawlURL, e);
+					logger.info("exception ignored");
 					continue;
 				} else {
 					throw e;
 				}
 			}
+			index++;
 		}
 	}
 

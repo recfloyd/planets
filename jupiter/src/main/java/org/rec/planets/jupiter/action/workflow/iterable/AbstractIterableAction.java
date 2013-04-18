@@ -62,9 +62,9 @@ public abstract class AbstractIterableAction implements Action {
 
 		Class clazz = object.getClass();
 
-		if (clazz.isAssignableFrom(Map.class)) {
+		if (Map.class.isAssignableFrom(clazz)) {
 			list = traverseMap(object, context);
-		} else if (clazz.isAssignableFrom(Collection.class)) {
+		} else if (Collection.class.isAssignableFrom(clazz)) {
 			list = traverseCollection(object, context);
 		} else if (clazz.isArray()) {
 			list = traverseArray(object, context);
@@ -92,12 +92,11 @@ public abstract class AbstractIterableAction implements Action {
 				try {
 					reaults.get(i).get();
 				} catch (ExecutionException e) {
+					logger.warn("error occured when process crawlURL: "
+							+ context.getCrawlURL() + " and action index is "
+							+ i + " and action is " + nestedAction, e);
 					if (omitException) {
-						logger.warn(
-								"error occured and omitted when process crawlURL: "
-										+ context.getCrawlURL()
-										+ " and action index is " + i
-										+ " and action is " + nestedAction, e);
+						logger.info("exception ignored");
 						continue;
 					} else {
 						throw e;
@@ -112,12 +111,13 @@ public abstract class AbstractIterableAction implements Action {
 				try {
 					nestedAction.execute(context);
 				} catch (Exception e) {
+					logger.warn(
+							"error occured and omitted when process crawlURL: "
+									+ context.getCrawlURL()
+									+ " and action index is " + i
+									+ " and action is " + nestedAction, e);
 					if (omitException) {
-						logger.warn(
-								"error occured and omitted when process crawlURL: "
-										+ context.getCrawlURL()
-										+ " and action index is " + i
-										+ " and action is " + nestedAction, e);
+						logger.info("exception ignored");
 						continue;
 					} else {
 						throw e;

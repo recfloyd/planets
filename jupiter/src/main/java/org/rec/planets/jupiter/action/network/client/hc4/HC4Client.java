@@ -16,11 +16,16 @@ import org.apache.http.client.CookieStore;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpHead;
+import org.apache.http.client.methods.HttpOptions;
+import org.apache.http.client.methods.HttpPatch;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
+import org.apache.http.client.methods.HttpTrace;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.protocol.ClientContext;
-import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.cookie.Cookie;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.cookie.BasicClientCookie;
@@ -31,6 +36,7 @@ import org.apache.http.util.EntityUtils;
 import org.rec.planets.jupiter.action.network.bean.Request;
 import org.rec.planets.jupiter.action.network.bean.Response;
 import org.rec.planets.jupiter.action.network.client.Client;
+import org.rec.planets.mercury.parse.URLUtil;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -75,14 +81,18 @@ public class HC4Client implements Client {
 				: encoding;
 
 		HttpUriRequest httpRequest = null;
+		String uri = URLUtil.buildParam(request.getUrl(), request.getParams());
 		switch (method) {
+		case GET:
+			httpRequest = new HttpGet(uri);
+			break;
 		case POST:
-			httpRequest = new HttpPost(request.getUrl());
-			if (request.getParams() != null) {
+			httpRequest = new HttpPost(uri);
+			if (request.getData() != null) {
 				List<NameValuePair> params = new ArrayList<NameValuePair>();
 
-				for (Map.Entry<String, List<String>> entry : request
-						.getParams().entrySet()) {
+				for (Map.Entry<String, List<String>> entry : request.getData()
+						.entrySet()) {
 					for (String value : entry.getValue()) {
 						params.add(new BasicNameValuePair(entry.getKey(), value));
 					}
@@ -91,17 +101,47 @@ public class HC4Client implements Client {
 						params, encoding));
 			}
 			break;
-		default:
-			URIBuilder builder = new URIBuilder(request.getUrl());
-			if (request.getParams() != null) {
-				for (Map.Entry<String, List<String>> entry : request
-						.getParams().entrySet()) {
+		case PUT:
+			httpRequest = new HttpPut(uri);
+			if (request.getData() != null) {
+				List<NameValuePair> params = new ArrayList<NameValuePair>();
+
+				for (Map.Entry<String, List<String>> entry : request.getData()
+						.entrySet()) {
 					for (String value : entry.getValue()) {
-						builder.addParameter(entry.getKey(), value);
+						params.add(new BasicNameValuePair(entry.getKey(), value));
 					}
 				}
+				((HttpPut) httpRequest).setEntity(new UrlEncodedFormEntity(
+						params, encoding));
 			}
-			httpRequest = new HttpGet(builder.build());
+			break;
+		case PATCH:
+			httpRequest = new HttpPatch(uri);
+			if (request.getData() != null) {
+				List<NameValuePair> params = new ArrayList<NameValuePair>();
+
+				for (Map.Entry<String, List<String>> entry : request.getData()
+						.entrySet()) {
+					for (String value : entry.getValue()) {
+						params.add(new BasicNameValuePair(entry.getKey(), value));
+					}
+				}
+				((HttpPatch) httpRequest).setEntity(new UrlEncodedFormEntity(
+						params, encoding));
+			}
+			break;
+		case DELETE:
+			httpRequest = new HttpDelete(uri);
+			break;
+		case HEAD:
+			httpRequest = new HttpHead(uri);
+			break;
+		case OPTIONS:
+			httpRequest = new HttpOptions(uri);
+			break;
+		case TRACE:
+			httpRequest = new HttpTrace(uri);
 			break;
 		}
 

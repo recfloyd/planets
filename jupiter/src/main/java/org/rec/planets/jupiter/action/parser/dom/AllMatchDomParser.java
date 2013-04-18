@@ -18,27 +18,28 @@ import com.google.common.primitives.Ints;
  * 		<property name="omitSourceNull" value="false"/>
  * 		<property name="contextWriter" ref="结果写入器"/>
  * 		<property name="resultKey" value="结果写入键"/>
- * 		<property name="omitSourceNull" value="true"/>
+ * 		<property name="omitResultNull" value="true"/>
  * 		<property name="domElement" ref="..."/>
+ * 		<property name="stringfy" value="true"/><!--是否解码为string,或者保持dom-->
  * 	</bean>
  * </code>
+ * 
  * @author rec
- *
+ * 
  */
 public class AllMatchDomParser extends AbstractDomParser {
 
 	@Override
 	protected Object extract(Elements elements, ActionContext context) {
-		List<String> result = new ArrayList<String>();
+		List<Object> result = new ArrayList<Object>();
 		Element e = null;
 		int[] indexes = domElement.getIndexes();
 		for (int i = 0; i < elements.size(); i++) {
 			e = elements.get(i);
 			if (indexes == null || Ints.contains(indexes, i)) {
-				result.add(super.extractFromElement(e));
+				result.add(stringfy ? super.extractFromElement(e) : e);
 			}
 		}
 		return result;
 	}
-
 }

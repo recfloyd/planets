@@ -17,7 +17,7 @@ import org.rec.planets.jupiter.context.accessor.AbstractReadWriteSupport;
  * 		<property name="beanFactory" ref="对象工厂"/>
  * 		<property name="contextWriter" ref="对象写入器"/>
  * 		<property name="resultKey" value="对象写入键"/>
- * 		<property name="omitSourceNull" value="..."/>
+ * 		<property name="omitResultNull" value="..."/>
  * 	</bean>
  * </code>
  * 
@@ -37,5 +37,9 @@ public class BeanInitAssambler extends AbstractReadWriteSupport implements
 		}
 		Object obj = beanFactory.getBean(context);
 		writeResult(context, obj);
+	}
+
+	public void setBeanFactory(BeanFactory beanFactory) {
+		this.beanFactory = beanFactory;
 	}
 }

@@ -23,6 +23,7 @@ public class Request extends AbstractBean {
 	private HttpMethod method;
 	private HttpHeaders headers;
 	private MultiValueMap<String, String> params;
+	private MultiValueMap<String, String> data;//暂时只支持字符串类型的request body,其他类型后续追加
 	private String encoding;
 	private List<HttpCookie> cookies;
 	private Map<String, Object> clientSetting;
@@ -57,6 +58,14 @@ public class Request extends AbstractBean {
 
 	public void setParams(MultiValueMap<String, String> params) {
 		this.params = params;
+	}
+
+	public MultiValueMap<String, String> getData() {
+		return data;
+	}
+
+	public void setData(MultiValueMap<String, String> data) {
+		this.data = data;
 	}
 
 	public String getEncoding() {
@@ -96,6 +105,15 @@ public class Request extends AbstractBean {
 		if (this.params == null)
 			return null;
 		Collection<String> values = this.params.get(name);
+		if (CollectionUtils.isEmpty(values))
+			return null;
+		return values.iterator().next();
+	}
+
+	public String getSingleData(String name) {
+		if (this.data == null)
+			return null;
+		Collection<String> values = this.data.get(name);
 		if (CollectionUtils.isEmpty(values))
 			return null;
 		return values.iterator().next();

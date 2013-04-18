@@ -11,7 +11,7 @@ import org.rec.planets.mercury.parse.RegexUtil;
  * 		<property name="omitSourceNull" value="false"/>
  * 		<property name="contextWriter" ref="结果写入器"/>
  * 		<property name="resultKey" value="结果写入键"/>
- * 		<property name="omitSourceNull" value="true"/>
+ * 		<property name="omitResultNull" value="true"/>
  * 		<property name="regex" ref="..."/>
  * 	</bean>
  * </code>

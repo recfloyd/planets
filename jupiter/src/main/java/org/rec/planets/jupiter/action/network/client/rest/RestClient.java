@@ -1,7 +1,7 @@
 package org.rec.planets.jupiter.action.network.client.rest;
 
 import java.net.HttpCookie;
-import java.util.HashMap;
+import java.net.URI;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -10,6 +10,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.rec.planets.jupiter.action.network.bean.Request;
 import org.rec.planets.jupiter.action.network.bean.Response;
 import org.rec.planets.jupiter.action.network.client.Client;
+import org.rec.planets.mercury.parse.URLUtil;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -62,7 +63,7 @@ public class RestClient implements Client {
 
 	private <T> Response<T> getResponse(Request request, Class<T> responseType)
 			throws Exception {
-		HttpEntity<String> requestEntity = null;
+		HttpEntity<?> requestEntity = null;
 
 		HttpHeaders headers = new HttpHeaders();
 
@@ -74,19 +75,21 @@ public class RestClient implements Client {
 		if (CollectionUtils.isNotEmpty(cookies))
 			headers.add(REQUEST_COOKIE_HEAD, buildCookieRequest(cookies));
 
-		requestEntity = new HttpEntity<String>(headers);
+		MultiValueMap<String, String> data = request.getData();
+		if (data == null)
+			requestEntity = new HttpEntity<String>(headers);
+		else
+			requestEntity = new HttpEntity<MultiValueMap<String, String>>(data,
+					httpHeaders);
 
-		Map<String, String> uriVariables = new HashMap<String, String>();
-		MultiValueMap<String, String> params = request.getParams();
-		if (params != null)
-			uriVariables.putAll(params.toSingleValueMap());
+		URI uri = new URI(URLUtil.buildParam(request.getUrl(),
+				request.getParams()));
 
 		HttpMethod method = request.getMethod();
 		method = method == null ? HttpMethod.GET : method;
 
-		ResponseEntity<T> responseEntity = restTemplate.exchange(
-				request.getUrl(), method, requestEntity, responseType,
-				uriVariables);
+		ResponseEntity<T> responseEntity = restTemplate.exchange(uri, method,
+				requestEntity, responseType);
 
 		List<HttpCookie> responseCookies = null;
 		HttpHeaders responseHeaders = responseEntity.getHeaders();

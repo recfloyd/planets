@@ -49,12 +49,13 @@ public class ParallelAction implements Action {
 			try {
 				reaults.get(i).get();
 			} catch (ExecutionException e) {
+				logger.warn(
+						"error occured when process crawlURL: "
+								+ context.getCrawlURL()
+								+ " and action index is " + i
+								+ " and action is " + actions.get(i), e);
 				if (omitException) {
-					logger.warn(
-							"error occured and omitted when process crawlURL: "
-									+ context.getCrawlURL()
-									+ " and action index is " + i
-									+ " and action is " + actions.get(i), e);
+					logger.info("exception ignored");
 					continue;
 				} else {
 					throw e;

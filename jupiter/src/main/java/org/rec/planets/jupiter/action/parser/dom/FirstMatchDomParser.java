@@ -1,5 +1,6 @@
 package org.rec.planets.jupiter.action.parser.dom;
 
+import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.rec.planets.jupiter.context.ActionContext;
 
@@ -12,8 +13,9 @@ import org.rec.planets.jupiter.context.ActionContext;
  * 		<property name="omitSourceNull" value="false"/>
  * 		<property name="contextWriter" ref="结果写入器"/>
  * 		<property name="resultKey" value="结果写入键"/>
- * 		<property name="omitSourceNull" value="true"/>
+ * 		<property name="omitResultNull" value="true"/>
  * 		<property name="domElement" ref="..."/>
+ * 		<property name="stringfy" value="true"/><!--是否解码为string,或者保持dom-->
  * 	</bean>
  * </code>
  * 
@@ -24,7 +26,8 @@ public class FirstMatchDomParser extends AbstractDomParser {
 
 	@Override
 	protected Object extract(Elements elements, ActionContext context) {
-		return super.extractFromElement(elements.first());
+		Element e = elements.first();
+		return stringfy ? super.extractFromElement(e) : e;
 	}
 
 }
