@@ -8,12 +8,12 @@ import org.rec.planets.jupiter.context.ActionContext;
  * <code>
  * 	<bean id="值转储Action" class="">
  * 		<property name="contextReader" ref="源读取器"/>
- * 		<property name="sourceKey" ref="源读取键"/>
- * 		<property name="omitSourceNull" ref="..."/>
+ * 		<property name="sourceKey" value="源读取键"/>
+ * 		<property name="omitSourceNull" value="..."/>
  * 
  * 		<property name="contextWriter" ref="目标写入器"/>
- * 		<property name="resultKey" ref="目标写入键"/>
- * 		<property name="omitSourceNull" ref="..."/>
+ * 		<property name="resultKey" value="目标写入键"/>
+ * 		<property name="omitSourceNull" value="..."/>
  * 	</bean>
  * </code>
  * @author rec

@@ -11,13 +11,13 @@ import org.rec.planets.jupiter.context.accessor.AbstractReadWriteSupport;
  * 	<bean id="对象初始化Action" class="">
  * 		<!--以下3个可以省略 如果已经存在则跳过处理-->
  * 		<property name="contextReader" ref="对象读取器"/>
- * 		<property name="sourceKey" ref="对象读取键"/>
- * 		<property name="omitSourceNull" ref="true"/>
+ * 		<property name="sourceKey" value="对象读取键"/>
+ * 		<property name="omitSourceNull" value="true"/>
  * 
  * 		<property name="beanFactory" ref="对象工厂"/>
  * 		<property name="contextWriter" ref="对象写入器"/>
- * 		<property name="resultKey" ref="对象写入键"/>
- * 		<property name="omitSourceNull" ref="..."/>
+ * 		<property name="resultKey" value="对象写入键"/>
+ * 		<property name="omitSourceNull" value="..."/>
  * 	</bean>
  * </code>
  * 

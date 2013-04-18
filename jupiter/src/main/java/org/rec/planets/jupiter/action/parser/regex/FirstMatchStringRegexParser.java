@@ -12,13 +12,13 @@ import com.google.common.base.Joiner;
  * <code>
  * 	<bean id="正则解析Action" class="">
  * 		<property name="contextReader" ref="文本读取器"/>
- * 		<property name="sourceKey" ref="文本读取键"/>
- * 		<property name="omitSourceNull" ref="false"/>
+ * 		<property name="sourceKey" value="文本读取键"/>
+ * 		<property name="omitSourceNull" value="false"/>
  * 		<property name="contextWriter" ref="结果写入器"/>
- * 		<property name="resultKey" ref="结果写入键"/>
- * 		<property name="omitSourceNull" ref="true"/>
+ * 		<property name="resultKey" value="结果写入键"/>
+ * 		<property name="omitSourceNull" value="true"/>
  * 		<property name="regex" ref="..."/>
- * 		<property name="joiner" ref="..."/>
+ * 		<property name="joiner" value="..."/>
  * 	</bean>
  * </code>
  * 

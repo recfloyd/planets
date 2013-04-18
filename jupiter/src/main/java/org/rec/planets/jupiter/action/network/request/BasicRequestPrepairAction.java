@@ -11,8 +11,8 @@ import org.springframework.http.HttpMethod;
  * <code>
  * 	<bean id="基础请求创建Action" class="">
  * 		<property name="contextWriter" ref="请求写入器"/>
- * 		<property name="resultKey" ref="请求写入键"/>
- * 		<property name="omitSourceNull" ref="..."/>
+ * 		<property name="resultKey" value="请求写入键"/>
+ * 		<property name="omitSourceNull" value="..."/>
  * 	</bean>
  * </code>
  * @author rec

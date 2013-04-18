@@ -8,6 +8,18 @@ import org.rec.planets.jupiter.system.node.NodeIdHolder;
 import org.rec.planets.mercury.communication.bean.pack.ResultPack;
 import org.rec.planets.mercury.communication.service.PushResultService;
 
+/**
+ * 推送结果的客户端<br/>
+ * <code>
+ * 	<bean id="推送结果Client" class="">
+ * 		<property name="pushResultService" ref="推送结果服务实现类"/>
+ * 		<property name="slotFactory" ref="任务槽工厂"/>
+ * 		<property name="commandHandler" ref="命令处理类"/>
+ * 	</bean>
+ * </code>
+ * @author rec
+ *
+ */
 public class PushResultClient {
 	private PushResultService pushResultService;
 	private SlotFactory slotFactory;

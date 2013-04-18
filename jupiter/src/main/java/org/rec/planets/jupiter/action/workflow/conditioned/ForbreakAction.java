@@ -9,7 +9,7 @@ import org.rec.planets.jupiter.context.ActionContext;
  * <code>
  * 	<bean id="ForBreakAction" class="">
  * 		<property name="contextReader" ref="条件读取器"/>
- * 		<property name="evalString" ref="条件读取键"/>
+ * 		<property name="evalString" value="条件读取键"/>
  * 		<property name="actions">
  * 			<list>
  * 				...

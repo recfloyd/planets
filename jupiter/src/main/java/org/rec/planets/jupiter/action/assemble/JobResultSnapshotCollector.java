@@ -13,8 +13,8 @@ import org.rec.planets.mercury.communication.bean.CrawlPropagation;
  * <code>
  * 	<bean id="结果收集Action" class="">
  * 		<property name="contextReader" ref="结果读取器"/>
- * 		<property name="sourceKey" ref="结果读取键"/>
- * 		<property name="omitSourceNull" ref="..."/>
+ * 		<property name="sourceKey" value="结果读取键"/>
+ * 		<property name="omitSourceNull" value="..."/>
  * 	</bean>
  * </code>
  * @author rec

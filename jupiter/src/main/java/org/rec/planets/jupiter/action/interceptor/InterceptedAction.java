@@ -7,8 +7,8 @@ import org.rec.planets.jupiter.context.ActionContext;
  * 被拦截的处理器,在一个处理器外包装一个拦截器<br/>
  * <code>
  * 	<bean id="增加了拦截功能的Action" class="">
- * 		<property name="action" ref="实际工作的action"/>
- * 		<property name="interceptor" ref="拦截器"/>
+ * 		<constructor-arg name="action" ref="实际工作的action"/>
+ * 		<constructor-arg name="interceptor" ref="拦截器"/>
  * 	</bean>
  * </code>
  * @author rec

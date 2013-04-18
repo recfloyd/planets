@@ -16,8 +16,8 @@ import org.springframework.http.ResponseEntity;
  * <code>
  * 	<bean id="带宽拦截Interceptor" class="">
  * 		<property name="contextReader" ref="响应读取器"/>
- * 		<property name="resultKey" ref="响应读取键"/>
- * 		<property name="omitNull" ref="..."/>
+ * 		<property name="resultKey" value="响应读取键"/>
+ * 		<property name="omitNull" value="..."/>
  * 	</bean>
  * </code>
  * 

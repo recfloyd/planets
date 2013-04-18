@@ -10,10 +10,10 @@ import org.rec.planets.jupiter.context.accessor.ContextReader;
  * 		<property name="nestedAction" ref="..."/>
  * 		<property name="contextReader" ref="循环体读取器"/>
  * 		<property name="itemsKey" ref="循环体读取键"/>
- * 		<property name="omitAbsence" ref="是否忽略空循环体"/>
- * 		<property name="parallel" ref="是否并行"/>
+ * 		<property name="omitAbsence" value="是否忽略空循环体"/>
+ * 		<property name="parallel" value="是否并行"/>
  * 		<property name="threadPoolFactory" ref="并行线程池"/>
- * 		<property name="omitException" ref="是否忽略异常"/>
+ * 		<property name="omitException" value="是否忽略异常"/>
  * 	</bean>
  * </code>
  * 

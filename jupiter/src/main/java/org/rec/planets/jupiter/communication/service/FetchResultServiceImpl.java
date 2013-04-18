@@ -11,6 +11,17 @@ import org.rec.planets.mercury.communication.service.FetchResultService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * 获取结果实现类<br/>
+ * <code>
+ * 	<bean id="获取结果Impl" class="">
+ * 		<property name="slotFactory" ref="任务槽工厂"/>
+ * 		<property name="commandHandler" ref="命令处理类"/>
+ * 	</bean>
+ * </code>
+ * @author rec
+ *
+ */
 public class FetchResultServiceImpl implements FetchResultService {
 	private static final Logger logger = LoggerFactory
 			.getLogger(FetchResultServiceImpl.class);

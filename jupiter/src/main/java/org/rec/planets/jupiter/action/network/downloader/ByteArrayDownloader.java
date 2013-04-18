@@ -9,11 +9,11 @@ import org.rec.planets.jupiter.action.network.client.Client;
  * <code>
  * 	<bean id="字节数组下载Action" class="">
  * 		<property name="clientReader" ref="客户端读取器"/>
- * 		<property name="clientKey" ref="客户端读取键"/>
+ * 		<property name="clientKey" value="客户端读取键"/>
  * 		<property name="requestReader" ref="请求读取器"/>
- * 		<property name="requestKey" ref="请求读取键"/>
+ * 		<property name="requestKey" value="请求读取键"/>
  * 		<property name="responseWriter" ref="响应写入器"/>
- * 		<property name="responseKey" ref="响应写入键"/>
+ * 		<property name="responseKey" value="响应写入键"/>
  * 	</bean>
  * </code>
  * 

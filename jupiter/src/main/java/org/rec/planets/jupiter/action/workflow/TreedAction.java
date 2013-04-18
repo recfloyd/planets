@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
  * <code>
  * 	<bean id="树形Action" class="">
  * 		<property name="tree" ref="TreeNode根节点"/>
- * 		<property name="allowNotFound" ref="是否忽略找不到action"/>
+ * 		<property name="allowNotFound" value="是否忽略找不到action"/>
  * 	</bean>
  * </code>
  * @author rec

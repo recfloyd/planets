@@ -12,11 +12,11 @@ import com.google.common.base.Strings;
  * <code>
  * 	<bean id="基础请求创建Action" class="">
  * 		<property name="contextReader" ref="url读取器"/>
- * 		<property name="sourceKey" ref="url读取键"/>
- * 		<property name="omitSourceNull" ref="true"/>
+ * 		<property name="sourceKey" value="url读取键"/>
+ * 		<property name="omitSourceNull" value="true"/>
  * 		<property name="contextWriter" ref="请求写入器"/>
- * 		<property name="resultKey" ref="请求写入键"/>
- * 		<property name="omitSourceNull" ref="..."/>
+ * 		<property name="resultKey" value="请求写入键"/>
+ * 		<property name="omitSourceNull" value="..."/>
  * 	</bean>
  * </code>
  * 

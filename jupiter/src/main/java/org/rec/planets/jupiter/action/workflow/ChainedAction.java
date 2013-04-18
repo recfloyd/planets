@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
  * 				...
  * 			</list>
  * 		</property>
- * 		<property name="omitException" ref="是否忽略异常"/>
+ * 		<property name="omitException" value="是否忽略异常"/>
  * 	</bean>
  * </code>
  * 

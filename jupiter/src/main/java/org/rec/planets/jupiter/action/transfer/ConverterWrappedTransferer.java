@@ -10,13 +10,13 @@ import org.springframework.util.Assert;
  * <code>
  * 	<bean id="转换Action" class="">
  * 		<property name="contextReader" ref="源读取器"/>
- * 		<property name="sourceKey" ref="源读取键"/>
- * 		<property name="omitSourceNull" ref="false"/>
+ * 		<property name="sourceKey" value="源读取键"/>
+ * 		<property name="omitSourceNull" value="false"/>
  * 		<property name="contextWriter" ref="目标写入器"/>
- * 		<property name="resultKey" ref="目标写入键"/>
- * 		<property name="omitSourceNull" ref="false"/>
+ * 		<property name="resultKey" value="目标写入键"/>
+ * 		<property name="omitSourceNull" value="false"/>
  * 		<property name="converter" ref="转换器"/>
- * 		<property name="clazz" ref="..."/>
+ * 		<property name="clazz" value="..."/>
  * 	</bean>
  * </code>
  * @author rec

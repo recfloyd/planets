@@ -9,10 +9,10 @@ import org.rec.planets.jupiter.context.ActionContext;
  * 	<bean id="循环Action" class="">
  * 		<property name="nestedAction" ref="..."/>
  * 		<property name="items" ref="循环体,必须是可迭代的"/>
- * 		<property name="omitAbsence" ref="是否忽略空循环体"/>
- * 		<property name="parallel" ref="是否并行"/>
+ * 		<property name="omitAbsence" value="是否忽略空循环体"/>
+ * 		<property name="parallel" value="是否并行"/>
  * 		<property name="threadPoolFactory" ref="并行线程池"/>
- * 		<property name="omitException" ref="是否忽略异常"/>
+ * 		<property name="omitException" value="是否忽略异常"/>
  * 	</bean>
  * </code>
  * @author rec

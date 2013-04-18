@@ -13,6 +13,18 @@ import org.rec.planets.mercury.domain.Job;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * 拉取任务的客户端<br/>
+ * <code>
+ * 	<bean id="拉取任务Client" class="">
+ * 		<property name="pollJobService" ref="拉取服务实现类"/>
+ * 		<property name="slotFactory" ref="任务槽工厂"/>
+ * 		<property name="commandHandler" ref="命令处理类"/>
+ * 	</bean>
+ * </code>
+ * @author rec
+ *
+ */
 public class PollJobClient {
 	private static final Logger logger = LoggerFactory
 			.getLogger(PollJobClient.class);

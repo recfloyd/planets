@@ -14,11 +14,11 @@ import com.google.common.primitives.Ints;
  * <code>
  * 	<bean id="dom解析Action" class="">
  * 		<property name="contextReader" ref="DOM读取器"/>
- * 		<property name="sourceKey" ref="DOM读取键"/>
- * 		<property name="omitSourceNull" ref="false"/>
+ * 		<property name="sourceKey" value="DOM读取键"/>
+ * 		<property name="omitSourceNull" value="false"/>
  * 		<property name="contextWriter" ref="结果写入器"/>
- * 		<property name="resultKey" ref="结果写入键"/>
- * 		<property name="omitSourceNull" ref="true"/>
+ * 		<property name="resultKey" value="结果写入键"/>
+ * 		<property name="omitSourceNull" value="true"/>
  * 		<property name="domElement" ref="..."/>
  * 	</bean>
  * </code>

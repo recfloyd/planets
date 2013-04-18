@@ -11,9 +11,9 @@ import org.rec.planets.mercury.url.processor.URLProcessor;
  * <code>
  * 	<bean id="转换Action" class="">
  * 		<property name="baseURLReader" ref="基本url读取器"/>
- * 		<property name="baseURLKey" ref="基本url读取键"/>
+ * 		<property name="baseURLKey" value="基本url读取键"/>
  * 		<property name="crawlURLReader" ref="目标url读取器"/>
- * 		<property name="crawlURLKey" ref="目标url读取键"/>
+ * 		<property name="crawlURLKey" value="目标url读取键"/>
  * 		<property name="urlProcessor" ref="url处理器"/>
  * 	</bean>
  * </code>

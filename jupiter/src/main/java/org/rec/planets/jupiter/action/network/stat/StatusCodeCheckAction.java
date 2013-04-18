@@ -17,12 +17,12 @@ import com.google.common.base.Strings;
  * <code>
  * 	<bean id="响应码检查Action" class="">
  * 		<property name="contextReader" ref="响应读取器"/>
- * 		<property name="resultKey" ref="响应读取键"/>
- * 		<property name="omitNull" ref="..."/>
- * 		<property name="omitException" ref="..."/><!--如果响应码不是200,是否抛出异常-->
+ * 		<property name="resultKey" value="响应读取键"/>
+ * 		<property name="omitNull" value="..."/>
+ * 		<property name="omitException" value="..."/><!--如果响应码不是200,是否抛出异常-->
  * 		<!--以下2项可以省略,当返回304的时候,可以向context写入一个boolean值,方便后续判断-->
  * 		<property name="contextWriter" ref="304写入器"/>
- * 		<property name="notModifiedKey" ref="304写入键"/>
+ * 		<property name="notModifiedKey" value="304写入键"/>
  * 	</bean>
  * </code>
  * 
@@ -73,4 +73,15 @@ public class StatusCodeCheckAction extends AbstractResponseReadable implements
 		}
 	}
 
+	public void setContextWriter(ContextWriter contextWriter) {
+		this.contextWriter = contextWriter;
+	}
+
+	public void setNotModifiedKey(String notModifiedKey) {
+		this.notModifiedKey = notModifiedKey;
+	}
+
+	public void setOmitException(boolean omitException) {
+		this.omitException = omitException;
+	}
 }

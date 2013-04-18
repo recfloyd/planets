@@ -12,11 +12,11 @@ import com.google.common.base.Strings;
  * <code>
  * 	<bean id="dom准备Action" class="">
  * 		<property name="contextReader" ref="响应读取器"/>
- * 		<property name="sourceKey" ref="响应读取键"/>
- * 		<property name="omitSourceNull" ref="true"/>
+ * 		<property name="sourceKey" value="响应读取键"/>
+ * 		<property name="omitSourceNull" value="true"/>
  * 		<property name="contextWriter" ref="DOM写入器"/>
- * 		<property name="resultKey" ref="DOM写入键"/>
- * 		<property name="omitSourceNull" ref="false"/>
+ * 		<property name="resultKey" value="DOM写入键"/>
+ * 		<property name="omitSourceNull" value="false"/>
  * 	</bean>
  * </code>
  * @author rec
