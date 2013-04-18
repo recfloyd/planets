@@ -1,10 +1,11 @@
 package org.rec.planets.jupiter.communication.service.client;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import org.rec.planets.jupiter.slot.Slot;
-import org.rec.planets.jupiter.system.NodeIdHolder;
+import org.rec.planets.jupiter.slot.SlotFactory;
+import org.rec.planets.jupiter.system.command.CommandHandler;
+import org.rec.planets.jupiter.system.node.NodeIdHolder;
 import org.rec.planets.mercury.communication.bean.pack.JobPack;
 import org.rec.planets.mercury.communication.bean.pack.PollPack;
 import org.rec.planets.mercury.communication.service.PollJobService;
@@ -16,26 +17,31 @@ public class PollJobClient {
 	private static final Logger logger = LoggerFactory
 			.getLogger(PollJobClient.class);
 	private PollJobService pollJobService;
-	private Map<Short, Slot> slots;
+	private SlotFactory slotFactory;
+	private CommandHandler commandHandler;
 
 	public void execute() throws Exception {
 		PollPack pollPack = new PollPack();
 		pollPack.setNodeId(NodeIdHolder.getNodeId());
-		Map<Short, Long> ruleVersions = new HashMap<Short, Long>(slots.size());
-		for (Map.Entry<Short, Slot> slotEntry : slots.entrySet()) {
-			ruleVersions.put(slotEntry.getKey(), slotEntry.getValue()
-					.getRuleVersion());
-		}
-		pollPack.setRuleVersions(ruleVersions);
+		pollPack.setRuleVersions(slotFactory.getRuleVersions());
 
 		JobPack jobPack = pollJobService.poll(pollPack);
 
 		if (jobPack == null)
 			return;
-		// TODO 首先处理命令
 
+		Map<String, Object> command = jobPack.getCommand();
+		if (command != null && command.size() > 0) {
+			if (commandHandler == null) {
+				throw new RuntimeException("there's no command hanlder for command "
+						+ command);
+			}
+			commandHandler.handle(command);
+		}
+
+		Slot slot = null;
 		for (Job job : jobPack.getJobs()) {
-			Slot slot = slots.get(job.getWebsiteId());
+			slot = slotFactory.getSlot(job.getWebsiteId(), null);
 			if (slot == null) {
 				logger.error("no slot config for websiteId "
 						+ job.getWebsiteId());
@@ -45,11 +51,15 @@ public class PollJobClient {
 		}
 	}
 
+	public void setCommandHandler(CommandHandler commandHandler) {
+		this.commandHandler = commandHandler;
+	}
+
 	public void setPollJobService(PollJobService pollJobService) {
 		this.pollJobService = pollJobService;
 	}
 
-	public void setSlots(Map<Short, Slot> slots) {
-		this.slots = slots;
+	public void setSlotFactory(SlotFactory slotFactory) {
+		this.slotFactory = slotFactory;
 	}
 }

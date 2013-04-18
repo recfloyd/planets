@@ -1,4 +1,4 @@
-package org.rec.planets.jupiter.system;
+package org.rec.planets.jupiter.system.command;
 
 import java.util.Map;
 
