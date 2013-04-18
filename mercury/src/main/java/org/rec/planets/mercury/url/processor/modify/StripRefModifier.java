@@ -27,7 +27,7 @@ public final class StripRefModifier extends AbstractModifier {
 	}
 
 	@Override
-	public String modify(String url, String baseURL) {
+	protected String modify(String url, String baseURL) {
 		return URLUtil.stripRef(url);
 	}
 
