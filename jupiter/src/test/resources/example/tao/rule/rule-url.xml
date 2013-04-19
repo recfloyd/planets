@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="
+	http://www.springframework.org/schema/beans	
+	http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.springframework.org/schema/util
+	http://www.springframework.org/schema/util/spring-util.xsd
+	">
+	<bean id="ifElseAction"
+		class="org.rec.planets.jupiter.action.workflow.conditioned.IfelseAction">
+		<property name="contextReader" ref="contextReader" />
+		<property name="evalString">
+			<value><![CDATA[crawlURL.appParams['todoPage'] > 1]]></value>
+		</property>
+		<property name="ifAction" ref="getNextPageAction" />
+	</bean>
+
+	<bean id="getNextPageAction" class="org.rec.planets.jupiter.action.workflow.ChainedAction">
+		<property name="actions">
+			<list>
+				<ref local="nextPageAction" />
+				<ref local="nextURLTransAction" />
+				<ref local="crawlPropergationInitAction" />
+				<ref local="crawlURLInitAction" />
+				<ref local="crawlURLCopyAction" />
+				<ref local="crawlURLSetAction" />
+				<ref local="todoModifyAction" />
+			</list>
+		</property>
+		<property name="omitException" value="false" />
+	</bean>
+
+	<bean id="nextPageAction"
+		class="org.rec.planets.jupiter.action.parser.dom.FirstMatchDomParser">
+		<property name="contextReader" ref="contextReader" />
+		<property name="sourceKey" value="urlcontext['key_document']" />
+		<property name="omitSourceNull" value="false" />
+		<property name="contextWriter" ref="contextWriter" />
+		<property name="resultKey" value="urlcontext['next_page']" />
+		<property name="omitResultNull" value="false" />
+		<property name="domElement">
+			<bean class="org.rec.planets.jupiter.action.parser.dom.bean.DomElement">
+				<constructor-arg name="selector">
+					<value><![CDATA[a.ui-page-next]]></value>
+				</constructor-arg>
+				<constructor-arg name="attrabute" value="href" />
+			</bean>
+		</property>
+	</bean>
+
+	<bean id="nextURLTransAction"
+		class="org.rec.planets.jupiter.action.transfer.CrawlURLStringTransferer">
+		<property name="baseURLReader">
+			<null />
+		</property>
+		<property name="baseURLKey">
+			<null />
+		</property>
+		<property name="crawlURLReader" ref="contextReader" />
+		<property name="crawlURLKey" value="urlcontext['next_page']" />
+		<property name="contextWriter" ref="contextWriter" />
+		<property name="resultKey" value="urlcontext['next_page']" />
+		<property name="urlProcessor">
+			<bean
+				class="org.rec.planets.mercury.url.processor.workflow.ChainedURLProcessor">
+				<property name="omitException" value="false" />
+				<property name="processors">
+					<list>
+						<bean
+							class="org.rec.planets.mercury.url.processor.modify.QueryParamModifier">
+							<property name="params">
+								<set>
+									<value>cat</value>
+									<value>q</value>
+									<value>sort</value>
+									<value>style</value>
+									<value>s</value>
+								</set>
+							</property>
+							<property name="reserved" value="true" />
+						</bean>
+						<bean
+							class="org.rec.planets.mercury.url.processor.modify.StripRefModifier"
+							factory-method="getInstance" />
+					</list>
+				</property>
+			</bean>
+		</property>
+	</bean>
+
+	<bean id="crawlPropergationInitAction"
+		class="org.rec.planets.jupiter.action.assemble.BeanInitAssambler">
+		<property name="contextReader" ref="contextReader" />
+		<property name="sourceKey" value="urlcontext['crawl_propergation']" />
+		<property name="omitSourceNull" value="true" />
+		<property name="beanFactory">
+			<bean
+				class="org.rec.planets.jupiter.action.assemble.factory.CrawlPropergationFactory" />
+		</property>
+		<property name="contextWriter" ref="contextWriter" />
+		<property name="resultKey" value="urlcontext['crawl_propergation']" />
+		<property name="omitResultNull" value="false" />
+	</bean>
+
+	<bean id="crawlURLInitAction"
+		class="org.rec.planets.jupiter.action.assemble.BeanInitAssambler">
+		<property name="beanFactory">
+			<bean
+				class="org.rec.planets.jupiter.action.assemble.factory.BasicBeanFactory">
+				<property name="clazz" value="org.rec.planets.mercury.domain.CrawlURL" />
+			</bean>
+		</property>
+		<property name="contextWriter" ref="collectionWriter" />
+		<property name="resultKey" value="urlcontext['crawl_propergation'].children" />
+		<property name="omitResultNull" value="false" />
+	</bean>
+
+	<bean id="crawlURLCopyAction"
+		class="org.rec.planets.jupiter.action.transfer.CrawlURLTransferer">
+		<property name="baseURLReader" ref="contextReader" />
+		<property name="baseURLKey" value="crawlURL" />
+		<property name="crawlURLReader" ref="contextReader" />
+		<property name="crawlURLKey" value="urlcontext['crawl_propergation'].children[0]" />
+		<property name="urlProcessor">
+			<bean
+				class="org.rec.planets.mercury.url.processor.property.DirectPropertiesCopier">
+				<property name="propertyNames">
+					<set>
+						<value>websiteId</value>
+						<value>appParams</value>
+					</set>
+				</property>
+			</bean>
+		</property>
+	</bean>
+
+	<bean id="crawlURLSetAction"
+		class="org.rec.planets.jupiter.action.assemble.ObjectCopyAssambler">
+		<property name="contextReader" ref="contextReader" />
+		<property name="sourceKey" value="urlcontext['next_page']" />
+		<property name="omitSourceNull" value="false" />
+		<property name="contextWriter" ref="contextWriter" />
+		<property name="resultKey"
+			value="urlcontext['crawl_propergation'].children[0].url" />
+		<property name="omitResultNull" value="false" />
+	</bean>
+
+	<bean id="todoModifyAction"
+		class="org.rec.planets.jupiter.action.assemble.ObjectCopyAssambler">
+		<property name="contextReader" ref="contextReader" />
+		<property name="sourceKey"
+			value="urlcontext['crawl_propergation'].children[0].appParams['todoPage'] - 1" />
+		<property name="omitSourceNull" value="false" />
+		<property name="contextWriter" ref="contextWriter" />
+		<property name="resultKey"
+			value="urlcontext['crawl_propergation'].children[0].appParams['todoPage']" />
+		<property name="omitResultNull" value="false" />
+	</bean>
+</beans>

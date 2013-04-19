@@ -1,0 +1,325 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="
+	http://www.springframework.org/schema/beans	
+	http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.springframework.org/schema/util
+	http://www.springframework.org/schema/util/spring-util.xsd
+	">
+	<bean id="productBlockParseAction"
+		class="org.rec.planets.jupiter.action.parser.dom.AllMatchDomParser">
+		<property name="contextReader" ref="contextReader" />
+		<property name="sourceKey" value="urlcontext['key_document']" />
+		<property name="omitSourceNull" value="false" />
+		<property name="contextWriter" ref="contextWriter" />
+		<property name="resultKey" value="urlcontext['product_blocks']" />
+		<property name="omitResultNull" value="false" />
+		<property name="domElement">
+			<bean class="org.rec.planets.jupiter.action.parser.dom.bean.DomElement">
+				<constructor-arg name="selector">
+					<value><![CDATA[div#J_ItemList > div.product]]></value>
+				</constructor-arg>
+			</bean>
+		</property>
+		<property name="stringfy" value="false" />
+	</bean>
+
+	<bean id="crawlEntityInitAction"
+		class="org.rec.planets.jupiter.action.assemble.BeanInitAssambler">
+		<property name="contextReader" ref="contextReader" />
+		<property name="sourceKey" value="urlcontext['crawl_entity']" />
+		<property name="omitSourceNull" value="true" />
+		<property name="beanFactory">
+			<bean
+				class="org.rec.planets.jupiter.action.assemble.factory.CrawlEntityFactory" />
+		</property>
+		<property name="contextWriter" ref="contextWriter" />
+		<property name="resultKey" value="urlcontext['crawl_entity']" />
+		<property name="omitResultNull" value="false" />
+	</bean>
+
+	<bean id="productListInitAction"
+		class="org.rec.planets.jupiter.action.assemble.BeanInitAssambler">
+		<property name="contextReader" ref="contextReader" />
+		<property name="sourceKey"
+			value="urlcontext['crawl_entity'].content['product_list']" />
+		<property name="omitSourceNull" value="true" />
+		<property name="beanFactory">
+			<bean
+				class="org.rec.planets.jupiter.action.assemble.factory.BasicBeanFactory">
+				<property name="clazz" value="java.util.concurrent.CopyOnWriteArrayList" />
+			</bean>
+		</property>
+		<property name="contextWriter" ref="contextWriter" />
+		<property name="resultKey"
+			value="urlcontext['crawl_entity'].content['product_list']" />
+		<property name="omitResultNull" value="false" />
+	</bean>
+
+	<bean id="iterateAction"
+		class="org.rec.planets.jupiter.action.workflow.iterable.ContextedIterableAction">
+		<property name="nestedAction" ref="productParseAction" />
+		<property name="contextReader" ref="contextReader" />
+		<property name="itemsKey" value="urlcontext['product_blocks']" />
+		<property name="omitAbsence" value="false" />
+		<property name="parallel" value="false" />
+		<property name="threadPoolFactory" ref="threadPoolFactory" />
+		<property name="omitException" value="false" />
+	</bean>
+
+	<bean id="threadPoolFactory"
+		class="org.rec.planets.jupiter.action.workflow.parallel.GlobalThreadPoolFactory">
+		<property name="maxThread" value="5" />
+	</bean>
+
+	<bean id="productParseAction" class="org.rec.planets.jupiter.action.workflow.ChainedAction">
+		<property name="actions">
+			<list>
+				<ref local="productInitAction" />
+				<ref local="productNameParseAction" />
+				<ref local="productNameTrimAction" />
+				<ref local="productPriceParseAction" />
+				<ref local="productPriceTransAction" />
+				<ref local="productSalesParseAction" />
+				<ref local="productCommentsParseAction" />
+				<ref local="productCommentsTransAction" />
+				<ref local="productShopParseAction" />
+				<ref local="shopTrimAction" />
+				<ref local="productURLParseAction" />
+				<ref local="productURLTransAction" />
+				<ref local="productTypeCopyAction" />
+				<ref local="productCopyAction" />
+			</list>
+		</property>
+		<property name="omitException" value="false" />
+	</bean>
+
+	<bean id="productInitAction"
+		class="org.rec.planets.jupiter.action.assemble.BeanInitAssambler">
+		<property name="beanFactory">
+			<bean
+				class="org.rec.planets.jupiter.action.assemble.factory.BasicBeanFactory">
+				<property name="clazz" value="java.util.concurrent.ConcurrentHashMap" />
+			</bean>
+		</property>
+		<property name="contextWriter" ref="threadLocalReaderWriter" />
+		<property name="resultKey" value="@{product}@" />
+		<property name="omitResultNull" value="false" />
+	</bean>
+
+	<bean id="productNameParseAction"
+		class="org.rec.planets.jupiter.action.parser.dom.FirstMatchDomParser">
+		<property name="contextReader" ref="iterateReader" />
+		<property name="sourceKey">
+			<null />
+		</property>
+		<property name="omitSourceNull" value="false" />
+		<property name="contextWriter" ref="threadLocalReaderWriter" />
+		<property name="resultKey" value="@{product}@name" />
+		<property name="omitResultNull" value="false" />
+		<property name="domElement">
+			<bean class="org.rec.planets.jupiter.action.parser.dom.bean.DomElement">
+				<constructor-arg name="selector">
+					<value><![CDATA[div.product-iWrap > p.productTitle > a]]></value>
+				</constructor-arg>
+			</bean>
+		</property>
+	</bean>
+
+	<bean id="productNameTrimAction"
+		class="org.rec.planets.jupiter.action.transfer.html.HTMLEscapeTransferer">
+		<property name="contextReader" ref="threadLocalReaderWriter" />
+		<property name="sourceKey" value="@{product}@name" />
+		<property name="omitSourceNull" value="false" />
+		<property name="contextWriter" ref="threadLocalReaderWriter" />
+		<property name="resultKey" value="@{product}@name" />
+		<property name="omitResultNull" value="false" />
+	</bean>
+
+	<bean id="productPriceParseAction"
+		class="org.rec.planets.jupiter.action.parser.dom.FirstMatchDomParser">
+		<property name="contextReader" ref="iterateReader" />
+		<property name="sourceKey">
+			<null />
+		</property>
+		<property name="omitSourceNull" value="false" />
+		<property name="contextWriter" ref="threadLocalReaderWriter" />
+		<property name="resultKey" value="@{product}@price" />
+		<property name="omitResultNull" value="false" />
+		<property name="domElement">
+			<bean class="org.rec.planets.jupiter.action.parser.dom.bean.DomElement">
+				<constructor-arg name="selector">
+					<value><![CDATA[div.product-iWrap > p.productPrice > em]]></value>
+				</constructor-arg>
+				<constructor-arg name="attrabute" value="title" />
+			</bean>
+		</property>
+	</bean>
+
+	<bean id="productPriceTransAction"
+		class="org.rec.planets.jupiter.action.transfer.ConverterWrappedTransferer">
+		<property name="contextReader" ref="threadLocalReaderWriter" />
+		<property name="sourceKey" value="@{product}@price" />
+		<property name="omitSourceNull" value="false" />
+		<property name="contextWriter" ref="threadLocalReaderWriter" />
+		<property name="resultKey" value="@{product}@price" />
+		<property name="omitResultNull" value="false" />
+		<property name="converter">
+			<bean class="org.apache.commons.beanutils.converters.DoubleConverter" />
+		</property>
+		<property name="clazz" value="java.lang.Double" />
+	</bean>
+
+	<bean id="productSalesParseAction"
+		class="org.rec.planets.jupiter.action.parser.dom.FirstMatchDomParser">
+		<property name="contextReader" ref="iterateReader" />
+		<property name="sourceKey">
+			<null />
+		</property>
+		<property name="omitSourceNull" value="false" />
+		<property name="contextWriter" ref="threadLocalReaderWriter" />
+		<property name="resultKey" value="@{product}@sales" />
+		<property name="omitResultNull" value="false" />
+		<property name="domElement">
+			<bean class="org.rec.planets.jupiter.action.parser.dom.bean.DomElement">
+				<constructor-arg name="selector">
+					<value><![CDATA[div.product-iWrap > p.productStatus > em]]></value>
+				</constructor-arg>
+			</bean>
+		</property>
+	</bean>
+
+	<bean id="productCommentsParseAction"
+		class="org.rec.planets.jupiter.action.parser.dom.FirstMatchDomParser">
+		<property name="contextReader" ref="iterateReader" />
+		<property name="sourceKey">
+			<null />
+		</property>
+		<property name="omitSourceNull" value="false" />
+		<property name="contextWriter" ref="threadLocalReaderWriter" />
+		<property name="resultKey" value="@{product}@comments" />
+		<property name="omitResultNull" value="true" />
+		<property name="domElement">
+			<bean class="org.rec.planets.jupiter.action.parser.dom.bean.DomElement">
+				<constructor-arg name="selector">
+					<value><![CDATA[div.product-iWrap > p.productStatus > a]]></value>
+				</constructor-arg>
+			</bean>
+		</property>
+	</bean>
+
+	<bean id="productCommentsTransAction"
+		class="org.rec.planets.jupiter.action.parser.regex.SingleMatchStringRegexParser">
+		<property name="contextReader" ref="threadLocalReaderWriter" />
+		<property name="sourceKey" value="@{product}@comments" />
+		<property name="omitSourceNull" value="true" />
+		<property name="contextWriter" ref="threadLocalReaderWriter" />
+		<property name="resultKey" value="@{product}@comments" />
+		<property name="omitResultNull" value="false" />
+		<property name="regex">
+			<bean class="org.rec.planets.mercury.parse.bean.Regex">
+				<constructor-arg name="expression">
+					<value><![CDATA[累计评价:(.+)]]></value>
+				</constructor-arg>
+				<constructor-arg name="groups" value="1" />
+			</bean>
+		</property>
+	</bean>
+
+	<bean id="productShopParseAction"
+		class="org.rec.planets.jupiter.action.parser.dom.FirstMatchDomParser">
+		<property name="contextReader" ref="iterateReader" />
+		<property name="sourceKey">
+			<null />
+		</property>
+		<property name="omitSourceNull" value="false" />
+		<property name="contextWriter" ref="threadLocalReaderWriter" />
+		<property name="resultKey" value="@{product}@shop" />
+		<property name="omitResultNull" value="false" />
+		<property name="domElement">
+			<bean class="org.rec.planets.jupiter.action.parser.dom.bean.DomElement">
+				<constructor-arg name="selector">
+					<value><![CDATA[div.product-iWrap > div.productShop > a]]></value>
+				</constructor-arg>
+			</bean>
+		</property>
+	</bean>
+
+	<bean id="shopTrimAction"
+		class="org.rec.planets.jupiter.action.transfer.html.HTMLEscapeTransferer">
+		<property name="contextReader" ref="threadLocalReaderWriter" />
+		<property name="sourceKey" value="@{product}@shop" />
+		<property name="omitSourceNull" value="false" />
+		<property name="contextWriter" ref="threadLocalReaderWriter" />
+		<property name="resultKey" value="@{product}@shop" />
+		<property name="omitResultNull" value="false" />
+	</bean>
+
+	<bean id="productURLParseAction"
+		class="org.rec.planets.jupiter.action.parser.dom.FirstMatchDomParser">
+		<property name="contextReader" ref="iterateReader" />
+		<property name="sourceKey">
+			<null />
+		</property>
+		<property name="omitSourceNull" value="false" />
+		<property name="contextWriter" ref="threadLocalReaderWriter" />
+		<property name="resultKey" value="@{product}@url" />
+		<property name="omitResultNull" value="false" />
+		<property name="domElement">
+			<bean class="org.rec.planets.jupiter.action.parser.dom.bean.DomElement">
+				<constructor-arg name="selector">
+					<value><![CDATA[div.product-iWrap > p.productTitle > a]]></value>
+				</constructor-arg>
+				<constructor-arg name="attrabute" value="href" />
+			</bean>
+		</property>
+	</bean>
+
+	<bean id="productURLTransAction"
+		class="org.rec.planets.jupiter.action.transfer.CrawlURLStringTransferer">
+		<property name="baseURLReader">
+			<null />
+		</property>
+		<property name="baseURLKey">
+			<null />
+		</property>
+		<property name="crawlURLReader" ref="threadLocalReaderWriter" />
+		<property name="crawlURLKey" value="@{product}@url" />
+		<property name="contextWriter" ref="threadLocalReaderWriter" />
+		<property name="resultKey" value="@{product}@url" />
+		<property name="urlProcessor">
+			<bean
+				class="org.rec.planets.mercury.url.processor.modify.QueryParamModifier">
+				<property name="params">
+					<set>
+						<value>id</value>
+					</set>
+				</property>
+				<property name="reserved" value="true" />
+			</bean>
+		</property>
+	</bean>
+
+	<bean id="productTypeCopyAction"
+		class="org.rec.planets.jupiter.action.assemble.ObjectCopyAssambler">
+		<property name="contextReader" ref="contextReader" />
+		<property name="sourceKey" value="crawlURL.appParams['type']" />
+		<property name="omitSourceNull" value="false" />
+		<property name="contextWriter" ref="threadLocalReaderWriter" />
+		<property name="resultKey" value="@{product}@type" />
+		<property name="omitResultNull" value="false" />
+	</bean>
+
+	<bean id="productCopyAction"
+		class="org.rec.planets.jupiter.action.assemble.ObjectCopyAssambler">
+		<property name="contextReader" ref="threadLocalReaderWriter" />
+		<property name="sourceKey" value="@{product}@" />
+		<property name="omitSourceNull" value="false" />
+		<property name="contextWriter" ref="collectionWriter" />
+		<property name="resultKey"
+			value="urlcontext['crawl_entity'].content['product_list']" />
+		<property name="omitResultNull" value="false" />
+	</bean>
+</beans>
