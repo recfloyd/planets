@@ -3,7 +3,7 @@ package org.rec.planets.jupiter.action.assemble;
 import org.rec.planets.jupiter.action.Action;
 import org.rec.planets.jupiter.action.assemble.factory.BeanFactory;
 import org.rec.planets.jupiter.context.ActionContext;
-import org.rec.planets.jupiter.context.accessor.AbstractReadWriteSupport;
+import org.rec.planets.jupiter.context.accessor.support.AbstractReadWriteSupport;
 
 /**
  * Bean初始化组装器<br/>

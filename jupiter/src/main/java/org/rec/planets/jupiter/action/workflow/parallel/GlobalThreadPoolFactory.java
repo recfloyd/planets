@@ -14,9 +14,11 @@ import org.rec.planets.jupiter.context.ActionContext;
  * 
  */
 public class GlobalThreadPoolFactory implements ThreadPoolFactory {
-	private static volatile ThreadPoolExecutor threadPool;
+	private static volatile ThreadPoolExecutor threadPool = new ThreadPoolExecutor(
+			10, 10, 0L, TimeUnit.MILLISECONDS,
+			new LinkedBlockingQueue<Runnable>());;
 	@SuppressWarnings("unused")
-	private int maxThread;
+	private int maxThread = 10;
 
 	@Override
 	public ExecutorService getThreadPool(ActionContext context) {

@@ -4,7 +4,7 @@ import org.rec.planets.jupiter.action.Action;
 import org.rec.planets.jupiter.action.network.bean.Response;
 import org.rec.planets.jupiter.context.ActionContext;
 import org.rec.planets.jupiter.context.ActionContextConstants;
-import org.rec.planets.jupiter.context.accessor.ContextWriter;
+import org.rec.planets.jupiter.context.accessor.writer.ContextWriter;
 import org.rec.planets.jupiter.slot.snapshot.JobResultSnapshotFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

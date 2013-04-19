@@ -1,6 +1,7 @@
-package org.rec.planets.jupiter.context.accessor;
+package org.rec.planets.jupiter.context.accessor.support;
 
 import org.rec.planets.jupiter.context.ActionContext;
+import org.rec.planets.jupiter.context.accessor.writer.ContextWriter;
 
 public class AbstractReadWriteSupport extends AbstractReadSupport {
 	protected ContextWriter contextWriter;

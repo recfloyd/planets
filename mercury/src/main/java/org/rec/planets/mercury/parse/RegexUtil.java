@@ -109,6 +109,26 @@ public abstract class RegexUtil {
 	}
 
 	/**
+	 * 只捕获单组数据
+	 * 
+	 * @param string
+	 * @param regex
+	 * @return
+	 */
+	public static String getSingleMatch(String string, Regex regex) {
+		Matcher matcher = getMatcher(string, regex);
+
+		boolean tag = false;
+
+		tag = regex.isStrict() ? matcher.matches() : matcher.find();
+
+		if (!tag)
+			return null;
+
+		return matcher.group(regex.getGroups()[0]);
+	}
+
+	/**
 	 * 根据正则表达式从字符串中抽取全部捕获组
 	 * 
 	 * @param string

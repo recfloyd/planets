@@ -1,6 +1,7 @@
-package org.rec.planets.jupiter.context.accessor;
+package org.rec.planets.jupiter.context.accessor.support;
 
 import org.rec.planets.jupiter.context.ActionContext;
+import org.rec.planets.jupiter.context.accessor.reader.ContextReader;
 
 public abstract class AbstractReadSupport {
 	protected ContextReader contextReader;

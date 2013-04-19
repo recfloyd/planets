@@ -3,7 +3,7 @@ package org.rec.planets.jupiter.action.assemble;
 import org.rec.planets.jupiter.action.Action;
 import org.rec.planets.jupiter.context.ActionContext;
 import org.rec.planets.jupiter.context.ActionContextConstants;
-import org.rec.planets.jupiter.context.accessor.AbstractReadSupport;
+import org.rec.planets.jupiter.context.accessor.support.AbstractReadSupport;
 import org.rec.planets.jupiter.slot.snapshot.JobResultSnapshotFactory;
 import org.rec.planets.mercury.communication.bean.CrawlEntity;
 import org.rec.planets.mercury.communication.bean.CrawlPropagation;

@@ -19,7 +19,7 @@ import org.rec.planets.jupiter.context.ActionContext;
  * @author rec
  * 
  */
-public class PropertySetAssambler extends AbstractReadProcessWriteAction {
+public class ObjectCopyAssambler extends AbstractReadProcessWriteAction {
 
 	@Override
 	protected Object processInternal(ActionContext context, Object source)

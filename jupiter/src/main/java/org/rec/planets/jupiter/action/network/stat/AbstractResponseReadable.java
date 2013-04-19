@@ -2,7 +2,7 @@ package org.rec.planets.jupiter.action.network.stat;
 
 import org.rec.planets.jupiter.action.network.bean.Response;
 import org.rec.planets.jupiter.context.ActionContext;
-import org.rec.planets.jupiter.context.accessor.ContextReader;
+import org.rec.planets.jupiter.context.accessor.reader.ContextReader;
 
 public abstract class AbstractResponseReadable {
 	protected boolean omitNull;

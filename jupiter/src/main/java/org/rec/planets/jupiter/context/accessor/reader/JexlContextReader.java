@@ -1,6 +1,5 @@
-package org.rec.planets.jupiter.context.accessor;
+package org.rec.planets.jupiter.context.accessor.reader;
 
-import org.rec.planets.jupiter.context.ActionContext;
 import org.rec.planets.mercury.expression.JexlUtil;
 
 /**
@@ -11,7 +10,7 @@ import org.rec.planets.mercury.expression.JexlUtil;
  */
 public class JexlContextReader implements ContextReader {
 	@Override
-	public Object read(ActionContext context, String key) {
+	public Object read(Object context, String key) {
 		return JexlUtil.evalFromObject(context, key);
 	}
 }

@@ -3,7 +3,7 @@ package org.rec.planets.jupiter.action.network.request;
 import org.rec.planets.jupiter.action.Action;
 import org.rec.planets.jupiter.action.network.bean.Request;
 import org.rec.planets.jupiter.context.ActionContext;
-import org.rec.planets.jupiter.context.accessor.AbstractReadWriteSupport;
+import org.rec.planets.jupiter.context.accessor.support.AbstractReadWriteSupport;
 import org.springframework.http.HttpMethod;
 
 /**

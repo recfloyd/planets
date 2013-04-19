@@ -8,7 +8,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.rec.planets.jupiter.action.Action;
 import org.rec.planets.jupiter.action.network.bean.Response;
 import org.rec.planets.jupiter.context.ActionContext;
-import org.rec.planets.jupiter.context.accessor.JexlContextReader;
+import org.rec.planets.jupiter.context.accessor.reader.JexlContextReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;

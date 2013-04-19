@@ -2,8 +2,8 @@ package org.rec.planets.jupiter.action.transfer;
 
 import org.rec.planets.jupiter.action.Action;
 import org.rec.planets.jupiter.context.ActionContext;
-import org.rec.planets.jupiter.context.accessor.ContextReader;
-import org.rec.planets.jupiter.context.accessor.ContextWriter;
+import org.rec.planets.jupiter.context.accessor.reader.ContextReader;
+import org.rec.planets.jupiter.context.accessor.writer.ContextWriter;
 import org.rec.planets.mercury.domain.CrawlURL;
 import org.rec.planets.mercury.url.processor.URLProcessor;
 

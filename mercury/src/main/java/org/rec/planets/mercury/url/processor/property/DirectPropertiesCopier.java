@@ -27,8 +27,8 @@ public class DirectPropertiesCopier extends AbstractBean implements
 			propertyName = propertyDescriptor.getName();
 			if ((allAllowed || propertyNames.contains(propertyName))
 					&& PropertyUtils.isWriteable(crawlURL, propertyName)) {
-				PropertyUtils.setProperty(crawlURL, propertyName,
-						PropertyUtils.getProperty(baseURL, propertyName));
+				PropertyUtils.setNestedProperty(crawlURL, propertyName,
+						PropertyUtils.getNestedProperty(baseURL, propertyName));
 			}
 		}
 	}
