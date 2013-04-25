@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+    <bean id="mainHandleAction" class="org.rec.planets.jupiter.action.workflow.ChainedAction">
+        <property name="actions">
+            <list>
+                <ref local="sitemapGetAction"/>
+                <ref local="sitemapTransAction"/>
+                <ref local="sitemapCrawlPropergationInitAction"/>
+                <ref local="sitemapCrawlURLInitAction"/>
+                <ref local="sitemapCrawlURLCopyAction"/>
+                <ref local="sitemapCrawlURLSetAction"/>
+                <ref local="sitemapTypeSetAction"/>
+            </list>
+        </property>
+        <property name="omitException" value="false"/>
+    </bean>
+
+    <bean id="sitemapGetAction" class="org.rec.planets.jupiter.action.parser.dom.FirstMatchDomParser">
+        <property name="contextReader" ref="urlContextReaderWriter"/>
+        <property name="sourceKey" value="key_document"/>
+        <property name="contextWriter" ref="urlContextReaderWriter"/>
+        <property name="resultKey" value="key_sitemap_url"/>
+        <property name="domElement">
+            <bean class="org.rec.planets.jupiter.action.parser.dom.bean.DomElement">
+                <constructor-arg name="selector">
+                    <value><![CDATA[a:containsOwn(全部商品详细分类)]]></value>
+                </constructor-arg>
+                <constructor-arg name="attrabute" value="href"/>
+            </bean>
+        </property>
+    </bean>
+
+    <bean id="sitemapTransAction"
+          class="org.rec.planets.jupiter.action.transfer.CrawlURLStringTransferer">
+        <property name="baseURLReader">
+            <null/>
+        </property>
+        <property name="baseURLKey">
+            <null/>
+        </property>
+        <property name="crawlURLReader" ref="urlContextReaderWriter"/>
+        <property name="crawlURLKey" value="key_sitemap_url"/>
+        <property name="contextWriter" ref="urlContextReaderWriter"/>
+        <property name="resultKey" value="key_sitemap_url"/>
+        <property name="urlProcessor">
+            <bean class="org.rec.planets.mercury.url.processor.modify.StripTailModifier"/>
+        </property>
+    </bean>
+
+    <bean id="sitemapCrawlPropergationInitAction"
+          class="org.rec.planets.jupiter.action.assemble.BeanInitAssambler">
+        <property name="contextReader" ref="urlContextReaderWriter"/>
+        <property name="sourceKey" value="crawl_propergation"/>
+        <property name="omitSourceNull" value="true"/>
+        <property name="beanFactory">
+            <bean
+                    class="org.rec.planets.jupiter.action.assemble.factory.CrawlPropergationFactory"/>
+        </property>
+        <property name="contextWriter" ref="urlContextReaderWriter"/>
+        <property name="resultKey" value="crawl_propergation"/>
+    </bean>
+
+    <bean id="sitemapCrawlURLInitAction"
+          class="org.rec.planets.jupiter.action.assemble.BeanInitAssambler">
+        <property name="beanFactory">
+            <bean
+                    class="org.rec.planets.jupiter.action.assemble.factory.BasicBeanFactory">
+                <property name="clazz" value="org.rec.planets.mercury.domain.CrawlURL"/>
+            </bean>
+        </property>
+        <property name="contextWriter" ref="collectionWriter"/>
+        <property name="resultKey" value="urlcontext['crawl_propergation'].children"/>
+    </bean>
+
+    <bean id="sitemapCrawlURLCopyAction"
+          class="org.rec.planets.jupiter.action.transfer.CrawlURLTransferer">
+        <property name="baseURLReader" ref="contextReader"/>
+        <property name="baseURLKey" value="crawlURL"/>
+        <property name="crawlURLReader" ref="contextReader"/>
+        <property name="crawlURLKey" value="urlcontext['crawl_propergation'].children[0]"/>
+        <property name="urlProcessor">
+            <bean
+                    class="org.rec.planets.mercury.url.processor.property.DirectPropertiesCopier">
+                <property name="propertyNames">
+                    <set>
+                        <value>websiteId</value>
+                    </set>
+                </property>
+            </bean>
+        </property>
+    </bean>
+
+    <bean id="sitemapCrawlURLSetAction"
+          class="org.rec.planets.jupiter.action.assemble.ObjectCopyAssambler">
+        <property name="contextReader" ref="urlContextReaderWriter"/>
+        <property name="sourceKey" value="key_sitemap_url"/>
+        <property name="contextWriter" ref="contextWriter"/>
+        <property name="resultKey"
+                  value="urlcontext['crawl_propergation'].children[0].url"/>
+    </bean>
+
+    <bean id="sitemapTypeSetAction"
+          class="org.rec.planets.jupiter.action.assemble.ObjectCopyAssambler">
+        <property name="contextReader" ref="contextReader"/>
+        <property name="sourceKey" value="15" />
+        <property name="contextWriter" ref="contextWriter"/>
+        <property name="resultKey"
+                  value="urlcontext['crawl_propergation'].children[0].pageType"/>
+    </bean>
+</beans>

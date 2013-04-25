@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:util="http://www.springframework.org/schema/util" xmlns:lang="http://www.springframework.org/schema/lang"
+       xsi:schemaLocation="
+	http://www.springframework.org/schema/beans	
+	http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.springframework.org/schema/util
+	http://www.springframework.org/schema/util/spring-util.xsd
+	http://www.springframework.org/schema/lang
+	http://www.springframework.org/schema/lang/spring-lang.xsd
+	">
+    <bean id="rule" class="org.rec.planets.jupiter.rule.Rule">
+        <constructor-arg name="websiteId" value="3"/>
+        <constructor-arg name="version" value="1"/>
+        <constructor-arg name="websiteProperties" ref="websiteProperties"/>
+        <constructor-arg name="action" ref="action"/>
+    </bean>
+
+    <util:map id="websiteProperties" key-type="java.lang.String"
+              map-class="java.util.HashMap">
+        <entry key="max_thread">
+            <value type="java.lang.Integer">8</value>
+        </entry>
+        <entry key="key_client_param">
+            <map key-type="java.lang.String">
+                <entry key="http.protocol.content-charset">
+                    <value>GB2312</value>
+                </entry>
+                <entry key="http.protocol.element-charset">
+                    <value>GB2312</value>
+                </entry>
+                <entry key="http.useragent">
+                    <value>
+                        <![CDATA[Mozilla/5.0 (X11; Linux i686 on x86_64; rv:10.0.2) Gecko/20100101 Firefox/10.0.2]]></value>
+                </entry>
+                <entry key="http.connection.timeout">
+                    <value type="java.lang.Integer">25000</value>
+                </entry>
+                <entry key="http.socket.timeout">
+                    <value type="java.lang.Integer">25000</value>
+                </entry>
+                <entry key="http.protocol.allow-circular-redirects">
+                    <value type="java.lang.Boolean">true</value>
+                </entry>
+                <entry key="http.conn-manager.timeout">
+                    <value type="java.lang.Long">25000</value>
+                </entry>
+                <entry key="http.protocol.cookie-policy">
+                    <value>compatibility</value>
+                </entry>
+                <entry key="http.protocol.handle-redirects">
+                    <value type="java.lang.Boolean">true</value>
+                </entry>
+                <entry key="http.protocol.max-redirects">
+                    <value type="java.lang.Integer">25</value>
+                </entry>
+                <entry key="http.protocol.reject-relative-redirect">
+                    <value type="java.lang.Boolean">false</value>
+                </entry>
+            </map>
+        </entry>
+    </util:map>
+
+    <bean id="action" class="org.rec.planets.jupiter.action.workflow.ChainedAction">
+        <property name="actions">
+            <list>
+                <ref local="clientPrepareAction"/>
+                <ref local="requestPrepareAction"/>
+                <ref local="downloadWithExceptionHandled"/>
+                <ref local="statusCodeCheckAction"/>
+                <ref local="domPrepareAction"/>
+                <bean class="org.rec.planets.jupiter.action.workflow.conditioned.ChooseAction">
+                    <property name="contextReader" ref="contextReader"/>
+                    <property name="actionMap">
+                        <map key-type="java.lang.String" value-type="org.rec.planets.jupiter.action.Action">
+                            <entry key="crawlURL.pageType==10" value-ref="mainHandleAction"/>
+                            <entry key="crawlURL.pageType==15" value-ref="sitemapHandleAction"/>
+                        </map>
+                    </property>
+                </bean>
+                <ref local="entityCollectAction"/>
+                <ref local="propergationCollectAction"/>
+            </list>
+        </property>
+        <property name="omitException" value="false"/>
+    </bean>
+
+    <bean id="urlContextReaderWriter" class="org.rec.planets.jupiter.context.accessor.writer.UrlContextReaderWriter"/>
+
+    <bean id="collectionWriter"
+          class="org.rec.planets.jupiter.context.accessor.writer.CollectionContextWriter"/>
+
+    <bean id="contextReader"
+          class="org.rec.planets.jupiter.context.accessor.reader.MvelContextReader"/>
+
+    <bean id="contextWriter"
+          class="org.rec.planets.jupiter.context.accessor.writer.BeanWrapperContextWriter"/>
+
+    <bean id="iterateReader"
+          class="org.rec.planets.jupiter.context.accessor.reader.IterableItemContextReader"/>
+
+    <bean id="threadLocalReaderWriter"
+          class="org.rec.planets.jupiter.context.accessor.writer.ThreadLocalReaderWriter">
+        <property name="nestedWriter">
+            <bean
+                    class="org.rec.planets.jupiter.context.accessor.writer.PropertyContextWriter"/>
+        </property>
+    </bean>
+
+    <bean id="clientCache"
+          class="org.rec.planets.jupiter.action.network.client.lifecycle.WebClientCache"/>
+    <bean id="clientFactory"
+          class="org.rec.planets.jupiter.action.network.client.hc4.HC4ClientFactory"/>
+
+    <bean id="clientPrepareAction"
+          class="org.rec.planets.jupiter.action.network.client.lifecycle.ClientPrepareAction">
+        <property name="contextReader" ref="urlContextReaderWriter"/>
+        <property name="sourceKey" value="key_client"/>
+        <property name="omitSourceNull" value="true"/>
+        <property name="contextWriter" ref="urlContextReaderWriter"/>
+        <property name="resultKey" value="key_client"/>
+        <property name="clientCache" ref="clientCache"/>
+        <property name="clientFactory" ref="clientFactory"/>
+    </bean>
+
+    <bean id="requestPrepareAction"
+          class="org.rec.planets.jupiter.action.network.request.BasicRequestPrepairAction">
+        <property name="contextWriter" ref="urlContextReaderWriter"/>
+        <property name="resultKey" value="key_request"/>
+    </bean>
+
+    <bean id="textDownloadAction"
+          class="org.rec.planets.jupiter.action.network.downloader.TextDownloader">
+        <property name="clientReader" ref="urlContextReaderWriter"/>
+        <property name="clientKey" value="key_client"/>
+        <property name="requestReader" ref="urlContextReaderWriter"/>
+        <property name="requestKey" value="key_request"/>
+        <property name="responseWriter" ref="urlContextReaderWriter"/>
+        <property name="responseKey" value="key_http_response"/>
+    </bean>
+
+    <bean id="responseDebugAction"
+          class="org.rec.planets.jupiter.action.network.stat.ResponseDebugAction"/>
+
+    <bean id="downloadExceptionInterceptor"
+          class="org.rec.planets.jupiter.action.network.stat.DownloadExceptionInterceptor"/>
+
+    <bean id="downloadWithExceptionHandled"
+          class="org.rec.planets.jupiter.action.interceptor.InterceptedAction">
+        <constructor-arg name="action" ref="textDownloadAction"/>
+        <constructor-arg name="interceptor" ref="downloadExceptionInterceptor"/>
+    </bean>
+
+    <bean id="statusCodeCheckAction"
+          class="org.rec.planets.jupiter.action.network.stat.StatusCodeCheckAction">
+        <property name="contextReader" ref="urlContextReaderWriter"/>
+        <property name="resultKey" value="key_http_response"/>
+        <property name="contextWriter" ref="urlContextReaderWriter"/>
+        <property name="notModifiedKey" value="key_http_response_304"/>
+    </bean>
+
+    <bean id="domPrepareAction"
+          class="org.rec.planets.jupiter.action.parser.dom.DomPrepairAction">
+        <property name="contextReader" ref="urlContextReaderWriter"/>
+        <property name="sourceKey" value="key_http_response"/>
+        <property name="contextWriter" ref="urlContextReaderWriter"/>
+        <property name="resultKey" value="key_document"/>
+    </bean>
+
+    <bean id="entityCollectAction"
+          class="org.rec.planets.jupiter.action.assemble.JobResultSnapshotCollector">
+        <property name="contextReader" ref="urlContextReaderWriter"/>
+        <property name="sourceKey" value="crawl_entity"/>
+        <property name="omitSourceNull" value="true"/>
+    </bean>
+
+    <bean id="propergationCollectAction"
+          class="org.rec.planets.jupiter.action.assemble.JobResultSnapshotCollector">
+        <property name="contextReader" ref="urlContextReaderWriter"/>
+        <property name="sourceKey" value="crawl_propergation"/>
+        <property name="omitSourceNull" value="true"/>
+    </bean>
+</beans>

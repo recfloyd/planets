@@ -25,7 +25,7 @@
 	</logger>
 	
 	<logger name="org.apache.http.headers" additivity="false">
-		<level value="debug" />
+		<level value="error" />
 		<appender-ref ref="stdout" />
 	</logger>
 	

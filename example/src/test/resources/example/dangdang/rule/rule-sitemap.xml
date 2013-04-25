@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+    <bean id="sitemapHandleAction" class="org.rec.planets.jupiter.action.workflow.ChainedAction">
+        <property name="actions">
+            <list>
+                <ref local="cat1GetAction"/>
+                <ref local="cat1CrawlPropergationInitAction"/>
+                <ref local="cat1IterateAction"/>
+            </list>
+        </property>
+        <property name="omitException" value="false"/>
+    </bean>
+
+    <bean id="cat1GetAction" class="org.rec.planets.jupiter.action.parser.dom.AllMatchDomParser">
+        <property name="contextReader" ref="urlContextReaderWriter"/>
+        <property name="sourceKey" value="key_document"/>
+        <property name="contextWriter" ref="urlContextReaderWriter"/>
+        <property name="resultKey" value="key_cat1_dom"/>
+        <property name="stringfy" value="false"/>
+        <property name="domElement">
+            <bean class="org.rec.planets.jupiter.action.parser.dom.bean.DomElement">
+                <constructor-arg name="selector">
+                    <value><![CDATA[li.clearfix > a.title]]></value>
+                </constructor-arg>
+            </bean>
+        </property>
+    </bean>
+
+    <bean id="cat1CrawlPropergationInitAction"
+          class="org.rec.planets.jupiter.action.assemble.BeanInitAssambler">
+        <property name="beanFactory">
+            <bean
+                    class="org.rec.planets.jupiter.action.assemble.factory.CrawlPropergationFactory"/>
+        </property>
+        <property name="contextWriter" ref="urlContextReaderWriter"/>
+        <property name="resultKey" value="crawl_propergation"/>
+    </bean>
+
+    <bean id="cat1IterateAction"
+          class="org.rec.planets.jupiter.action.workflow.iterable.ContextedIterableAction">
+        <property name="nestedAction" ref="cat1ParseAction"/>
+        <property name="contextReader" ref="urlContextReaderWriter"/>
+        <property name="itemsKey" value="key_cat1_dom"/>
+    </bean>
+
+    <bean id="cat1ParseAction" class="org.rec.planets.jupiter.action.workflow.ChainedAction">
+        <property name="actions">
+            <list>
+                <ref local="cat1URLInitAction"/>
+                <ref local="cat1URLSetAction"/>
+                <ref local="cat1URLAppParamInitAction"/>
+                <ref local="cat1URLAppParamSetAction"/>
+                <ref local="cat1WebSetAction"/>
+                <ref local="cat1TypeSetAction"/>
+                <ref local="cat1CrawlURLCopyAction"/>
+            </list>
+        </property>
+        <property name="omitException" value="false"/>
+    </bean>
+
+    <bean id="cat1URLInitAction"
+          class="org.rec.planets.jupiter.action.assemble.BeanInitAssambler">
+        <property name="beanFactory">
+            <bean
+                    class="org.rec.planets.jupiter.action.assemble.factory.BasicBeanFactory">
+                <property name="clazz" value="org.rec.planets.mercury.domain.CrawlURL"/>
+            </bean>
+        </property>
+        <property name="contextWriter" ref="threadLocalReaderWriter"/>
+        <property name="resultKey" value="@{cat1URL}@"/>
+    </bean>
+
+    <bean id="cat1URLSetAction" class="org.rec.planets.jupiter.action.parser.dom.DirectDomParser">
+        <property name="contextReader" ref="iterateReader"/>
+        <property name="contextWriter" ref="threadLocalReaderWriter"/>
+        <property name="resultKey" value="@{cat1URL}@url"/>
+        <property name="domElement">
+            <bean class="org.rec.planets.jupiter.action.parser.dom.bean.DomElement">
+                <constructor-arg name="selector" value=""/>
+                <constructor-arg name="attrabute" value="href"/>
+            </bean>
+        </property>
+    </bean>
+
+    <bean id="cat1URLAppParamInitAction"
+          class="org.rec.planets.jupiter.action.assemble.BeanInitAssambler">
+        <property name="beanFactory">
+            <bean
+                    class="org.rec.planets.jupiter.action.assemble.factory.BasicBeanFactory">
+                <property name="clazz" value="java.util.HashMap"/>
+            </bean>
+        </property>
+        <property name="contextWriter" ref="threadLocalReaderWriter"/>
+        <property name="resultKey" value="@{cat1URL}@appParams"/>
+    </bean>
+
+    <bean id="cat1URLAppParamSetAction" class="org.rec.planets.jupiter.action.parser.dom.DirectDomParser">
+        <property name="contextReader" ref="iterateReader"/>
+        <property name="contextWriter" ref="threadLocalReaderWriter"/>
+        <property name="resultKey" value="@{cat1URL}@appParams.cat1"/>
+        <property name="domElement">
+            <bean class="org.rec.planets.jupiter.action.parser.dom.bean.DomElement">
+                <constructor-arg name="selector" value=""/>
+                <constructor-arg name="attrabute" value=""/>
+            </bean>
+        </property>
+    </bean>
+
+    <bean id="cat1WebSetAction"
+          class="org.rec.planets.jupiter.action.assemble.ObjectCopyAssambler">
+        <property name="contextReader" ref="contextReader"/>
+        <property name="sourceKey" value="crawlURL.websiteId"/>
+        <property name="contextWriter" ref="threadLocalReaderWriter"/>
+        <property name="resultKey" value="@{cat1URL}@websiteId"/>
+    </bean>
+
+    <bean id="cat1TypeSetAction"
+          class="org.rec.planets.jupiter.action.assemble.ObjectCopyAssambler">
+        <property name="contextReader" ref="contextReader"/>
+        <property name="sourceKey" value="(byte)15"/>
+        <property name="contextWriter" ref="threadLocalReaderWriter"/>
+        <property name="resultKey" value="@{cat1URL}@pageType"/>
+    </bean>
+
+    <bean id="cat1CrawlURLCopyAction"
+          class="org.rec.planets.jupiter.action.assemble.ObjectCopyAssambler">
+        <property name="contextReader" ref="threadLocalReaderWriter"/>
+        <property name="sourceKey" value="@{cat1URL}@"/>
+        <property name="contextWriter" ref="collectionWriter"/>
+        <property name="resultKey" value="urlcontext['crawl_propergation'].children"/>
+    </bean>
+</beans>
