@@ -378,5 +378,6 @@
 	<modules>
 		<module>mercury</module>
 		<module>jupiter</module>
-	</modules>
+        <module>example</module>
+    </modules>
 </project>
