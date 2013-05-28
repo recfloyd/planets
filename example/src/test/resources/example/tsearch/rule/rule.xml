@@ -20,7 +20,7 @@
 	<util:map id="websiteProperties" key-type="java.lang.String"
 		map-class="java.util.HashMap">
 		<entry key="max_thread">
-			<value type="java.lang.Integer">3</value>
+			<value type="java.lang.Integer">1</value>
 		</entry>
 		<entry key="key_client_param">
 			<map key-type="java.lang.String">
@@ -74,6 +74,7 @@
 				<ref local="resultCopyAction" />
 				<ref local="keywordCopyAction" />
 				<ref local="entityCollectAction" />
+				<ref local="sleepAction" />
 			</list>
 		</property>
 		<property name="omitException" value="false" />
@@ -103,6 +104,10 @@
 		class="org.rec.planets.jupiter.action.network.client.lifecycle.WebClientCache" />
 	<bean id="clientFactory"
 		class="org.rec.planets.jupiter.action.network.client.hc4.HC4ClientFactory" />
+
+	<bean id="sleepAction" class="org.rec.planets.jupiter.action.system.SleepAction">
+		<property name="sleepMilliseconds" value="500,3000" />
+	</bean>
 
 	<bean id="clientPrepareAction"
 		class="org.rec.planets.jupiter.action.network.client.lifecycle.ClientPrepareAction">
