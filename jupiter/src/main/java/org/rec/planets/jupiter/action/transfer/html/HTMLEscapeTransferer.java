@@ -30,9 +30,7 @@ public class HTMLEscapeTransferer extends AbstractReadProcessWriteAction {
 
 		// 去除script
 		html = RegexUtil.replaceAll(html,
-				"<\\s*script.*?>.*?<\\s*/script\\s*>", "");
-		// 去掉注释
-		html = RegexUtil.replaceAll(html, "<!--.*?-->", "");
+				"</?[a-z][a-z0-9]*[^<>]*>|<!--.*?-->", "");
 
 		// 多个空格转换成一个空格
 		html = RegexUtil.replaceAll(html, "[\\r\\n]+", " ");
@@ -40,10 +38,9 @@ public class HTMLEscapeTransferer extends AbstractReadProcessWriteAction {
 		html = RegexUtil.replaceAll(html, "\\s+", " ");
 
 		// HTML标签
-		html = RegexUtil.replaceAll(html, "</?.*?>", "");
 		html = HtmlUtils.htmlUnescape(html);
 
-		return html;
+		return html.trim();
 	}
 
 }

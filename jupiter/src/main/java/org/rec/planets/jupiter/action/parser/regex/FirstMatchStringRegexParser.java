@@ -30,7 +30,7 @@ public class FirstMatchStringRegexParser extends AbstractRegexParser {
 
 	@Override
 	protected Object find(String text) {
-		List<String> result = RegexUtil.getFirstGroups(text, regex);
+		List<String> result = RegexUtil.getFirstMatchGroups(text, regex);
 		if (!CollectionUtils.isEmpty(result))
 			return Joiner.on(joiner).join(result);
 		else

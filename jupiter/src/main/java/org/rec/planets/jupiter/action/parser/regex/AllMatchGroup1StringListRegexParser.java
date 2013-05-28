@@ -3,7 +3,7 @@ package org.rec.planets.jupiter.action.parser.regex;
 import org.rec.planets.mercury.parse.RegexUtil;
 
 /**
- * 获取全部匹配内容的正则解析器,它解析的结果是一个List<List<String>><br/>
+ * 获取全部匹配内容,并收集group 1的正则解析器,它解析的结果是一个List<String><br/>
  * <code>
  * 	<bean id="正则解析Action" class="">
  * 		<property name="contextReader" ref="文本读取器"/>
@@ -19,10 +19,10 @@ import org.rec.planets.mercury.parse.RegexUtil;
  * @author rec
  * 
  */
-public class AllMatchStringListRegexParser extends AbstractRegexParser {
+public class AllMatchGroup1StringListRegexParser extends AbstractRegexParser {
 
 	@Override
 	protected Object find(String text) {
-		return RegexUtil.getAllMatchGroups(text, regex);
+		return RegexUtil.getAllMatchGroup1(text, regex);
 	}
 }

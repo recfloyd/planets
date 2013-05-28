@@ -27,7 +27,7 @@ public class RegexEigenPicker implements EigenPicker {
 		List<String> s = null;
 
 		for (EigenRegex regex : regexList) {
-			s = RegexUtil.getFirstGroups(
+			s = RegexUtil.getFirstMatchGroups(
 					regex.isOmitHost() ? omitHostURL : url, regex.getRegex());
 			if (!CollectionUtils.isEmpty(s))
 				break;

@@ -19,7 +19,7 @@ public class ThreadLocalReaderWriter implements ContextReader, ContextWriter {
 
 	@Override
 	public Object read(Object context, String key) {
-		List<String> split = RegexUtil.getFirstGroups(key,
+		List<String> split = RegexUtil.getFirstMatchGroups(key,
 				THREAD_LOCAL_KEY_PATTERN);
 		Object source = ThreadLocalObjectHolder.getObject(split.get(0));
 		if (source == null)
@@ -35,7 +35,7 @@ public class ThreadLocalReaderWriter implements ContextReader, ContextWriter {
 
 	@Override
 	public void write(Object context, String key, Object result) {
-		List<String> split = RegexUtil.getFirstGroups(key,
+		List<String> split = RegexUtil.getFirstMatchGroups(key,
 				THREAD_LOCAL_KEY_PATTERN);
 		String newKey = split.get(1);
 		if (Strings.isNullOrEmpty(newKey))
@@ -48,7 +48,7 @@ public class ThreadLocalReaderWriter implements ContextReader, ContextWriter {
 
 	@Override
 	public Object remove(Object context, String key) {
-		List<String> split = RegexUtil.getFirstGroups(key,
+		List<String> split = RegexUtil.getFirstMatchGroups(key,
 				THREAD_LOCAL_KEY_PATTERN);
 		String newKey = split.get(1);
 		if (Strings.isNullOrEmpty(newKey))

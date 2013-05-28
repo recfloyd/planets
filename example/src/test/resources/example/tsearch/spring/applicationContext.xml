@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="
+	http://www.springframework.org/schema/beans	
+	http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.springframework.org/schema/util
+	http://www.springframework.org/schema/util/spring-util.xsd
+	">
+
+	<bean id="controller" class="example.tsearch.Controller">
+		<property name="fetchResultService" ref="fetchResultService" />
+		<property name="input" value="d:/input.txt" />
+		<property name="rules">
+			<array>
+				<value><![CDATA[classpath:example/tsearch/rule/rule.xml]]></value>
+			</array>
+		</property>
+		<property name="websiteId" value="1" />
+		<property name="output" value="d:/output.txt" />
+		<property name="lineStart" value="1" />
+		<property name="lineEnd" value="200000" />
+		<property name="batchSize" value="100" />
+	</bean>
+
+	<bean id="fetchResultService"
+		class="org.rec.planets.jupiter.communication.service.FetchResultServiceImpl">
+		<property name="slotFactory" ref="slotFactory" />
+		<property name="commandHandler" ref="commandHandler" />
+	</bean>
+
+	<bean id="commandHandler"
+		class="org.rec.planets.jupiter.system.command.RuleUpdateCommandHandler">
+		<property name="slotFactory" ref="slotFactory" />
+	</bean>
+
+	<bean id="slotFactory" class="org.rec.planets.jupiter.slot.DefaultSlotFactory">
+		<property name="ruleFactory" ref="ruleFactory" />
+	</bean>
+
+	<bean id="ruleFactory" class="org.rec.planets.jupiter.rule.SpringRuleFactory" />
+</beans>

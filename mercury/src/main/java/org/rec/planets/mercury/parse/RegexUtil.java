@@ -88,7 +88,7 @@ public abstract class RegexUtil {
 	 * @param regex
 	 * @return
 	 */
-	public static List<String> getFirstGroups(String string, Regex regex) {
+	public static List<String> getFirstMatchGroups(String string, Regex regex) {
 		Matcher matcher = getMatcher(string, regex);
 
 		boolean tag = false;
@@ -135,7 +135,7 @@ public abstract class RegexUtil {
 	 * @param regex
 	 * @return
 	 */
-	public static List<List<String>> getAllGroups(String string, Regex regex) {
+	public static List<List<String>> getAllMatchGroups(String string, Regex regex) {
 		Matcher matcher = getMatcher(string, regex);
 		List<List<String>> result = new LinkedList<List<String>>();
 		MatchIterator matchIterator = matcher.findAll();
@@ -154,6 +154,27 @@ public abstract class RegexUtil {
 
 		return result;
 	}
+	
+	/**
+	 * 循环捕获group 1并存入一个数组
+	 * @param string
+	 * @param regex
+	 * @return
+	 */
+	public static List<String> getAllMatchGroup1(String string,Regex regex){
+		Matcher matcher = getMatcher(string, regex);
+		List<String> result = new LinkedList<String>();
+		MatchIterator matchIterator = matcher.findAll();
+		MatchResult mr = null;
+
+		while (matchIterator.hasMore()) {
+			mr = matchIterator.nextMatch();
+			result.add(mr.group(1));
+		}
+
+		return result;
+	}
+	
 
 	/**
 	 * 替换所有符合正则的字符串

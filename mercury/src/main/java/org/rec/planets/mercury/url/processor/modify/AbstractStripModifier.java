@@ -16,7 +16,7 @@ public abstract class AbstractStripModifier extends AbstractModifier {
 	private static final long serialVersionUID = 8068074835965660503L;
 
 	protected String extractFromRegex(String url, Regex regex) {
-		List<String> s = RegexUtil.getFirstGroups(url, regex);
+		List<String> s = RegexUtil.getFirstMatchGroups(url, regex);
 		if (CollectionUtils.isEmpty(s))
 			return url;
 		else
